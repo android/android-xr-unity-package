@@ -1,0 +1,72 @@
+{
+    "name": "Google.XR.Extensions.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Google.XR.Extensions",
+        "Unity.XR.OpenXR",
+        "Unity.XR.OpenXR.Editor",
+        "Unity.XR.Management.Editor",
+        "Unity.XR.Hands",
+        "GUID:e7613e527d035461da6942ba7283ee2d",
+        "Unity.XR.CoreUtils.Editor",
+        "Unity.XR.CompositionLayers",
+        "Unity.XR.CompositionLayers.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Unity",
+            "expression": "6000.0.4",
+            "define": "UNITY_6000_0_4_OR_NEWER"
+        },
+        {
+            "name": "Unity",
+            "expression": "6000.0.23",
+            "define": "UNITY_6000_0_23_OR_NEWER"
+        },
+        {
+            "name": "com.unity.xr.openxr",
+            "expression": "1.8.2",
+            "define": "UNITY_OPENXR_1_8_2_OR_NEWER"
+        },
+        {
+            "name": "com.unity.xr.management",
+            "expression": "4.4.0",
+            "define": "XR_MGMT_4_4_0_OR_NEWER"
+        },
+        {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "0.1",
+            "define": "UNITY_OPEN_XR_ANDROID_XR"
+        },
+        {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "0.2",
+            "define": "UNITY_OPEN_XR_ANDROID_XR_0_2_0"
+        },
+        {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "0.3.9",
+            "define": "UNITY_OPEN_XR_ANDROID_XR_0_4_0"
+        },
+        {
+            "name": "com.unity.xr.hands",
+            "expression": "0.1",
+            "define": "UNITY_XR_HAND"
+        },
+        {
+            "name": "com.unity.xr.compositionlayers",
+            "expression": "1.0.0",
+            "define": "XR_COMPOSITION_LAYERS"
+        }
+    ],
+    "noEngineReferences": false
+}

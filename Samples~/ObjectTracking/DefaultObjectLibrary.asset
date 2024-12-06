@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85f3b71a771f04aef8057fae3964fd78, type: 3}
+  m_Name: DefaultObjectLibrary
+  m_EditorClassIdentifier: 
+  m_GuidLow: 5231381147601766013
+  m_GuidHigh: 268852974053537697
+  m_ReferenceObjects:
+  - m_GuidLow: 5501203670109783770
+    m_GuidHigh: 4907264030549191043
+    m_Name: Unknown
+    m_Entries: []
+  - m_GuidLow: 5630282842206567856
+    m_GuidHigh: 13470116424238995089
+    m_Name: Keyboard
+    m_Entries: []
+  - m_GuidLow: 5124404429390836303
+    m_GuidHigh: 14386661670736831384
+    m_Name: Mouse
+    m_Entries: []
+  - m_GuidLow: 5684059569476403640
+    m_GuidHigh: 16361373534798586557
+    m_Name: Laptop
+    m_Entries: []

@@ -1,0 +1,65 @@
+{
+    "name": "com.google.xr.extensions",
+    "displayName": "Android XR Extensions for Unity",
+    "version": "0.9.0",
+    "unity": "6000.0",
+    "unityRelease": "23f1",
+    "description": "Android XR Extensions package. This package provides additional XR features that are not yet supported by Unity OpenXR Android XR and OpenXR Plugin packages.",
+    "author":
+    {
+        "name": "Google LLC"
+    },
+    "dependencies":
+    {
+        "com.unity.xr.openxr": "1.13.0",
+        "com.unity.xr.arfoundation": "6.1.0-pre.3",
+        "com.unity.xr.management": "4.5.0"
+    },
+    "samples": [
+        {
+            "displayName": "Environment Blend Mode",
+            "description": "This sample uses the Environment Blend Mode feature for switching between Additive, Alpha and Opaque modes. Used for blending virtual objects with real-world environments when full screen passthrough is enabled.",
+            "path": "Samples~/BlendMode"
+        },
+        {
+            "displayName": "Foveation",
+            "description": "This sample showcases the Foveation (Legacy) feature, the FoveationLevel will be changed every 5 seconds to demonstrate the 4 different levels of Foveation the profile supports.",
+            "path": "Samples~/Foveation"
+        },
+        {
+            "displayName": "Composition Layer Passthrough",
+            "description": "This sample uses the Passthrough Composition Layer feature to demonstrate creating a passthrough polygonal cutout.\n\nIt requires <b>com.unity.xr.compositionlayers@1.0.0</b> package to access Composition Layer Support.",
+            "path": "Samples~/Passthrough"
+        },
+        {
+            "displayName": "Trackables",
+            "description": "This sample uses the Anchor and Plane components. It implements the OnPlanesChanges and OnAnchorChanges events to track the addition and removal of Anchors and Planes within the environment. The gathered information about these planes and anchors is then used to print information onto the screen.",
+            "path": "Samples~/Trackables"
+        },
+        {
+            "displayName": "Face Tracking",
+            "description": "This sample uses the Face Tracking feature to obtain weight values of certain facial features. These values are then applied to a skinned mesh renderer, allowing for dynamic modification of the mesh based on facial expressions.",
+            "path": "Samples~/FaceTracking"
+        },
+        {
+            "displayName": "Object Tracking",
+            "description": "This sample uses the Object Tracking feature which calls the OnObjectsChanged method to track the addition and removal of tracked objects within the environment. The information regarding the tracked objects are then printed as information onto the screen.",
+            "path": "Samples~/ObjectTracking"
+        },
+        {
+            "displayName": "Hand Mesh",
+            "description": "The sample uses the Hand Mesh feature in order to get generated mesh information from the XRHandMeshFeature. Mesh information provided for the left and right hands are sent to a mesh filter for rendering.",
+            "path": "Samples~/HandMesh"
+        },
+        {
+            "displayName": "Display Refresh Rate",
+            "description": "This sample uses the Display Refresh Rate feature in order to continually show the display's refresh rate on the screen.",
+            "path": "Samples~/DisplayRefreshRate"
+        },
+        {
+            "displayName": "Unbounded Reference Space",
+            "description": "This sample uses XRInputSubsystem to check if the tracking origin mode is Unbounded.",
+            "path": "Samples~/UnboundedRefSpace"
+        }
+    ]
+}

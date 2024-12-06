@@ -1,0 +1,10 @@
+{
+    "name": "AndroidXRHandMeshPlugin",
+    "version": "1.0.0",
+    "libraryName": "unity_openxr_android",
+    "meshings": [
+        {
+            "id": "AndroidXRHandMeshProvider"
+        }
+    ]
+}

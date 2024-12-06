@@ -1,0 +1,40 @@
+{
+    "name": "Google.XR.Extensions",
+    "rootNamespace": "",
+    "references": [
+        "Unity.XR.OpenXR",
+        "Unity.XR.Hands",
+        "Unity.XR.ARSubsystems",
+        "Unity.XR.ARFoundation",
+        "Unity.XR.Management",
+        "Unity.XR.CoreUtils",
+        "Unity.InputSystem",
+        "GUID:e7613e527d035461da6942ba7283ee2d",
+        "Unity.XR.CompositionLayers"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "0.1",
+            "define": "UNITY_OPEN_XR_ANDROID_XR"
+        },
+        {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "0.2",
+            "define": "UNITY_OPEN_XR_ANDROID_XR_0_2_0"
+        },
+        {
+            "name": "com.unity.xr.compositionlayers",
+            "expression": "1.0.0",
+            "define": "XR_COMPOSITION_LAYERS"
+        }
+    ],
+    "noEngineReferences": false
+}
