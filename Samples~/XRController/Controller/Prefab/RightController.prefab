@@ -1,0 +1,381 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7103663176713473981
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8784341879701893518, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b9a1629f76681a042b010d162c2fdc2b, type: 2}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9063079
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.42261827
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6862024747161618847, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b9a1629f76681a042b010d162c2fdc2b, type: 2}
+    - target: {fileID: -5314042243280585700, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b9a1629f76681a042b010d162c2fdc2b, type: 2}
+    - target: {fileID: -3217550034380309225, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b9a1629f76681a042b010d162c2fdc2b, type: 2}
+    - target: {fileID: -2125337632178896584, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b9a1629f76681a042b010d162c2fdc2b, type: 2}
+    - target: {fileID: -145678107328856847, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b9a1629f76681a042b010d162c2fdc2b, type: 2}
+    - target: {fileID: 919132149155446097, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_Name
+      value: RightController
+      objectReference: {fileID: 0}
+    - target: {fileID: 5083040237849557129, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b9a1629f76681a042b010d162c2fdc2b, type: 2}
+    - target: {fileID: 9208272126419478429, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9208272126419478429, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9208272126419478429, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bdd1862cd6f2b16499c1452732012561, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -6543063263856533454}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8259703150381748233}
+  m_SourcePrefab: {fileID: 100100000, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+--- !u!4 &447389116888004299 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -1972512806318392970, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+  m_PrefabInstance: {fileID: 7103663176713473981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &858690377499744557 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7602047982978766480, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+  m_PrefabInstance: {fileID: 7103663176713473981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4833032538134728416 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2415945325235355997, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+  m_PrefabInstance: {fileID: 7103663176713473981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6831642413329840564 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4349235418747893257, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+  m_PrefabInstance: {fileID: 7103663176713473981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7950016438109647596 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+  m_PrefabInstance: {fileID: 7103663176713473981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-6543063263856533454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7950016438109647596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49ad92e74cacea040be7c224f4f331c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbStick: {fileID: 858690377499744557}
+  upperButton: {fileID: 8563786927995694241}
+  lowerButton: {fileID: 7963703494288566308}
+  systemButton: {fileID: 6831642413329840564}
+  trigger: {fileID: 447389116888004299}
+  grip: {fileID: 4833032538134728416}
+  maxThumbStickRot: {x: 10, y: 10}
+  pressedThumbStickOffset: 0.002
+  pressedUpperBtnOffset: 0.002
+  pressedLowerBtnOffset: 0.002
+  pressedSystemBtnOffset: 0.001
+  maxTriggerRot: 17
+  maxGripRot: -10
+  thumbStickInput:
+    m_Name: Thumb Stick Input
+    m_Type: 0
+    m_ExpectedControlType: Vector2
+    m_Id: 8c7e2def-b6ba-4664-8f6a-66af72fdb1c0
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 3a9d57d1-cf09-4679-ba7b-a0ab8a8777e7
+      m_Path: <XRController>{RightHand}/thumbstick
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Thumb Stick Input
+      m_Flags: 0
+    m_Flags: 0
+  thumbStickPressedInput:
+    m_Name: Thumb Stick Pressed Input
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 99b58c0a-2f29-4009-9194-31c2dceb7aa4
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 3e571457-2758-47aa-9466-67c6ac94dd46
+      m_Path: <XRController>{RightHand}/thumbstickClicked
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Thumb Stick Pressed Input
+      m_Flags: 0
+    m_Flags: 0
+  upperButtonPressedInput:
+    m_Name: Upper Button Pressed Input
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: f49c71ff-10f3-4cac-b31d-30934359bc33
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 4f302464-f8d4-4e01-8f27-1f3998825ca9
+      m_Path: <XRController>{RightHand}/secondaryButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Upper Button Pressed Input
+      m_Flags: 0
+    m_Flags: 0
+  lowerButtonPressedInput:
+    m_Name: Lower Button Pressed Input
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 0d589104-79d9-4292-9906-6ec3ffb3fbc3
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: f8bf1b01-29db-46c0-b2f7-812d5335510a
+      m_Path: <XRController>{RightHand}/primaryButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Lower Button Pressed Input
+      m_Flags: 0
+    m_Flags: 0
+  systemButtonPressedInput:
+    m_Name: System Button Pressed Input
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 204582f4-3b37-4564-bc46-47d78719a08b
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 7f1b74e6-09ce-4f89-bd15-256046c7cdfa
+      m_Path: <XRController>{RightHand}/menu
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: System Button Pressed Input
+      m_Flags: 0
+    m_Flags: 0
+  triggerInput:
+    m_Name: Trigger Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 61f541b4-96cf-4366-908a-ed3e700cb741
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: f3628654-d886-46a8-890c-0e0704e59331
+      m_Path: <XRController>{RightHand}/trigger
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Trigger Input
+      m_Flags: 0
+    m_Flags: 0
+  gripInput:
+    m_Name: Grip Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: c5c87782-108d-421e-b8c3-b200bb931da2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 76b0f182-2468-4a72-a816-9cc007cd343c
+      m_Path: <XRController>{RightHand}/grip
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Grip Input
+      m_Flags: 0
+    m_Flags: 0
+  inverseThumbStickX: 1
+  inverseThumbStickY: 1
+  gripRotationPivot: {x: 0, y: 0, z: 1}
+  triggerRotationPivot: {x: 1, y: 0, z: 0}
+--- !u!114 &8259703150381748233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7950016438109647596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2fadf230d1919748a9aa21d40f74619, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TrackingType: 0
+  m_UpdateType: 0
+  m_IgnoreTrackingState: 0
+  m_PositionInput:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Position
+      m_Type: 0
+      m_ExpectedControlType: Vector3
+      m_Id: 6c89bbec-85b0-479b-9957-ee0ca649c504
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 43920afb-23e6-4706-97dc-6bb36b1b6ef5
+        m_Path: <XRController>{RightHand}/devicePosition
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Position
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_RotationInput:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Rotation
+      m_Type: 0
+      m_ExpectedControlType: Quaternion
+      m_Id: f2fc1659-d32b-47f0-b459-d1eab4bd76ab
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: f3da4612-de2e-4340-92c2-292ce4a5c83a
+        m_Path: <XRController>{RightHand}/deviceRotation
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Rotation
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_TrackingStateInput:
+    m_UseReference: 0
+    m_Action:
+      m_Name: Tracking State
+      m_Type: 0
+      m_ExpectedControlType: Integer
+      m_Id: 91c97358-615f-4b1c-a8c9-d12f5433d0d0
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 97f6baaf-0224-4299-b7ce-bff780809976
+        m_Path: <XRController>{RightHand}/trackingState
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Tracking State
+        m_Flags: 0
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_PositionAction:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: dbc2eb1a-8ebf-4c9c-a89c-1ab6a46f4c41
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  m_RotationAction:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 4247e993-057b-44dc-9d84-edc8179067d7
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+--- !u!4 &7963703494288566308 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 869628106617186201, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+  m_PrefabInstance: {fileID: 7103663176713473981}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8563786927995694241 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -7760292788115692772, guid: 6776c902296b26441b87a0a88dc19696, type: 3}
+  m_PrefabInstance: {fileID: 7103663176713473981}
+  m_PrefabAsset: {fileID: 0}
