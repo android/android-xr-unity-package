@@ -60,6 +60,11 @@
             "displayName": "Unbounded Reference Space",
             "description": "This sample uses XRInputSubsystem to check if the tracking origin mode is Unbounded.",
             "path": "Samples~/UnboundedRefSpace"
+        },
+        {
+            "displayName": "XRController",
+            "description": "This sample includes the XRController asset.",
+            "path": "Samples~/XRController"
         }
     ]
 }
