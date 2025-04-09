@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2025-04-03
+
+### Added
+  * New Sample **XRController** which syncs and displays Samsung Controller
+
+### Changed
+  * N/A
+
+### Deprecated
+  * N/A
+
+### Removed
+  * N/A
+
+### Fixed
+  * Updated Android XR permissions.
+
 ## [0.9.0] - 2024-12-12
 
 This is the first release of **Android XR Extensions for Unity

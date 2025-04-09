@@ -27,10 +27,16 @@ namespace Google.XR.Extensions
     public enum AndroidXRPermission
     {
         /// <summary>
-        /// Permission to enable scene understanding features that relies on motion tracking,
+        /// Permission to enable coarse scene understanding features that relies on motion tracking,
         /// ToF sensor, and the VST RGB-left cameras.
         /// </summary>
-        SceneUnderstanding,
+        SceneUnderstandingCoarse,
+
+        /// <summary>
+        /// Permission to enable fine scene understanding features that relies on motion tracking,
+        /// such as depth texture and scene meshing.
+        /// </summary>
+        SceneUnderstandingFine,
 
         /// <summary>
         /// Permission to enable hand tracking.
@@ -38,12 +44,12 @@ namespace Google.XR.Extensions
         HandTracking,
 
         /// <summary>
-        /// Permission to enable eye tracking.
+        /// Permission to enable coarse eye tracking.
         /// </summary>
-        EyeTracking,
+        EyeTrackingCoarse,
 
         /// <summary>
-        /// Permission to enable eye gaze interaction.
+        /// Permission to enable eye gaze interaction and fine eye tracking.
         /// </summary>
         EyeTrackingFine,
 
@@ -68,12 +74,14 @@ namespace Google.XR.Extensions
         {
             switch (permission)
             {
-                case AndroidXRPermission.SceneUnderstanding:
-                    return "android.permission.SCENE_UNDERSTANDING";
+                case AndroidXRPermission.SceneUnderstandingCoarse:
+                    return "android.permission.SCENE_UNDERSTANDING_COARSE";
+                case AndroidXRPermission.SceneUnderstandingFine:
+                    return "android.permission.SCENE_UNDERSTANDING_FINE";
                 case AndroidXRPermission.HandTracking:
                     return "android.permission.HAND_TRACKING";
-                case AndroidXRPermission.EyeTracking:
-                    return "android.permission.EYE_TRACKING";
+                case AndroidXRPermission.EyeTrackingCoarse:
+                    return "android.permission.EYE_TRACKING_COARSE";
                 case AndroidXRPermission.EyeTrackingFine:
                     return "android.permission.EYE_TRACKING_FINE";
                 case AndroidXRPermission.FaceTracking:

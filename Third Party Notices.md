@@ -246,6 +246,8 @@ Graphics, Inc.
 -----------------------------------------------------------------------------------------
 == Google JDK 21
 
+# google3/third_party/java_src/jdk/openjdk21/src/LICENSE
+
 The GNU General Public License (GPL)
 
 Version 2, June 1991
@@ -598,6 +600,8 @@ exception as provided by Oracle in the LICENSE file that accompanied this code."
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/make/data/cldr/LICENSE.txt
+
 ﻿UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE
 
 See Terms of Use for definitions of Unicode Inc.'s
@@ -649,6 +653,8 @@ written authorization of the copyright holder.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/aes.md
+
 ## Cryptix AES v3.2.0
 
 ### Cryptix General License
@@ -689,6 +695,8 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/asm.md
 
 ## ASM Bytecode Manipulation Framework v9.3
 
@@ -731,6 +739,8 @@ THE POSSIBILITY OF SUCH DAMAGE.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/c-libutl.md
+
 ## c-libutl 20160225
 
 ### c-libutl License
@@ -770,6 +780,8 @@ http://opensource.org/licenses/bsd-license.php
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/cldr.md
 
 ## Unicode Common Local Data Repository (CLDR) v43
 
@@ -884,6 +896,8 @@ written authorization of the copyright holder.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/icu.md
 
 ## International Components for Unicode (ICU4J) v72.1
 
@@ -1408,6 +1422,8 @@ written authorization of the copyright holder.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/public_suffix.md
+
 ## Mozilla Public Suffix List
 
 ### Public Suffix Notice
@@ -1812,6 +1828,8 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/unicode.md
+
 ## The Unicode Standard, Unicode Character Database, Version 15.0.0
 
 ### Unicode Character Database
@@ -1920,6 +1938,8 @@ Entire Agreement. This Agreement constitutes the entire agreement between the pa
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/share/legal/zlib.md
+
 ## zlib v1.2.13
 
 ### zlib License
@@ -1951,6 +1971,8 @@ jloup@gzip.org          madler@alumni.caltech.edu
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.base/windows/legal/wepoll.md
 
 ## Bert Belder: wepoll v 1.5.8
 
@@ -1991,6 +2013,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/colorimaging.md
+
 ## Eastman Kodak Company: Portions of color management and imaging software
 
 ### Eastman Kodak Notice
@@ -2002,6 +2026,8 @@ Portions Copyright Eastman Kodak Company 1991-2003
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/freetype.md
 
 ## The FreeType Project: Freetype v2.13.0
 
@@ -2657,6 +2683,8 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/giflib.md
+
 ## GIFLIB v5.2.1
 
 ### GIFLIB License
@@ -2691,6 +2719,8 @@ SPDX-License-Identifier: MIT
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/harfbuzz.md
 
 ## Harfbuzz v8.2.2
 
@@ -2800,6 +2830,8 @@ Werner Lemberg
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/jpeg.md
+
 ## Independent JPEG Group: JPEG release 6b
 
 ### JPEG License
@@ -2881,6 +2913,8 @@ Service Mark property of CompuServe Incorporated."
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/lcms.md
 
 ## Little Color Management System (LCMS) v2.15
 
@@ -2994,6 +3028,8 @@ Tim Zaman
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/libpng.md
 
 ## libpng v1.6.40
 
@@ -3206,6 +3242,8 @@ released under other open source licenses.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/legal/mesa3d.md
+
 ## Mesa 3-D Graphics Library v21.0.3
 
 ### Mesa License
@@ -3345,6 +3383,8 @@ include/KHR/khrplatform.h :
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/native/libsplashscreen/giflib/COPYING
+
 The GIFLIB distribution is Copyright (c) 1997  Eric S. Raymond
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -3368,6 +3408,8 @@ THE SOFTWARE.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/share/native/libsplashscreen/libpng/LICENSE
 
 COPYRIGHT NOTICE, DISCLAIMER, and LICENSE
 =========================================
@@ -3508,6 +3550,8 @@ be appreciated.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/unix/legal/pipewire.md
+
 ## PipeWire 0.3.68
 
 ### PipeWire license:
@@ -3554,6 +3598,8 @@ Copyright © 2021 Red Hat, Inc.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.desktop/unix/legal/xwd.md
+
 ## xwd v1.0.7
 
 ### xwd utility
@@ -3592,6 +3638,8 @@ from The Open Group.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.smartcardio/unix/legal/pcsclite.md
 
 ## PC/SC Lite v1.9.9
 
@@ -3655,6 +3703,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.smartcardio/unix/native/libj2pcsc/MUSCLE/COPYING
+
 Copyright (c) 1999-2003 David Corcoran <corcoran@musclecard.com>
 Copyright (c) 2001-2011 Ludovic Rousseau <ludovic.rousseau@free.fr>
 All rights reserved.
@@ -3688,6 +3738,8 @@ Some source code files are using other licenses. However, they are not included 
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.xml.crypto/share/legal/santuario.md
 
 ## Apache Santuario v3.0.2
 
@@ -3921,6 +3973,8 @@ copyright (c) 2021, Oracle and/or its affiliates.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.xml/share/legal/bcel.md
+
 ## Apache Commons Byte Code Engineering Library (BCEL) Version 6.7.0
 
 ### Apache Commons BCEL Notice
@@ -4145,6 +4199,8 @@ limitations under the License.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.xml/share/legal/dom.md
+
 ## DOM Level 3 Core Specification v1.0
 
 ### W3C Software Notice
@@ -4227,6 +4283,8 @@ site-policy@w3.org.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.xml/share/legal/jcup.md
+
 ## CUP Parser Generator for Java v 0.11b
 
 ### CUP Parser Generator License
@@ -4262,6 +4320,8 @@ the CUP runtime code linked with the generated parser.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.xml/share/legal/xalan.md
 
 ## Apache Xalan v2.7.2
 
@@ -4523,6 +4583,8 @@ covered by this same license.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/java.xml/share/legal/xerces.md
+
 ## Apache Xerces v2.12.2
 
 ### Apache Xerces Notice
@@ -4757,6 +4819,8 @@ limitations under the License.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.crypto.cryptoki/share/legal/pkcs11cryptotoken.md
+
 ## OASIS PKCS #11 Cryptographic Token Interface v3.0
 
 ### OASIS PKCS #11 Cryptographic Token Interface License
@@ -4834,6 +4898,8 @@ claims in such list are, in fact, Essential Claims.]
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.crypto.cryptoki/share/legal/pkcs11wrapper.md
+
 ## IAIK (Institute for Applied Information Processing and Communication) PKCS#11 wrapper files v1
 
 ### IAIK License
@@ -4885,6 +4951,8 @@ POSSIBILITY OF SUCH DAMAGE.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.dynalink/share/legal/dynalink.md
+
 ## Dynalink v.5
 
 ### Dynalink License
@@ -4921,6 +4989,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.internal.le/share/legal/jline.md
 
 ## JLine v3.22.0
 
@@ -4968,6 +5038,8 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.internal.opt/share/legal/jopt-simple.md
+
 ## jopt-simple v5.0.4
 
 ### MIT License
@@ -4999,6 +5071,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.javadoc/share/legal/jquery.md
 
 ## jQuery v3.6.1
 
@@ -5077,6 +5151,8 @@ the terms above.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.javadoc/share/legal/jqueryUI.md
+
 ## jQuery UI v1.13.2
 
 ### jQuery UI License
@@ -5130,6 +5206,8 @@ the terms above.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.localedata/share/legal/cldr.md
 
 ## Unicode Common Local Data Repository (CLDR) v43
 
@@ -5245,6 +5323,8 @@ written authorization of the copyright holder.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/src/src/jdk.localedata/share/legal/thaidict.md
+
 ## Thai Dictionary
 
 ### Thai Dictionary License
@@ -5280,6 +5360,8 @@ SOFTWARE.
 
 ------------------
 
+
+# google3/third_party/java_src/jdk/openjdk21/src/src/utils/hsdis/hsdis-license.txt
 
 The Universal Permissive License (UPL), Version 1.0
 
@@ -5321,6 +5403,8 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------------------
 
 
+# google3/third_party/java_src/jdk/openjdk21/openjdk-missing-licenses.txt
+
 # This file provides a mechanism to work around problems with missing licenses
 # when importing OpenJDK source.
 # We currently assume all licenses in OpenJDK are documented in these files:
@@ -5332,6 +5416,8 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 # file contains those licenses, and serves as a temprorary workaround until
 # those licenses are either properly documented in the above files or deleted.
 
+# License from google3/third_party/java_src/jdk/openjdk20/src/make/data/cldr/common/dtd/cldrTest.dtd
+
 Copyright © 2003-2010 Unicode, Inc. and others. All rights reserved. Distributed under the Terms of Use in http://www.unicode.org/copyright.html.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of the Unicode data files and any associated documentation (the "Data Files") or Unicode software and any associated documentation (the "Software") to deal in the Data Files or Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, and/or sell copies of the Data Files or Software, and to permit persons to whom the Data Files or Software are furnished to do so, provided that (a) the above copyright notice(s) and this permission notice appear with all copies of the Data Files or Software, (b) both the above copyright notice(s) and this permission notice appear in associated documentation, and (c) there is clear notice in each modified Data File or in the Software as well as in the documentation associated with the Data File(s) or Software that the data or software has been modified.
@@ -5340,11 +5426,15 @@ THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
 
 Except as contained in this notice, the name of a copyright holder shall not be used in advertising or otherwise to promote the sale, use or other dealings in these Data Files or Software without prior written authorization of the copyright holder.
 
+# License from google3/third_party/java_src/jdk/openjdk20/src/src/hotspot/share/runtime/sharedRuntimeMath.hpp
+
 Copyright (c) 1998 Oracle and/or its affiliates. All rights reserved.
 
 Developed at SunSoft, a Sun Microsystems, Inc. business.
 Permission to use, copy, modify, and distribute this software is freely granted,
 provided that this notice is preserved.
+
+# License from google3/third_party/java_src/jdk/openjdk20/src/src/java.security.jgss/share/classes/sun/security/krb5/internal/crypto/dk/DkCrypto.java
 
 Copyright (C) 1998 by the FundsXpress, INC. All rights reserved.
 
@@ -6551,3 +6641,4 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----------------------------------------------------------------------------------------
+

@@ -140,20 +140,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49ad92e74cacea040be7c224f4f331c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thumbStick: {fileID: 6560750023782525230}
-  upperButton: {fileID: 3294422559947940247}
-  lowerButton: {fileID: 3338177163201177434}
-  systemButton: {fileID: 3535638649786920005}
-  trigger: {fileID: 8090141865140552173}
-  grip: {fileID: 762857701643272421}
-  maxThumbStickRot: {x: 10, y: 10}
-  pressedThumbStickOffset: 0.002
-  pressedUpperBtnOffset: 0.002
-  pressedLowerBtnOffset: 0.002
-  pressedSystemBtnOffset: 0.001
-  maxTriggerRot: 17
-  maxGripRot: 10
-  thumbStickInput:
+  _thumbStick: {fileID: 6560750023782525230}
+  _upperButton: {fileID: 3294422559947940247}
+  _lowerButton: {fileID: 3338177163201177434}
+  _systemButton: {fileID: 3535638649786920005}
+  _trigger: {fileID: 8090141865140552173}
+  _grip: {fileID: 762857701643272421}
+  _maxThumbStickRot: {x: 10, y: 10}
+  _pressedThumbStickOffset: 0.002
+  _pressedUpperBtnOffset: 0.002
+  _pressedLowerBtnOffset: 0.002
+  _pressedSystemBtnOffset: 0.001
+  _maxTriggerRot: 17
+  _maxGripRot: 10
+  _thumbStickInput:
     m_Name: Thumb Stick Input
     m_Type: 0
     m_ExpectedControlType: Vector2
@@ -170,7 +170,7 @@ MonoBehaviour:
       m_Action: Thumb Stick Input
       m_Flags: 0
     m_Flags: 0
-  thumbStickPressedInput:
+  _thumbStickPressedInput:
     m_Name: Thumb Stick Pressed Input
     m_Type: 1
     m_ExpectedControlType: Button
@@ -187,7 +187,7 @@ MonoBehaviour:
       m_Action: Thumb Stick Pressed Input
       m_Flags: 0
     m_Flags: 0
-  upperButtonPressedInput:
+  _upperButtonPressedInput:
     m_Name: Upper Button Pressed Input
     m_Type: 1
     m_ExpectedControlType: Button
@@ -204,7 +204,7 @@ MonoBehaviour:
       m_Action: Upper Button Pressed Input
       m_Flags: 0
     m_Flags: 0
-  lowerButtonPressedInput:
+  _lowerButtonPressedInput:
     m_Name: Lower Button Pressed Input
     m_Type: 1
     m_ExpectedControlType: Button
@@ -221,7 +221,7 @@ MonoBehaviour:
       m_Action: Lower Button Pressed Input
       m_Flags: 0
     m_Flags: 0
-  systemButtonPressedInput:
+  _systemButtonPressedInput:
     m_Name: System Button Pressed Input
     m_Type: 1
     m_ExpectedControlType: Button
@@ -238,7 +238,7 @@ MonoBehaviour:
       m_Action: System Button Pressed Input
       m_Flags: 0
     m_Flags: 0
-  triggerInput:
+  _triggerInput:
     m_Name: Trigger Input
     m_Type: 0
     m_ExpectedControlType: 
@@ -255,7 +255,7 @@ MonoBehaviour:
       m_Action: Trigger Input
       m_Flags: 0
     m_Flags: 0
-  gripInput:
+  _gripInput:
     m_Name: Grip Input
     m_Type: 0
     m_ExpectedControlType: 
@@ -272,10 +272,10 @@ MonoBehaviour:
       m_Action: Grip Input
       m_Flags: 0
     m_Flags: 0
-  inverseThumbStickX: 1
-  inverseThumbStickY: 1
-  gripRotationPivot: {x: 0, y: 0, z: 1}
-  triggerRotationPivot: {x: 1, y: 0, z: 0}
+  _inverseThumbStickX: 1
+  _inverseThumbStickY: 1
+  _gripRotationPivot: {x: 0, y: 0, z: 1}
+  _triggerRotationPivot: {x: 1, y: 0, z: 0}
 --- !u!114 &106320436904039793
 MonoBehaviour:
   m_ObjectHideFlags: 0
