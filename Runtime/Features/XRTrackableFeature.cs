@@ -79,7 +79,7 @@ namespace Google.XR.Extensions
         /// Runtime permission required to enable scene understanding.
         /// </summary>
         public static readonly AndroidXRPermission RequiredPermission =
-            AndroidXRPermission.SceneUnderstanding;
+            AndroidXRPermission.SceneUnderstandingCoarse;
 
         internal static bool? _extensionEnabled = null;
 

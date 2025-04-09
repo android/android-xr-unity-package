@@ -89,6 +89,19 @@ namespace Google.XR.Extensions.Editor.Internal
                         { "value", "ACTIVITY_START_MODE_UNMANAGED_FULL_SPACE" }
                     }
             };
+        private static readonly ManifestElement _libopenxrso =
+            new ManifestElement()
+            {
+                ElementPath = new List<string>
+                    {
+                        "manifest", "application", "uses-native-library"
+                    },
+                Attributes = new Dictionary<string, string>
+                    {
+                        { "name", "libopenxr.google.so" },
+                        { "required", "false" }
+                    }
+            };
 #endif // XR_MGMT_4_4_0_OR_NEWER
 
         /// <inheritdoc/>
@@ -172,20 +185,28 @@ namespace Google.XR.Extensions.Editor.Internal
                 Debug.Log(stringBuilder);
             }
 
-            if (CheckSceneUnderstandingPermission())
+            if (CheckSceneUnderstandingCoarsePermission())
             {
                 requiredManifest.Add(
-                    GetAndroidXRPermissionElement(AndroidXRPermission.SceneUnderstanding));
+                    GetAndroidXRPermissionElement(AndroidXRPermission.SceneUnderstandingCoarse));
                 Debug.LogFormat("Inject permission manifest: {0}",
-                    AndroidXRPermission.SceneUnderstanding.ToPermissionString());
+                    AndroidXRPermission.SceneUnderstandingCoarse.ToPermissionString());
             }
 
-            if (CheckEyeTrackingPermission())
+            if (CheckSceneUnderstandingFinePermission())
             {
                 requiredManifest.Add(
-                    GetAndroidXRPermissionElement(AndroidXRPermission.EyeTracking));
+                    GetAndroidXRPermissionElement(AndroidXRPermission.SceneUnderstandingFine));
                 Debug.LogFormat("Inject permission manifest: {0}",
-                    AndroidXRPermission.EyeTracking.ToPermissionString());
+                    AndroidXRPermission.SceneUnderstandingFine.ToPermissionString());
+            }
+
+            if (CheckEyeTrackingCoarsePermission())
+            {
+                requiredManifest.Add(
+                    GetAndroidXRPermissionElement(AndroidXRPermission.EyeTrackingCoarse));
+                Debug.LogFormat("Inject permission manifest: {0}",
+                    AndroidXRPermission.EyeTrackingCoarse.ToPermissionString());
             }
 
             if (CheckEyeTrackingFinePermission())
@@ -203,6 +224,9 @@ namespace Google.XR.Extensions.Editor.Internal
                 Debug.LogFormat("Inject permission manifest: {0}",
                     AndroidXRPermission.HandTracking.ToPermissionString());
             }
+
+            requiredManifest.Add(_libopenxrso);
+            Debug.LogFormat("Inject native library manifest: libopenxr.google.so");
 
             List<ManifestElement> emptyElement = new List<ManifestElement>();
             return new ManifestRequirement
@@ -230,7 +254,7 @@ namespace Google.XR.Extensions.Editor.Internal
             };
         }
 
-        private bool CheckSceneUnderstandingPermission()
+        private bool CheckSceneUnderstandingCoarsePermission()
         {
             XRTrackableFeature trackableFeature =
                 AndroidXRBuildUtils.GetActiveFeature<XRTrackableFeature>();
@@ -265,7 +289,13 @@ namespace Google.XR.Extensions.Editor.Internal
                 (anchorFeature != null && anchorFeature.enabled);
         }
 
-        private bool CheckEyeTrackingPermission()
+        private bool CheckSceneUnderstandingFinePermission()
+        {
+            /// Add check for scene understanding when implemented.
+            return false;
+        }
+
+        private bool CheckEyeTrackingCoarsePermission()
         {
             FoveatedRenderingFeature foveatedRendering =
                 AndroidXRBuildUtils.GetActiveFeature<FoveatedRenderingFeature>();
