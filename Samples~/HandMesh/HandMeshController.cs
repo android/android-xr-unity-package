@@ -67,7 +67,7 @@ namespace Google.XR.Extensions.Samples.HandMesh
             if (meshSubsystems.Count != 1)
             {
                 Debug.LogError("Unexpected number of mesh subsystems."
-                    + "Expected 1, got {meshSubsystems.Count}.");
+                    + $"Expected 1, got {meshSubsystems.Count}.");
                 enabled = false;
                 return;
             }
