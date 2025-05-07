@@ -32,6 +32,7 @@ namespace Google.XR.Extensions
     {
         private XRFaceState _face;
         private int _parameterCount;
+        private int _regionConfidencesCount;
         private bool _grantedPermission = false;
         private bool _enabledTracking = false;
 
@@ -46,12 +47,13 @@ namespace Google.XR.Extensions
         /// <returns>Returns true if calibrated, false otherwise.</returns>
         public bool IsFaceCalibrated()
         {
-            return FaceTrackerApi.IsFaceCalibrated();
+            return XRFaceTrackerApi.IsFaceCalibrated();
         }
 
         private void Awake()
         {
             _face.Parameters = new float[0];
+            _face.ConfidenceRegions = new float[0];
             _face.TrackingState = XRFaceTrackingStates.Stopped;
             _face.Timestamp = 0;
         }
@@ -59,6 +61,7 @@ namespace Google.XR.Extensions
         private void Start()
         {
             _parameterCount = Enum.GetNames(typeof(XRFaceParameterIndices)).Length;
+            _regionConfidencesCount = Enum.GetNames(typeof(XRFaceConfidenceRegion)).Length;
         }
 
         private void Update()
@@ -71,13 +74,14 @@ namespace Google.XR.Extensions
             if (_grantedPermission && !_enabledTracking)
             {
                 // Use lazy-initializer to avoid tracker creation failure for permissions denied.
-                FaceTrackerApi.SetTrackingEnabled(true);
+                XRFaceTrackerApi.SetTrackingEnabled(true);
                 _enabledTracking = true;
             }
 
             if (_enabledTracking)
             {
-                FaceTrackerApi.GetXRFaceState(_parameterCount, ref _face);
+                XRFaceTrackerApi.GetXRFaceState(_parameterCount, _regionConfidencesCount,
+                    ref _face);
             }
         }
 
@@ -94,7 +98,7 @@ namespace Google.XR.Extensions
 
         private void OnDisable()
         {
-            FaceTrackerApi.SetTrackingEnabled(false);
+            XRFaceTrackerApi.SetTrackingEnabled(false);
             _enabledTracking = false;
             if (_face.TrackingState == XRFaceTrackingStates.Tracking)
             {

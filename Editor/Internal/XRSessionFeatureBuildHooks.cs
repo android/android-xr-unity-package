@@ -24,6 +24,7 @@ namespace Google.XR.Extensions.Editor.Internal
     using System.Diagnostics.CodeAnalysis;
     using System.Text;
     using Google.XR.Extensions;
+    using Unity.XR.Management.AndroidManifest.Editor;
     using UnityEditor;
     using UnityEditor.Build.Reporting;
     using UnityEditor.XR.OpenXR.Features;
@@ -32,38 +33,12 @@ namespace Google.XR.Extensions.Editor.Internal
     using UnityEngine.XR.OpenXR.Features;
     using UnityEngine.XR.OpenXR.Features.Interactions;
 
-#if XR_MGMT_4_4_0_OR_NEWER
-    using Unity.XR.Management.AndroidManifest.Editor;
-#endif
-
 #if UNITY_XR_HAND
     using UnityEngine.XR.Hands.OpenXR;
-#endif
-#if UNITY_OPEN_XR_ANDROID_XR
-    using ARPlaneFeature = UnityEngine.XR.OpenXR.Features.Android.ARPlaneFeature;
-#endif
-#if UNITY_OPEN_XR_ANDROID_XR_0_2_0
-    using ARRaycastFeature = UnityEngine.XR.OpenXR.Features.Android.ARRaycastFeature;
-#endif
-#if UNITY_OPEN_XR_ANDROID_XR_0_4_0
-    using AROcclusionFeature = UnityEngine.XR.OpenXR.Features.Android.AROcclusionFeature;
 #endif
 
     internal class XRSessionFeatureBuildHooks : OpenXRFeatureBuildHooks
     {
-        /// <inheritdoc/>
-        [SuppressMessage("UnityRules.UnityStyleRules",
-                         "US1109:PublicPropertiesMustBeUpperCamelCase",
-                         Justification = "Overridden property.")]
-        public override int callbackOrder => 1; // The order of this callback does not matter
-
-        /// <inheritdoc/>
-        [SuppressMessage("UnityRules.UnityStyleRules",
-                         "US1109:PublicPropertiesMustBeUpperCamelCase",
-                         Justification = "Overridden property.")]
-        public override Type featureType => typeof(XRSessionFeature);
-
-#if XR_MGMT_4_4_0_OR_NEWER
         private static readonly ManifestElement _immersiveHMD =
             new ManifestElement()
             {
@@ -76,6 +51,7 @@ namespace Google.XR.Extensions.Editor.Internal
                         { "name", "org.khronos.openxr.intent.category.IMMERSIVE_HMD" }
                     }
             };
+
         private static readonly ManifestElement _immersiveXR =
             new ManifestElement()
             {
@@ -85,10 +61,11 @@ namespace Google.XR.Extensions.Editor.Internal
                     },
                 Attributes = new Dictionary<string, string>
                     {
-                        { "name", "android.window.PROPERTY_ACTIVITY_XR_START_MODE" },
-                        { "value", "ACTIVITY_START_MODE_UNMANAGED_FULL_SPACE" }
+                        { "name", "android.window.PROPERTY_XR_ACTIVITY_START_MODE" },
+                        { "value", "XR_ACTIVITY_START_MODE_FULL_SPACE_UNMANAGED" }
                     }
             };
+
         private static readonly ManifestElement _libopenxrso =
             new ManifestElement()
             {
@@ -102,68 +79,51 @@ namespace Google.XR.Extensions.Editor.Internal
                         { "required", "false" }
                     }
             };
-#endif // XR_MGMT_4_4_0_OR_NEWER
 
-        /// <inheritdoc/>
-        protected override void OnProcessBootConfigExt(
-            BuildReport report, BootConfigBuilder builder)
-        {
-            XRFoveationFeature foveationFeature =
-                AndroidXRBuildUtils.GetActiveFeature<XRFoveationFeature>();
-            FoveatedRenderingFeature foveatedRendering =
-                AndroidXRBuildUtils.GetActiveFeature<FoveatedRenderingFeature>();
-            XRSessionFeature sessionFeature =
-                AndroidXRBuildUtils.GetActiveFeature<XRSessionFeature>();
-            bool needsFragmentDensityMapEnabled = (sessionFeature != null &&
-                sessionFeature.enabled && sessionFeature.VulkanSubsampling) ||
-                (foveationFeature != null && foveationFeature.enabled) ||
-                (foveatedRendering != null && foveatedRendering.enabled);
-            Debug.LogFormat(
-                "SetBootConfigBoolean: xr-vulkan-extension-fragment-density-map-enabled="
-                + needsFragmentDensityMapEnabled);
-            builder.SetBootConfigBoolean("xr-vulkan-extension-fragment-density-map-enabled",
-                needsFragmentDensityMapEnabled);
-
-            bool spacewarpEnabled = sessionFeature != null &&
-                sessionFeature.enabled && sessionFeature.SpaceWarp;
-            Debug.LogFormat("SetBootConfigBoolean: xr-meta-enabled=" + spacewarpEnabled);
-            builder.SetBootConfigBoolean("xr-meta-enabled", spacewarpEnabled);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnPreprocessBuildExt(BuildReport report)
-        {
-#if !XR_MGMT_4_4_0_OR_NEWER
-            XRSessionFeature activeFeature =
-                AndroidXRBuildUtils.GetActiveFeature<XRSessionFeature>();
-            if (activeFeature == null || !activeFeature.enabled || !activeFeature.ImmersiveXR)
+        private static readonly ManifestElement _openxrFeature =
+            new ManifestElement()
             {
-                return;
-            }
+                ElementPath = new List<string>
+                    {
+                        "manifest", "uses-feature"
+                    },
+                Attributes = new Dictionary<string, string>
+                    {
+                        { "name", "android.software.xr.api.openxr" },
+                        { "required", "true" },
+                        //// Require minimum OpenXR version 1.1 (no patch version specified)
+                        //// Major version bits: 0xffff0000
+                        //// Minor version bits: 0x0000ffff
+                        { "version", "0x00010001" }
+                    }
+            };
 
-            Debug.LogWarning(
-                "XRSessionFeature relies on XR Plugin Management to add manifest elements.\n" +
-                "Please upgrade it to 4.4.0+ or manually inject following manifest elements:\n" +
-                "<intent-filter>\n" +
-                " <category android:name=\"org.khronos.openxr.intent.category.IMMERSIVE_HMD\"/>\n" +
-                "</intent-filter>\n" +
-                "<property\n" +
-                "    android:name=\"android.window.PROPERTY_ACTIVITY_XR_START_MODE\"\n" +
-                "    android:value=\"ACTIVITY_START_MODE_UNMANAGED_FULL_SPACE\"/>");
-#endif // !XR_MGMT_4_4_0_OR_NEWER
-        }
+        private static readonly ManifestElement _openxrExperimentalFeature =
+            new ManifestElement()
+            {
+                ElementPath = new List<string>
+                    {
+                        "manifest", "application", "meta-data"
+                    },
+                Attributes = new Dictionary<string, string>
+                    {
+                        { "name", "com.android.extensions.xr.uses_experimental_openxr_feature" },
+                        { "value", "true" }
+                    }
+            };
 
         /// <inheritdoc/>
-        protected override void OnPostGenerateGradleAndroidProjectExt(string path)
-        {
-        }
+        [SuppressMessage("UnityRules.UnityStyleRules",
+                         "US1109:PublicPropertiesMustBeUpperCamelCase",
+                         Justification = "Overridden property.")]
+        public override int callbackOrder => 1; // The order of this callback does not matter
 
         /// <inheritdoc/>
-        protected override void OnPostprocessBuildExt(BuildReport report)
-        {
-        }
+        [SuppressMessage("UnityRules.UnityStyleRules",
+                         "US1109:PublicPropertiesMustBeUpperCamelCase",
+                         Justification = "Overridden property.")]
+        public override Type featureType => typeof(XRSessionFeature);
 
-#if XR_MGMT_4_4_0_OR_NEWER
         public override ManifestRequirement ProvideManifestRequirement()
         {
             bool unityOpenXRAndroidXR = AndroidXRBuildUtils.IsUnityAndroidXRActive();
@@ -225,8 +185,27 @@ namespace Google.XR.Extensions.Editor.Internal
                     AndroidXRPermission.HandTracking.ToPermissionString());
             }
 
+            if (CheckBodyTrackingPermission())
+            {
+                requiredManifest.Add(
+                    GetAndroidXRPermissionElement(AndroidXRPermission.BodyTracking));
+                Debug.LogFormat("Inject permission manifest: {0}",
+                    AndroidXRPermission.BodyTracking.ToPermissionString());
+            }
+
+            if (CheckExperimentalPermission())
+            {
+                requiredManifest.Add(_openxrExperimentalFeature);
+                Debug.LogWarningFormat("Inject experimental feature meta-data manifest. " +
+                    "Note: Applications with this meta-data can access ANDROIDX extensions " +
+                    "but cannot be published in Google Play Store.");
+            }
+
             requiredManifest.Add(_libopenxrso);
             Debug.LogFormat("Inject native library manifest: libopenxr.google.so");
+
+            requiredManifest.Add(_openxrFeature);
+            Debug.LogFormat("Inject feature manifest: android.software.xr.api.openxr");
 
             List<ManifestElement> emptyElement = new List<ManifestElement>();
             return new ManifestRequirement
@@ -240,6 +219,47 @@ namespace Google.XR.Extensions.Editor.Internal
                 RemoveElements =
                     requiredManifest.Count > 0 ? emptyElement : requiredManifest,
             };
+        }
+
+        /// <inheritdoc/>
+        protected override void OnProcessBootConfigExt(
+            BuildReport report, BootConfigBuilder builder)
+        {
+            XRFoveationFeature foveationFeature =
+                AndroidXRBuildUtils.GetActiveFeature<XRFoveationFeature>();
+            FoveatedRenderingFeature foveatedRendering =
+                AndroidXRBuildUtils.GetActiveFeature<FoveatedRenderingFeature>();
+            XRSessionFeature sessionFeature =
+                AndroidXRBuildUtils.GetActiveFeature<XRSessionFeature>();
+            bool needsFragmentDensityMapEnabled = (sessionFeature != null &&
+                sessionFeature.enabled && sessionFeature.VulkanSubsampling) ||
+                (foveationFeature != null && foveationFeature.enabled) ||
+                (foveatedRendering != null && foveatedRendering.enabled);
+            Debug.LogFormat(
+                "SetBootConfigBoolean: xr-vulkan-extension-fragment-density-map-enabled="
+                + needsFragmentDensityMapEnabled);
+            builder.SetBootConfigBoolean("xr-vulkan-extension-fragment-density-map-enabled",
+                needsFragmentDensityMapEnabled);
+
+            bool spacewarpEnabled = sessionFeature != null &&
+                sessionFeature.enabled && sessionFeature.SpaceWarp;
+            Debug.LogFormat("SetBootConfigBoolean: xr-meta-enabled=" + spacewarpEnabled);
+            builder.SetBootConfigBoolean("xr-meta-enabled", spacewarpEnabled);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnPreprocessBuildExt(BuildReport report)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void OnPostGenerateGradleAndroidProjectExt(string path)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void OnPostprocessBuildExt(BuildReport report)
+        {
         }
 
         private static ManifestElement GetAndroidXRPermissionElement(AndroidXRPermission permission)
@@ -256,43 +276,26 @@ namespace Google.XR.Extensions.Editor.Internal
 
         private bool CheckSceneUnderstandingCoarsePermission()
         {
-            XRTrackableFeature trackableFeature =
-                AndroidXRBuildUtils.GetActiveFeature<XRTrackableFeature>();
-            XRAnchorFeature anchorFeature =
-                AndroidXRBuildUtils.GetActiveFeature<XRAnchorFeature>();
-#if UNITY_OPEN_XR_ANDROID_XR
-            ARPlaneFeature arPlaneFeature =
-                AndroidXRBuildUtils.GetActiveFeature<ARPlaneFeature>();
-#endif
-#if UNITY_OPEN_XR_ANDROID_XR_0_2_0
-            ARRaycastFeature arRaycastFeature =
-                AndroidXRBuildUtils.GetActiveFeature<ARRaycastFeature>();
-#endif
-#if UNITY_OPEN_XR_ANDROID_XR_0_4_0
-            AROcclusionFeature occlusionFeature =
-                AndroidXRBuildUtils.GetActiveFeature<AROcclusionFeature>();
-#endif
             XRObjectTrackingFeature objectTrackingFeature =
                 AndroidXRBuildUtils.GetActiveFeature<XRObjectTrackingFeature>();
+            XRQrCodeTrackingFeature qrCodeFeature =
+                AndroidXRBuildUtils.GetActiveFeature<XRQrCodeTrackingFeature>();
+            XRMarkerTrackingFeature markerFeature =
+                AndroidXRBuildUtils.GetActiveFeature<XRMarkerTrackingFeature>();
 
-            return (trackableFeature != null && trackableFeature.enabled) ||
-#if UNITY_OPEN_XR_ANDROID_XR
-                (arPlaneFeature != null && arPlaneFeature.enabled) ||
-#endif
-#if UNITY_OPEN_XR_ANDROID_XR_0_2_0
-                (arRaycastFeature != null && arRaycastFeature.enabled) ||
-#endif
-#if UNITY_OPEN_XR_ANDROID_XR_0_4_0
-                (occlusionFeature != null && occlusionFeature.enabled) ||
-#endif
+            return
                 (objectTrackingFeature != null && objectTrackingFeature.enabled) ||
-                (anchorFeature != null && anchorFeature.enabled);
+                (qrCodeFeature != null && qrCodeFeature.enabled) ||
+                (markerFeature != null && markerFeature.enabled);
         }
 
         private bool CheckSceneUnderstandingFinePermission()
         {
-            /// Add check for scene understanding when implemented.
-            return false;
+            bool sceneMeshingInUse = false;
+            XRSceneMeshingFeature sceneMeshing =
+                AndroidXRBuildUtils.GetActiveFeature<XRSceneMeshingFeature>();
+            sceneMeshingInUse = sceneMeshing != null && sceneMeshing.enabled;
+            return sceneMeshingInUse;
         }
 
         private bool CheckEyeTrackingCoarsePermission()
@@ -333,6 +336,29 @@ namespace Google.XR.Extensions.Editor.Internal
             bool handMeshInUse = handMesh != null && handMesh.enabled;
             return handTrackingInUse || handMeshInUse;
         }
-#endif // XR_MGMT_4_4_0_OR_NEWER
+
+        private bool CheckBodyTrackingPermission()
+        {
+            XRBodyTrackingFeature bodyTracking =
+                AndroidXRBuildUtils.GetActiveFeature<XRBodyTrackingFeature>();
+            return bodyTracking != null && bodyTracking.enabled;
+        }
+
+        private bool CheckExperimentalPermission()
+        {
+            bool bodyTrackingInUse = false;
+            XRBodyTrackingFeature bodyTracking =
+                AndroidXRBuildUtils.GetActiveFeature<XRBodyTrackingFeature>();
+            bodyTrackingInUse = bodyTracking != null && bodyTracking.enabled;
+            bool sceneMeshingInUse = false;
+            XRSceneMeshingFeature sceneMeshing =
+                AndroidXRBuildUtils.GetActiveFeature<XRSceneMeshingFeature>();
+            sceneMeshingInUse = sceneMeshing != null && sceneMeshing.enabled;
+            bool systemStateInUse = false;
+            XRSystemStateFeature systemState =
+                AndroidXRBuildUtils.GetActiveFeature<XRSystemStateFeature>();
+            systemStateInUse = systemState != null && systemState.enabled;
+            return bodyTrackingInUse || sceneMeshingInUse || systemStateInUse;
+        }
     }
 }

@@ -51,6 +51,7 @@ namespace Google.XR.Extensions.Samples.HandMesh
         public MeshFilter RightHand;
 
         private XRMeshSubsystem _meshSubsystem;
+        private MeshFilter[] _hands;
 
         private void Start()
         {
@@ -73,6 +74,7 @@ namespace Google.XR.Extensions.Samples.HandMesh
             }
 
             _meshSubsystem = meshSubsystems[0];
+            _hands = new MeshFilter[2] { LeftHand, RightHand };
         }
 
         private void Update()
@@ -90,24 +92,21 @@ namespace Google.XR.Extensions.Samples.HandMesh
             List<MeshInfo> meshInfos = new List<MeshInfo>();
             if (_meshSubsystem.TryGetMeshInfos(meshInfos))
             {
-                if (meshInfos.Count != 2)
+                int index = 0;
+                foreach (MeshInfo info in meshInfos)
                 {
-                    Debug.LogError("Unexpected number of mesh infos from hand mesh subsystem."
-                        + $" Expected 2, got {meshInfos.Count}.");
-                }
-
-                if (meshInfos[0].ChangeState == MeshChangeState.Added
-                    || meshInfos[0].ChangeState == MeshChangeState.Updated)
-                {
-                    _meshSubsystem.GenerateMeshAsync(meshInfos[0].MeshId, LeftHand.mesh,
-                        null, MeshVertexAttributes.Normals, result => { });
-                }
-
-                if (meshInfos[1].ChangeState == MeshChangeState.Added
-                    || meshInfos[1].ChangeState == MeshChangeState.Updated)
-                {
-                    _meshSubsystem.GenerateMeshAsync(meshInfos[1].MeshId, RightHand.mesh,
-                        null, MeshVertexAttributes.Normals, result => { });
+                    if (XRMeshSubsystemExtension.IsSceneMeshId(info.MeshId))
+                    {
+                        continue;
+                    }
+                    if (info.ChangeState == MeshChangeState.Added
+                        || info.ChangeState == MeshChangeState.Updated)
+                    {
+                        Mesh hand = _hands[index].mesh;
+                        _meshSubsystem.GenerateMeshAsync(info.MeshId, hand,
+                            null, MeshVertexAttributes.Normals, result => { });
+                        index++;
+                    }
                 }
             }
         }

@@ -22,8 +22,7 @@ namespace Google.XR.Extensions.Internal
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
-    using Unity.Collections;
-    using Unity.Collections.LowLevel.Unsafe;
+    using System.Text;
     using UnityEngine;
     using UnityEngine.XR.ARSubsystems;
 
@@ -34,86 +33,24 @@ namespace Google.XR.Extensions.Internal
             ExternalApi.XrTrackable_setTracking(XRInstanceManagerApi.GetIntPtr(), type, enable);
         }
 
-        public static void SetPlaneDetectionMode(PlaneDetectionMode mode)
-        {
-            ExternalApi.XrTrackable_setPlaneDetectionMode(
-                XRInstanceManagerApi.GetIntPtr(), (uint)mode);
-        }
-
-        public static PlaneDetectionMode GetPlaneDetectionMode()
-        {
-            uint mode = 0;
-            ExternalApi.XrTrackable_getPlaneDetectionMode(
-                XRInstanceManagerApi.GetIntPtr(), ref mode);
-            return (PlaneDetectionMode)mode;
-        }
-
-        public static IntPtr AcquirePlaneChanges(ref IntPtr added, ref uint addedCount,
-            ref IntPtr updated, ref uint updatedCount, ref IntPtr removed, ref uint removedCount,
-            ref uint elementSize)
-        {
-            IntPtr planeChanges = IntPtr.Zero;
-            if (ExternalApi.XrTrackable_acquirePlaneChanges(
-                XRInstanceManagerApi.GetIntPtr(), ref planeChanges))
-            {
-                ExternalApi.XrPlaneChanges_getAddedCount(planeChanges, ref addedCount);
-                ExternalApi.XrPlaneChanges_getAdded(planeChanges, ref added);
-                ExternalApi.XrPlaneChanges_getUpdatedCount(planeChanges, ref updatedCount);
-                ExternalApi.XrPlaneChanges_getUpdated(planeChanges, ref updated);
-                ExternalApi.XrPlaneChanges_getRemovedCount(planeChanges, ref removedCount);
-                ExternalApi.XrPlaneChanges_getRemoved(planeChanges, ref removed);
-                ExternalApi.XrPlaneChanges_getPlaneSize(planeChanges, ref elementSize);
-            }
-
-            return planeChanges;
-        }
-
-        public static void ReleasePlaneChanges(IntPtr planeChanges)
-        {
-            ExternalApi.XrPlaneChanges_destroy(planeChanges);
-        }
-
-        public static uint GetBoundaySize(TrackableId planeId)
-        {
-            uint size = 0;
-            IntPtr nativeList = IntPtr.Zero;
-            ExternalApi.XrTrackable_acquirePlaneBoundary(
-                XRInstanceManagerApi.GetIntPtr(), planeId, ref size, nativeList);
-            return size;
-        }
-
-        public static unsafe bool AcquireBoundary(
-            TrackableId planeId, NativeArray<Vector2> boundary)
-        {
-            uint size = (uint)boundary.Length;
-            return ExternalApi.XrTrackable_acquirePlaneBoundary(
-                XRInstanceManagerApi.GetIntPtr(),
-                planeId, ref size, (IntPtr)boundary.GetUnsafePtr());
-        }
-
         public static IntPtr AcquireObjectChanges(ref IntPtr added, ref uint addedCount,
             ref IntPtr updated, ref uint updatedCount, ref IntPtr removed, ref uint removedCount,
             ref uint elementSize)
         {
             IntPtr objectChanges = IntPtr.Zero;
-            if (ExternalApi.XrTrackable_acquireObjectChanges(
-                XRInstanceManagerApi.GetIntPtr(), ref objectChanges))
-            {
-                ExternalApi.XrObjectChanges_getAddedCount(objectChanges, ref addedCount);
-                ExternalApi.XrObjectChanges_getAdded(objectChanges, ref added);
-                ExternalApi.XrObjectChanges_getUpdatedCount(objectChanges, ref updatedCount);
-                ExternalApi.XrObjectChanges_getUpdated(objectChanges, ref updated);
-                ExternalApi.XrObjectChanges_getRemovedCount(objectChanges, ref removedCount);
-                ExternalApi.XrObjectChanges_getRemoved(objectChanges, ref removed);
-                ExternalApi.XrObjectChanges_getObjectSize(objectChanges, ref elementSize);
-            }
+            ExternalApi.XrTrackable_acquireObjectChanges(
+                XRInstanceManagerApi.GetIntPtr(), ref objectChanges,
+                ref added, ref addedCount,
+                ref updated, ref updatedCount,
+                ref removed, ref removedCount,
+                ref elementSize);
 
             return objectChanges;
         }
 
         public static void ReleaseObjectChanges(IntPtr objectChanges)
         {
-            ExternalApi.XrObjectChanges_destroy(objectChanges);
+            ExternalApi.XrTrackable_destroyObjectChanges(objectChanges);
         }
 
         public static Vector3 GetObjectExtents(TrackableId trackableId)
@@ -132,14 +69,100 @@ namespace Google.XR.Extensions.Internal
             return label;
         }
 
-        public static void UpdateReferenceGuids(Dictionary<XRObjectLabel, Guid> references)
+        public static void UpdateObjectReferenceGuids(Dictionary<XRObjectLabel, Guid> references)
         {
-            ExternalApi.XrTrackable_resetReferenceGuids(XRInstanceManagerApi.GetIntPtr());
+            ExternalApi.XrTrackable_resetObjectGuids(XRInstanceManagerApi.GetIntPtr());
             foreach (var (label, guid) in references)
             {
-                ExternalApi.XrTrackable_setReferenceGuid(
+                ExternalApi.XrTrackable_setObjectGuid(
                     XRInstanceManagerApi.GetIntPtr(), label, guid.ToByteArray());
             }
+        }
+
+        public static bool TryGetQrCodeProperties(ref uint maxCount, ref bool supportEstimation)
+        {
+            return ExternalApi.XrTrackable_getQrCodeProperties(
+                XRInstanceManagerApi.GetIntPtr(), ref maxCount, ref supportEstimation);
+        }
+
+        public static void ConfigureQrCode(Guid reference, float edge, bool staticOnly)
+        {
+            ExternalApi.XrTrackable_setQrCodeGuid(
+                XRInstanceManagerApi.GetIntPtr(), reference.ToByteArray());
+            ExternalApi.XrTrackable_configureQrCode(
+                XRInstanceManagerApi.GetIntPtr(), edge, staticOnly);
+        }
+
+        public static bool IsQrCode(TrackableId trackable)
+        {
+            ApiXrTrackableType type = ApiXrTrackableType.NotValid;
+            ExternalApi.XrTrackable_getTrackableType(
+                XRInstanceManagerApi.GetIntPtr(), trackable, ref type);
+            return type == ApiXrTrackableType.QrCode;
+        }
+
+        public static string GetQrCodeData(TrackableId trackable)
+        {
+            uint len = 0;
+            ExternalApi.XrTrackable_getQrCodeData(
+                XRInstanceManagerApi.GetIntPtr(), trackable, 0, ref len, null);
+            if (len == 0)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder stringBuilder = new StringBuilder((int)len);
+            ExternalApi.XrTrackable_getQrCodeData(
+                XRInstanceManagerApi.GetIntPtr(), trackable, (uint)stringBuilder.Capacity,
+                ref len, stringBuilder);
+            return stringBuilder.ToString();
+        }
+
+        public static bool TryGetMarkerProperties(ref uint maxCount, ref bool supportEstimation)
+        {
+            return ExternalApi.XrTrackable_getMarkerProperties(
+                XRInstanceManagerApi.GetIntPtr(), ref maxCount, ref supportEstimation);
+        }
+
+        public static void ConfigureMarker(bool staticOnly, List<XRMarkerDatabaseEntry> entries)
+        {
+            ExternalApi.XrTrackable_configureMarker(XRInstanceManagerApi.GetIntPtr(),
+                staticOnly, (uint)entries.Count, entries.ToArray());
+        }
+
+        public static bool IsMarker(TrackableId trackable)
+        {
+            ApiXrTrackableType type = ApiXrTrackableType.NotValid;
+            ExternalApi.XrTrackable_getTrackableType(
+                XRInstanceManagerApi.GetIntPtr(), trackable, ref type);
+            return type == ApiXrTrackableType.Marker;
+        }
+
+        public static bool GetMarkerData(
+            TrackableId trackable, ref XRMarkerDictionary dictionary, ref int id)
+        {
+            return ExternalApi.XrTrackable_getMarkerData(
+                XRInstanceManagerApi.GetIntPtr(), trackable, ref dictionary, ref id);
+        }
+
+        public static IntPtr AcquireImageChanges(ref IntPtr added, ref uint addedCount,
+            ref IntPtr updated, ref uint updatedCount, ref IntPtr removed, ref uint removedCount,
+            ref uint elementSize)
+        {
+            IntPtr imageChanges = IntPtr.Zero;
+            ExternalApi.XrTrackable_acquireImageChanges(
+                XRInstanceManagerApi.GetIntPtr(), ref imageChanges,
+                ref added, ref addedCount,
+                ref updated, ref updatedCount,
+                ref removed, ref removedCount,
+                ref elementSize);
+
+            return imageChanges;
+        }
+
+        public static void ReleaseImageChanges(IntPtr imageChanges)
+        {
+            ExternalApi.XrTrackable_destroyImageChanges(imageChanges);
         }
 
         private struct ExternalApi
@@ -149,57 +172,14 @@ namespace Google.XR.Extensions.Internal
                 IntPtr manager, ApiXrTrackableType type, bool enable);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void XrTrackable_setPlaneDetectionMode(IntPtr manager, uint mode);
+            public static extern void XrTrackable_getTrackableType(
+                IntPtr manager, TrackableId trackable_id, ref ApiXrTrackableType out_type);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void XrTrackable_getPlaneDetectionMode(
-                IntPtr manager, ref uint out_mode);
+            public static extern void XrTrackable_resetObjectGuids(IntPtr manager);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrTrackable_acquirePlaneChanges(
-                IntPtr manager, ref IntPtr out_container);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrPlaneChanges_getAdded(
-                IntPtr plane_changes, ref IntPtr out_list);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrPlaneChanges_getAddedCount(
-                IntPtr plane_changes, ref uint out_count);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrPlaneChanges_getUpdated(
-                IntPtr plane_changes, ref IntPtr out_list);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrPlaneChanges_getUpdatedCount(
-                IntPtr plane_changes, ref uint out_count);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrPlaneChanges_getRemoved(
-                IntPtr plane_changes, ref IntPtr out_list);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrPlaneChanges_getRemovedCount(
-                IntPtr plane_changes, ref uint out_count);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrPlaneChanges_getPlaneSize(
-                IntPtr plane_changes, ref uint out_size);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void XrPlaneChanges_destroy(IntPtr plane_changes);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrTrackable_acquirePlaneBoundary(
-                IntPtr manager, TrackableId plane_id, ref uint out_vertex_count,
-                IntPtr boundary_list);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void XrTrackable_resetReferenceGuids(IntPtr manager);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void XrTrackable_setReferenceGuid(
+            public static extern void XrTrackable_setObjectGuid(
                 IntPtr manager, XRObjectLabel label, byte[] reference_guid);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
@@ -212,38 +192,56 @@ namespace Google.XR.Extensions.Internal
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool XrTrackable_acquireObjectChanges(
-                IntPtr manager, ref IntPtr out_container);
+                IntPtr manager, ref IntPtr out_container,
+                ref IntPtr out_added_list, ref uint out_added_count,
+                ref IntPtr out_updated_list, ref uint out_updated_count,
+                ref IntPtr out_removed_list, ref uint out_removed_count,
+                ref uint out_object_size);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrObjectChanges_getAdded(
-                IntPtr object_changes, ref IntPtr out_list);
+            public static extern void XrTrackable_destroyObjectChanges(IntPtr object_changes);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrObjectChanges_getAddedCount(
-                IntPtr object_changes, ref uint out_count);
+            public static extern bool XrTrackable_getQrCodeProperties(
+                IntPtr manager, ref uint out_max_count, ref bool out_support_estimation);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrObjectChanges_getUpdated(
-                IntPtr object_changes, ref IntPtr out_list);
+            public static extern void XrTrackable_setQrCodeGuid(
+                IntPtr manager, byte[] reference_guid);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrObjectChanges_getUpdatedCount(
-                IntPtr object_changes, ref uint out_count);
+            public static extern void XrTrackable_configureQrCode(
+                IntPtr manager, float edge, bool static_only);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrObjectChanges_getRemoved(
-                IntPtr object_changes, ref IntPtr out_list);
+            public static extern void XrTrackable_getQrCodeData(
+                IntPtr manager, TrackableId trackable, uint max_len, ref uint out_len,
+                StringBuilder buffer);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrObjectChanges_getRemovedCount(
-                IntPtr object_changes, ref uint out_count);
+            public static extern bool XrTrackable_getMarkerProperties(IntPtr manager,
+                ref uint out_max_count, ref bool out_support_estimation);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrObjectChanges_getObjectSize(
-                IntPtr object_changes, ref uint out_size);
+            public static extern void XrTrackable_configureMarker(
+                IntPtr manager, bool static_only, uint entry_count,
+                XRMarkerDatabaseEntry[] entries);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void XrObjectChanges_destroy(IntPtr object_changes);
+            public static extern bool XrTrackable_getMarkerData(
+                IntPtr manger, TrackableId trackable, ref XRMarkerDictionary dictionary,
+                ref int id);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrTrackable_acquireImageChanges(
+                IntPtr manager, ref IntPtr out_container,
+                ref IntPtr out_added_list, ref uint out_added_count,
+                ref IntPtr out_updated_list, ref uint out_updated_count,
+                ref IntPtr out_removed_list, ref uint out_removed_count,
+                ref uint out_image_size);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern void XrTrackable_destroyImageChanges(IntPtr plane_changes);
         }
     }
 }

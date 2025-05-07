@@ -26,8 +26,10 @@ namespace Google.XR.Extensions.Internal
     {
         NotValid = 0,
         Plane = 1,
-        Depth = 2,
+        Depth = 1000463000,
         Object = 1000466000,
+        Marker = 1000707000,
+        QrCode = 1000708000,
     }
 
     internal static class ApiEnums

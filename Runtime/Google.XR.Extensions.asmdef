@@ -22,13 +22,8 @@
     "versionDefines": [
         {
             "name": "com.unity.xr.androidxr-openxr",
-            "expression": "0.1",
+            "expression": "0.5.0",
             "define": "UNITY_OPEN_XR_ANDROID_XR"
-        },
-        {
-            "name": "com.unity.xr.androidxr-openxr",
-            "expression": "0.2",
-            "define": "UNITY_OPEN_XR_ANDROID_XR_0_2_0"
         },
         {
             "name": "com.unity.xr.compositionlayers",

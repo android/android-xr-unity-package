@@ -20,15 +20,12 @@
 namespace Google.XR.Extensions.Editor.Internal
 {
     using System.Linq;
+    using Unity.XR.Management.AndroidManifest.Editor;
     using UnityEditor;
     using UnityEditor.XR.Management;
     using UnityEditor.XR.OpenXR.Features;
     using UnityEngine.XR.OpenXR;
     using UnityEngine.XR.OpenXR.Features;
-
-#if XR_MGMT_4_4_0_OR_NEWER
-    using Unity.XR.Management.AndroidManifest.Editor;
-#endif
 
     internal static class AndroidXRBuildUtils
     {
@@ -48,15 +45,13 @@ namespace Google.XR.Extensions.Editor.Internal
             return OpenXRSettings.ActiveBuildTargetInstance.GetFeature<TOpenXRFeature>();
         }
 
-#if XR_MGMT_4_4_0_OR_NEWER
         public static string PrintManifestElement(ManifestElement manifestElement)
         {
-            return string.Format("Path: {0}{1}",
-                string.Join("/", manifestElement.ElementPath),
-                string.Join("", manifestElement.Attributes.Select(
-                    pair => string.Format("\n  Attribute: {0}={1}", pair.Key, pair.Value))));
+            string element = string.Join("/", manifestElement.ElementPath);
+            string attributes = string.Join(string.Empty, manifestElement.Attributes.Select(
+                pair => string.Format("\n  Attribute: {0}={1}", pair.Key, pair.Value)));
+            return string.Format("Path: {0}{1}", element, attributes);
         }
-#endif
 
         internal static bool IsAnyAndroidXRFeatureEnabled()
         {

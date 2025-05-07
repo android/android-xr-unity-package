@@ -53,8 +53,21 @@ namespace Google.XR.Extensions.Samples.FaceTracking
         /// <summary> Indicates if the frame data is not random or default. </summary>
         public TextMesh DebugTextFrameValid;
 
+        /// <summary> Indicates the confidence of the bottom face region. </summary>
+        public TextMesh DebugTextConfidenceBottom;
+
+        /// <summary> Indicates the confidence of the left face region. </summary>
+        public TextMesh DebugTextConfidenceLeft;
+
+        /// <summary> Indicates the confidence of the right face region. </summary>
+        public TextMesh DebugTextConfidenceRight;
+
         /// <summary> An instance of the face mesh renderer. </summary>
         public SkinnedMeshRenderer SkinnedMeshRenderer;
+
+        // The timeout threshold in seconds while waiting services to start tracking during
+        // lifecycle tests.
+        private const int _serviceStartTimeout = 5;
 
         private XRFaceTrackingManager _faceManager;
         private AndroidXRPermissionUtil _permissionUtil;
@@ -113,16 +126,28 @@ namespace Google.XR.Extensions.Samples.FaceTracking
 
             // Test toggling on the face tracker
             _faceManager.enabled = true;
-            yield return new WaitForSeconds(1);
+            int timeSpent = 0;
+            while (timeSpent < _serviceStartTimeout)
+            {
+                yield return new WaitForSeconds(1);
+                timeSpent++;
+                if (_faceManager.Face.TrackingState == XRFaceTrackingStates.Tracking)
+                {
+                    break;
+                }
+            }
+
             if (_faceManager.Face.TrackingState == XRFaceTrackingStates.Tracking)
             {
                 DebugTextBottomCenter.color = Color.green;
-                DebugTextBottomCenter.text = "Tracker toggle on test successfully completed";
+                DebugTextBottomCenter.text = string.Format(
+                    "Tracker toggle on test successfully completed in {0}s", timeSpent);
             }
             else
             {
                 DebugTextBottomCenter.color = Color.red;
-                DebugTextBottomCenter.text = "Tracker toggle on test failed";
+                DebugTextBottomCenter.text = string.Format(
+                    "Tracker toggle on test failed with timeout {0}s", timeSpent);
             }
 
             yield return new WaitForSeconds(1);
@@ -144,13 +169,12 @@ namespace Google.XR.Extensions.Samples.FaceTracking
 
         private void Update()
         {
-            if (XRFaceTrackingFeature.IsFaceTrackingExtensionEnabled == null)
+            if (!XRFaceTrackingFeature.IsFaceTrackingExtensionEnabled.HasValue)
             {
                 DebugTextTopCenter.text = "XrInstance hasn't been initialized.";
                 return;
             }
-
-            if (!XRFaceTrackingFeature.IsFaceTrackingExtensionEnabled.Value)
+            else if (!XRFaceTrackingFeature.IsFaceTrackingExtensionEnabled.Value)
             {
                 DebugTextTopCenter.text = "XR_ANDROID_face_tracking is not enabled.";
                 return;
@@ -159,6 +183,32 @@ namespace Google.XR.Extensions.Samples.FaceTracking
             DebugTextTopCenter.text = "Tracking State: " + _faceManager.Face.TrackingState;
             DebugTextTimeStamp.text = "Capture Time: " + _faceManager.Face.Timestamp;
             DebugTextFrameValid.text = "Frame Valid: " + _faceManager.Face.IsValid;
+
+            DebugTextConfidenceBottom.text = "0";
+            DebugTextConfidenceLeft.text = "0";
+            DebugTextConfidenceRight.text = "0";
+            for (int x = 0; x < _faceManager.Face.ConfidenceRegions.Length; x++)
+            {
+                TextMesh regionText = null;
+                switch (x)
+                {
+                    case (int)XRFaceConfidenceRegion.Lower:
+                        regionText = DebugTextConfidenceBottom;
+                        break;
+                    case (int)XRFaceConfidenceRegion.LeftUpper:
+                        regionText = DebugTextConfidenceLeft;
+                        break;
+                    case (int)XRFaceConfidenceRegion.RightUpper:
+                        regionText = DebugTextConfidenceRight;
+                        break;
+                }
+
+                if (regionText != null)
+                {
+                    regionText.text = _faceManager.Face.ConfidenceRegions[x].ToString("F4");
+                }
+            }
+
             DebugTextLeft.text = string.Empty;
             DebugTextRight.text = string.Empty;
             for (int x = 0; x < _faceManager.Face.Parameters.Length; x++)

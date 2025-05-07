@@ -1,9 +1,9 @@
 {
     "name": "com.google.xr.extensions",
     "displayName": "Android XR Extensions for Unity",
-    "version": "0.9.1",
-    "unity": "6000.0",
-    "unityRelease": "23f1",
+    "version": "1.0.0",
+    "unity": "6000.1",
+    "unityRelease": "0b12",
     "description": "Android XR Extensions package. This package provides additional XR features that are not yet supported by Unity OpenXR Android XR and OpenXR Plugin packages.",
     "author":
     {
@@ -11,14 +11,14 @@
     },
     "dependencies":
     {
-        "com.unity.xr.openxr": "1.13.0",
-        "com.unity.xr.arfoundation": "6.1.0-pre.3",
+        "com.unity.xr.openxr": "1.14.2",
+        "com.unity.xr.arfoundation": "6.1.0",
         "com.unity.xr.management": "4.5.0"
     },
     "samples": [
         {
             "displayName": "Environment Blend Mode",
-            "description": "This sample uses the Environment Blend Mode feature for switching between Additive, Alpha and Opaque modes. Used for blending virtual objects with real-world environments when full screen passthrough is enabled.",
+            "description": "This sample uses the Environment Blend Mode feature and the System State feature.\n\nThe Environment Blend Mode feature allows for switching between Additive, Alpha and Opaque modes. Used for blending virtual objects with real-world environments when full screen passthrough is enabled.",
             "path": "Samples~/BlendMode"
         },
         {
@@ -30,11 +30,6 @@
             "displayName": "Composition Layer Passthrough",
             "description": "This sample uses the Passthrough Composition Layer feature to demonstrate creating a passthrough polygonal cutout.\n\nIt requires <b>com.unity.xr.compositionlayers@1.0.0</b> package to access Composition Layer Support.",
             "path": "Samples~/Passthrough"
-        },
-        {
-            "displayName": "Trackables",
-            "description": "This sample uses the Anchor and Plane components. It implements the OnPlanesChanges and OnAnchorChanges events to track the addition and removal of Anchors and Planes within the environment. The gathered information about these planes and anchors is then used to print information onto the screen.",
-            "path": "Samples~/Trackables"
         },
         {
             "displayName": "Face Tracking",
@@ -52,19 +47,29 @@
             "path": "Samples~/HandMesh"
         },
         {
-            "displayName": "Display Refresh Rate",
-            "description": "This sample uses the Display Refresh Rate feature in order to continually show the display's refresh rate on the screen.",
-            "path": "Samples~/DisplayRefreshRate"
-        },
-        {
             "displayName": "Unbounded Reference Space",
             "description": "This sample uses XRInputSubsystem to check if the tracking origin mode is Unbounded.",
             "path": "Samples~/UnboundedRefSpace"
         },
         {
+            "displayName": "Image Tracking",
+            "description": "This smaple demonstrates the usage of QR Code tracking and marker tracking through AR Foundation's ARTrackedImageManager.",
+            "path": "Samples~/ImageTracking"
+        },
+        {
+            "displayName": "Body Tracking",
+            "description": "This sample demonstrates the usage of body tracking through AR Foundation's ARHumanBodyManager.",
+            "path": "Samples~/BodyTracking"
+        },
+        {
             "displayName": "XRController",
             "description": "This sample includes the XRController asset.",
             "path": "Samples~/XRController"
+        },
+        {
+            "displayName": "Scene Meshing",
+            "description": "This sample uses the Scene Meshing feature to obtain mesh data which approximates the environment and renders it.",
+            "path": "Samples~/SceneMeshing"
         }
     ]
 }

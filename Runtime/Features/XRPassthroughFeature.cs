@@ -39,14 +39,15 @@ namespace Google.XR.Extensions
 #endif
 
     /// <summary>
-    /// This <see cref="OpenXRInteractionFeature"/> configures the
+    /// This <c><see cref="OpenXRInteractionFeature"/></c> configures the
     /// <c>XR_ANDROID_composition_layer_passthrough_mesh</c> and
     /// <c>XR_ANDROID_passthrough_camera_state</c> extensions
     /// at OpenXR runtime and provides passthrough geometry capabilities in the OpenXR platform.
     ///
-    /// Use <see cref="Unity.XR.CompositionLayers.CompositionLayer"/> with Passthrough layer type
-    /// to access passthrough cutout at runtime.
-    /// Note: a valid <see cref="MeshFilter.mesh"/> is required to configure the layer geometry.
+    /// Use <c><see cref="Unity.XR.CompositionLayers.CompositionLayer"/></c> with Passthrough layer
+    /// type to access passthrough cutout at runtime.
+    /// Note: a valid <c><see cref="MeshFilter.mesh"/></c> is required to configure the layer
+    /// geometry.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
@@ -93,7 +94,7 @@ namespace Google.XR.Extensions
         /// <summary>
         /// Gets if the required OpenXR extension is enabled.
         /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
-        /// whether the XR_ANDROID_composition_layer_passthrough_mesh extension is enabled.
+        /// whether the <c>XR_ANDROID_composition_layer_passthrough_mesh</c> extension is enabled.
         /// </summary>
         public static bool? IsExensionEnabled => _extensionEnabled;
 

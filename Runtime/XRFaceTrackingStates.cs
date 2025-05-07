@@ -24,7 +24,6 @@ namespace Google.XR.Extensions
     /// <summary>
     /// This is an enumeration of the possible face tracking states.
     /// </summary>
-    [Flags]
     public enum XRFaceTrackingStates
     {
         /// <summary>

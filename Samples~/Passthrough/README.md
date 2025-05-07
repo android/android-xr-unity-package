@@ -5,11 +5,11 @@ Android Platform.
 
 ## Turn on Composition Layer Passthrough feature
 
-To install XR Composition Layer Package version 1.0.0:
+To install XR Composition Layer Package version 2.0.0:
 
 *   Navigate to **Window** > **Package Manager**.
 *   Click **Add** button "+", and select **Install package by name...**
-*   Type package name `com.unity.xr.compositionlayers` and version `1.0.0`.
+*   Type package name `com.unity.xr.compositionlayers` and version `2.0.0`.
 *   Click **Install** button.
 
 To enable this sample:

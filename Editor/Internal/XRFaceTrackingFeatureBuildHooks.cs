@@ -24,18 +24,23 @@ namespace Google.XR.Extensions.Editor.Internal
     using System.Diagnostics.CodeAnalysis;
     using System.Text;
     using Google.XR.Extensions;
-    using UnityEditor;
+    using Unity.XR.Management.AndroidManifest.Editor;
     using UnityEditor.Build.Reporting;
     using UnityEditor.XR.OpenXR.Features;
     using UnityEngine;
     using UnityEngine.XR.OpenXR;
 
-#if XR_MGMT_4_4_0_OR_NEWER
-    using Unity.XR.Management.AndroidManifest.Editor;
-#endif
-
     internal class XRFaceTrackingFeatureBuildHooks : OpenXRFeatureBuildHooks
     {
+        private static readonly ManifestElement _permissionManifest = new ManifestElement()
+            {
+                ElementPath = new List<string> { "manifest", "uses-permission" },
+                Attributes = new Dictionary<string, string>
+                {
+                    { "name", XRFaceTrackingFeature.RequiredPermission.ToPermissionString() }
+                }
+            };
+
         /// <inheritdoc/>
         [SuppressMessage("UnityRules.UnityStyleRules",
                          "US1109:PublicPropertiesMustBeUpperCamelCase",
@@ -48,39 +53,6 @@ namespace Google.XR.Extensions.Editor.Internal
                          Justification = "Overridden property.")]
         public override Type featureType => typeof(XRFaceTrackingFeature);
 
-#if XR_MGMT_4_4_0_OR_NEWER
-        private static readonly ManifestElement _permissionManifest = new ManifestElement()
-            {
-                ElementPath = new List<string> { "manifest", "uses-permission" },
-                Attributes = new Dictionary<string, string>
-                {
-                    { "name", XRFaceTrackingFeature.RequiredPermission.ToPermissionString() }
-                }
-            };
-#endif // XR_MGMT_4_4_0_OR_NEWER
-
-        /// <inheritdoc/>
-        protected override void OnPreprocessBuildExt(BuildReport report)
-        {
-#if !XR_MGMT_4_4_0_OR_NEWER
-            Debug.LogWarning(
-                "XRFaceTrackingFeature relies on XR Plugin Management to add manifest elements.\n" +
-                "Please upgrade it to 4.4.0+ or manually inject following permissins:\n" +
-                "  android.permission.FACE_TRACKING");
-#endif // !XR_MGMT_4_4_0_OR_NEWER
-        }
-
-        /// <inheritdoc/>
-        protected override void OnPostGenerateGradleAndroidProjectExt(string path)
-        {
-        }
-
-        /// <inheritdoc/>
-        protected override void OnPostprocessBuildExt(BuildReport report)
-        {
-        }
-
-#if XR_MGMT_4_4_0_OR_NEWER
         public override ManifestRequirement ProvideManifestRequirement()
         {
             XRFaceTrackingFeature activeFeature =
@@ -112,6 +84,20 @@ namespace Google.XR.Extensions.Editor.Internal
                 RemoveElements = requiredManifest ? emptyElement : injectManifests,
             };
         }
-#endif // XR_MGMT_4_4_0_OR_NEWER
+
+        /// <inheritdoc/>
+        protected override void OnPreprocessBuildExt(BuildReport report)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void OnPostGenerateGradleAndroidProjectExt(string path)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void OnPostprocessBuildExt(BuildReport report)
+        {
+        }
     }
 }

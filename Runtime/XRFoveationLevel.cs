@@ -21,28 +21,28 @@ namespace Google.XR.Extensions
 {
     using System;
 
-    /// <summary>Enum corresponding to XrFoveationLevelFB.</summary>
+    /// <summary>Enum corresponding to <c>XrFoveationLevelFB</c>.</summary>
     public enum XRFoveationLevel
     {
         /// <summary>
-        /// Corresponds to XR_FOVEATION_LEVEL_NONE_FB - No foveation.
+        /// Corresponds to <c>XR_FOVEATION_LEVEL_NONE_FB</c> - No foveation.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Corresponds to XR_FOVEATION_LEVEL_LOW_FB - Less foveation
+        /// Corresponds to <c>XR_FOVEATION_LEVEL_LOW_FB</c> - Less foveation
         /// (higher periphery visual fidelity, lower performance).
         /// </summary>
         Low = 1,
 
         /// <summary>
-        /// Corresponds to XR_FOVEATION_LEVEL_MEDIUM_FB - Medium foveation
+        /// Corresponds to <c>XR_FOVEATION_LEVEL_MEDIUM_FB</c> - Medium foveation
         /// (medium periphery visual fidelity, medium performance).
         /// </summary>
         Medium = 2,
 
         /// <summary>
-        /// Corresponds to XR_FOVEATION_LEVEL_HIGH_FB - High foveation
+        /// Corresponds to <c>XR_FOVEATION_LEVEL_HIGH_FB</c> - High foveation
         /// (lower periphery visual fidelity, higher performance).
         /// </summary>
         High = 3,

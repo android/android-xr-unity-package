@@ -39,11 +39,11 @@ namespace Google.XR.Extensions
 #endif
 
     /// <summary>
-    /// This <see cref="OpenXRInteractionFeature"/> provides Android XR session management for all
-    /// extended Android XR features, and common session configurations.
+    /// This <c><see cref="OpenXRInteractionFeature"/></c> provides Android XR session management
+    /// for all extended Android XR features, and common session configurations.
     ///
-    /// It also provides Android XR implementation of <see cref="XRSessionSubsystem"/> if there is
-    /// no session subsystem available.
+    /// It also provides Android XR implementation of <c><see cref="XRSessionSubsystem"/></c> if
+    /// there is no session subsystem available.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
@@ -95,7 +95,7 @@ namespace Google.XR.Extensions
         private static bool _arSessionFeatureInUse = false;
 
         [SerializeField]
-        private bool _vulkanSubsampling = true;
+        private bool _vulkanSubsampling = false;
 
         [SerializeField]
         private bool _spacewarp = false;
@@ -287,6 +287,7 @@ namespace Google.XR.Extensions
             else
             {
                 Debug.LogWarning("Failed to find any active loader.");
+                return;
             }
 
             if (_sessionSubsystem == null)
@@ -303,47 +304,12 @@ namespace Google.XR.Extensions
         }
 
         /// <inheritdoc/>
-        protected override void OnSubsystemStart()
-        {
-            if (_arSessionFeatureInUse)
-            {
-                return;
-            }
-
-            Debug.Log($"{ApiConstants.LogTag}:: Start AndroidXRSessionSubsystem.");
-            if (_sessionSubsystem != null)
-            {
-                _sessionSubsystem.Start();
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnSubsystemStop()
-        {
-            if (_arSessionFeatureInUse)
-            {
-                return;
-            }
-
-            Debug.Log($"{ApiConstants.LogTag}:: Stop AndroidXRSessionSubsystem.");
-            if (_sessionSubsystem != null)
-            {
-                _sessionSubsystem.Stop();
-            }
-        }
-
-        /// <inheritdoc/>
         protected override void OnSubsystemDestroy()
         {
-            if (_arSessionFeatureInUse)
-            {
-                return;
-            }
-
-            Debug.Log($"{ApiConstants.LogTag}:: Destroy AndroidXRSessionSubsystem.");
             if (_sessionSubsystem != null)
             {
                 _sessionSubsystem.Destroy();
+                _sessionSubsystem = null;
             }
         }
     }

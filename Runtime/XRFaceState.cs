@@ -41,5 +41,10 @@ namespace Google.XR.Extensions
         /// Is true if the data is valid even if it has not been provided in this frame.
         /// </summary>
         public bool IsValid;
+
+        /// <summary>
+        /// Float values in the range 0 - 1 indicating the blendshape confidence of accuracy.
+        /// </summary>
+        public float[] ConfidenceRegions;
     }
 }

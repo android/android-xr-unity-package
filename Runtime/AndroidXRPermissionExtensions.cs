@@ -30,43 +30,48 @@ namespace Google.XR.Extensions
         /// Permission to enable coarse scene understanding features that relies on motion tracking,
         /// ToF sensor, and the VST RGB-left cameras.
         /// </summary>
-        SceneUnderstandingCoarse,
+        SceneUnderstandingCoarse = 0,
 
         /// <summary>
         /// Permission to enable fine scene understanding features that relies on motion tracking,
         /// such as depth texture and scene meshing.
         /// </summary>
-        SceneUnderstandingFine,
+        SceneUnderstandingFine = 1,
 
         /// <summary>
         /// Permission to enable hand tracking.
         /// </summary>
-        HandTracking,
+        HandTracking = 2,
 
         /// <summary>
         /// Permission to enable coarse eye tracking.
         /// </summary>
-        EyeTrackingCoarse,
+        EyeTrackingCoarse = 3,
 
         /// <summary>
         /// Permission to enable eye gaze interaction and fine eye tracking.
         /// </summary>
-        EyeTrackingFine,
+        EyeTrackingFine = 4,
 
         /// <summary>
         /// Permission to enable face tracking.
         /// </summary>
-        FaceTracking,
+        FaceTracking = 5,
+
+        /// <summary>
+        /// Permission to enable body tracking.
+        /// </summary>
+        BodyTracking = 9,
     }
 
     /// <summary>
-    /// Helper class for <see cref="AndroidXRPermission"/>.
+    /// Helper class for <c><see cref="AndroidXRPermission"/></c>.
     /// </summary>
     public static class AndroidXRPermissionExtensions
     {
         /// <summary>
-        /// Convert <see cref="AndroidXRPermission"/> to permission string that can be used in
-        /// runtime permission request.
+        /// Convert <c><see cref="AndroidXRPermission"/></c> to permission string that can be used
+        /// in runtime permission request.
         /// </summary>
         /// <param name="permission">The Android XR permission.</param>
         /// <returns>The permission string injected to manifest.</returns>
@@ -86,6 +91,8 @@ namespace Google.XR.Extensions
                     return "android.permission.EYE_TRACKING_FINE";
                 case AndroidXRPermission.FaceTracking:
                     return "android.permission.FACE_TRACKING";
+                case AndroidXRPermission.BodyTracking:
+                    return "com.android.extensions.xr.BODY_TRACKING";
                 default:
                     Debug.LogError($"Invalid AndroidXRPermission: {permission}");
                     return string.Empty;

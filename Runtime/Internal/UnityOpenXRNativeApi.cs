@@ -22,29 +22,51 @@ namespace Google.XR.Extensions.Internal
     using System.Runtime.InteropServices;
     using UnityEngine;
 
+    /// <summary>
+    /// Unify the usage accessing native plugin from Unity OpenXR Plugin.
+    ///
+    /// Note: features depending on Unity OpenXR Plugin would be affected by package upgraded.
+    /// Especially when the underlying functionality has been deprecated, corresponding OpenXR
+    /// features will also be deprecated or removed from Google XR Extensions package.
+    /// </summary>
     internal class UnityOpenXRNativeApi
     {
         public static void MetaSetSubsampledLayout(bool enabled)
         {
-            bool result = ExternalApi.MetaSetSubsampledLayout(enabled) >= 0;
-            Debug.LogFormat("MetaSetSubsampledLayout({0}): {1}",
-                enabled, result ? "succeed" : "failed");
+            int result = ExternalApi.MetaSetSubsampledLayout(enabled);
+            Debug.LogFormat("MetaSetSubsampledLayout({0}): {1} with status {2}.",
+                enabled, result >= 0  ? "succeed" : "failed", result);
         }
 
         public static void MetaSetSpaceWarp(bool enabled)
         {
-            bool result = ExternalApi.MetaSetSpaceWarp(enabled) >= 0;
-            Debug.LogFormat("MetaSetSpaceWarp({0}): {1}",
-                enabled, result ? "succeed" : "failed");
+            int result = ExternalApi.MetaSetSpaceWarp(enabled);
+            Debug.LogFormat("MetaSetSpaceWarp({0}): {1} with status {2}.",
+                enabled, result >= 0 ? "succeed" : "failed", result);
+        }
+
+        public static void FBSetFoveationLevel(
+            ulong xrSession, XRFoveationLevel foveationLevel,
+            float verticalOffset, bool foveationDynamic)
+        {
+            int result = ExternalApi.FBSetFoveationLevel(
+                xrSession, (int)foveationLevel, verticalOffset, foveationDynamic ? 1 : 0);
+            Debug.LogFormat("FBSetFoveationLevel({0}, {1}, {2}, {3}): {4} with status {5}.",
+                xrSession, foveationLevel, verticalOffset, foveationDynamic,
+                result >= 0 ? "succeed" : "failed", result);
         }
 
         private struct ExternalApi
         {
-            [DllImport("UnityOpenXR")]
+            [DllImport(ApiConstants.UnityOpenXRLib)]
             public static extern int MetaSetSubsampledLayout(bool enabled);
 
-            [DllImport("UnityOpenXR")]
+            [DllImport(ApiConstants.UnityOpenXRLib)]
             public static extern int MetaSetSpaceWarp(bool enable);
+
+            [DllImport(ApiConstants.UnityOpenXRLib)]
+            public static extern int FBSetFoveationLevel(
+                ulong session, int level, float verticalOffset, int dynamic);
         }
     }
 }

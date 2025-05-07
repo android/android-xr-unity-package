@@ -32,9 +32,9 @@ namespace Google.XR.Extensions
 #endif
 
     /// <summary>
-    /// This <see cref="OpenXRInteractionFeature"/> configures the
-    /// <see href="https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XR_FB_foveation">
-    /// XR_FB_foveation</see> extension at OpenXR runtime.
+    /// This <c><see cref="OpenXRInteractionFeature"/></c> configures the
+    /// <c><see href="https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XR_FB_foveation">
+    /// XR_FB_foveation</see></c> extension at OpenXR runtime.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(
@@ -88,7 +88,7 @@ namespace Google.XR.Extensions
         public static void FBSetFoveationLevel(
             XRFoveationLevel foveationLevel, float verticalOffset, bool foveationDynamic)
         {
-            FoveationApi.FBSetFoveationLevel(
+            UnityOpenXRNativeApi.FBSetFoveationLevel(
                 _xrSession, foveationLevel, verticalOffset, foveationDynamic);
         }
 

@@ -31,9 +31,9 @@ namespace Google.XR.Extensions
 #endif
 
     /// <summary>
-    /// This <see cref="OpenXRInteractionFeature"/> configures
-    /// <see href="https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XrEnvironmentBlendMode">
-    /// XrEnvironmentBlendMode</see> at OpenXR runtime.
+    /// This <c><see cref="OpenXRInteractionFeature"/></c> configures
+    /// <c><see href="https://registry.khronos.org/OpenXR/specs/1.0/html/xrspec.html#XrEnvironmentBlendMode">
+    /// XrEnvironmentBlendMode</see></c> at OpenXR runtime.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
@@ -62,6 +62,7 @@ namespace Google.XR.Extensions
         /// The environment blend modes supported by the current system for the current view
         /// configuration change.
         /// </summary>
+        [HideInInspector]
         public List<XrEnvironmentBlendMode> SupportedEnvironmentBlendModes
             = new List<XrEnvironmentBlendMode>();
 
@@ -73,8 +74,8 @@ namespace Google.XR.Extensions
         /// <summary>
         /// Gets or sets the requested blend mode at OpenXR runtime.
         /// When this feature is enabled, the value passed here will
-        /// be passed to xrEndFrame.
-        /// The value must be a member of  <see cref="SupportedEnvironmentBlendModes"/>
+        /// be passed to <c>xrEndFrame</c>.
+        /// The value must be a member of <c><see cref="SupportedEnvironmentBlendModes"/></c>
         /// </summary>
         public XrEnvironmentBlendMode RequestedEnvironmentBlendMode
         {
@@ -87,7 +88,7 @@ namespace Google.XR.Extensions
         }
 
         /// <summary>
-        /// The current blend mode that is used by xrEndFrame.
+        /// The current blend mode that is used by <c>xrEndFrame</c>.
         ///
         /// Note: It takes one frame to apply the blend mode changes.
         /// </summary>

@@ -31,7 +31,7 @@ namespace Google.XR.Extensions
 #endif  // UNITY_EDITOR
 
     /// <summary>
-    /// This feature provides access to the XR_ANDROID_hand_mesh extension.
+    /// This feature provides access to the <c>XR_ANDROID_hand_mesh</c> extension.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(
@@ -63,20 +63,17 @@ namespace Google.XR.Extensions
         public const string ExtensionString = "XR_ANDROID_hand_mesh";
 
         /// <summary>
-        /// Runtime permission required to enable depth texture.
+        /// Runtime permission required to enable hand tracking.
         /// </summary>
         public static readonly AndroidXRPermission RequiredPermission =
             AndroidXRPermission.HandTracking;
 
         internal static bool? _extensionEnabled = null;
 
-        private static List<XRMeshSubsystemDescriptor> _meshDescriptors =
-                    new List<XRMeshSubsystemDescriptor>();
-
         /// <summary>
         /// Gets if the required OpenXR extension is enabled.
         /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
-        /// whether the XR_ANDROID_hand_mesh extensions is
+        /// whether the <c>XR_ANDROID_hand_mesh</c> extensions is
         /// available on current device.
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
@@ -104,8 +101,8 @@ namespace Google.XR.Extensions
         /// <inheritdoc/>
         protected override void OnSubsystemCreate()
         {
-            CreateSubsystem<XRMeshSubsystemDescriptor, XRMeshSubsystem>(
-                _meshDescriptors, "AndroidXRHandMeshProvider");
+            AndroidXRFeatureUtils.CreateMeshingSubsystem(
+                UiName, CreateSubsystem<XRMeshSubsystemDescriptor, XRMeshSubsystem>);
         }
 
         /// <inheritdoc/>
@@ -119,7 +116,7 @@ namespace Google.XR.Extensions
         protected override void OnSubsystemStop()
         {
             XRHandMeshApi.Disable();
-            StartSubsystem<XRMeshSubsystem>();
+            StopSubsystem<XRMeshSubsystem>();
         }
 
         /// <inheritdoc/>

@@ -32,9 +32,9 @@ namespace Google.XR.Extensions
 #endif
 
     /// <summary>
-    /// This <see cref="XRUnboundedRefSpaceFeature"/> makes the UNBOUNDED
+    /// This <c><see cref="XRUnboundedRefSpaceFeature"/></c> makes the <c>UNBOUNDED</c>
     /// reference space available in this app and can be used by setting the
-    /// XRInputSubsystem tracking origin mode.
+    /// <c>XRInputSubsystem</c> tracking origin mode.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,

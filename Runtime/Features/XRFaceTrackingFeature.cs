@@ -31,7 +31,7 @@ namespace Google.XR.Extensions
 #endif
 
     /// <summary>
-    /// This <see cref="OpenXRInteractionFeature"/> configures new extension
+    /// This <c><see cref="OpenXRInteractionFeature"/></c> configures new extension
     /// <c>XR_ANDROID_face_tracking</c> and provides face blendshape parameter vectors at runtime.
     /// </summary>
 #if UNITY_EDITOR
@@ -74,7 +74,7 @@ namespace Google.XR.Extensions
         /// <summary>
         /// Gets if the required OpenXR extension is enabled.
         /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
-        /// whether the XR_ANDROID_face_tracking extension is enabled.
+        /// whether the <c>XR_ANDROID_face_tracking</c> extension is enabled.
         /// </summary>
         public static bool? IsFaceTrackingExtensionEnabled => _faceTrackingExtensionEnabled;
 

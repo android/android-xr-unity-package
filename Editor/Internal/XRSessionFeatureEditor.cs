@@ -39,14 +39,8 @@ namespace Google.XR.Extensions.Editor.Internal
             "It only takes effect when Foveated Rendering feature is in use.";
 
         private const string _spacewarpFieldName = "_spacewarp";
-#if UNITY_6000_0_23_OR_NEWER
         private const string _spacewarpTooltip =
             "Enable URP Spacewarp (Vulkan) to unlock extra computation power for suitable content.";
-#else
-        private const string _spacewarpTooltip =
-            "Enable URP Spacewarp (Vulkan) to unlock extra computation power for suitable content."
-            + " Note: it requires 6000.0.23f1 or newer versions.";
-#endif // UNITY_6000_0_23_OR_NEWER
 
         private static readonly GUIContent _immersiveXRLabel = new GUIContent(
             "Immersive XR", _immersiveXRTooltip);
@@ -72,14 +66,6 @@ namespace Google.XR.Extensions.Editor.Internal
             _subsampling.boolValue = EditorGUILayout.Toggle(
                 _subsamplingLabel, _subsampling.boolValue);
             _spacewarp.boolValue = EditorGUILayout.Toggle(_spacewarpLabel, _spacewarp.boolValue);
-#if !UNITY_6000_0_23_OR_NEWER
-            if (_spacewarp.boolValue)
-            {
-                EditorGUILayout.HelpBox(
-                    "URP Spacewarp (Vulkan) requires 6000.0.23f1 or newer versions.",
-                    MessageType.Warning);
-            }
-#endif
             serializedObject.ApplyModifiedProperties();
 
             EditorGUIUtility.labelWidth = 0f;

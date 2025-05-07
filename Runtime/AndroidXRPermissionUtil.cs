@@ -30,7 +30,7 @@ namespace Google.XR.Extensions
     public class AndroidXRPermissionUtil : MonoBehaviour
     {
         /// <summary>
-        /// A list of <see cref="AndroidXRPermissions"/> to request at runtime.
+        /// A list of <c><see cref="AndroidXRPermissions"/></c> to request at runtime.
         /// </summary>
         public List<AndroidXRPermission> AndroidXRPermissions = new List<AndroidXRPermission>();
 

@@ -79,7 +79,7 @@ namespace Google.XR.Extensions
         /// <summary>
         /// The interaction profile string used to reference the mouse input device.
         /// </summary>
-        public const string Profile = "/interaction_profiles/android/mouse_interaction";
+        public const string Profile = "/interaction_profiles/android/mouse_interaction_android";
 
         /// <summary>
         /// The OpenXR constant that is used to reference a mouse supported input device.
@@ -101,22 +101,22 @@ namespace Google.XR.Extensions
         private const string _select = "/input/select/click";
 
         /// <summary>
-        /// Constant for a boolean interaction binding '.../input/secondary/click' OpenXR Input
-        /// Binding. Used by input subsystem to bind actions to physical inputs.
+        /// Constant for a boolean interaction binding '.../input/secondary_android/click' OpenXR
+        /// Input Binding. Used by input subsystem to bind actions to physical inputs.
         /// </summary>
-        private const string _secondary = "/input/secondary/click";
+        private const string _secondary = "/input/secondary_android/click";
 
         /// <summary>
-        /// Constant for a boolean interaction binding '.../input/tertiary/click' OpenXR Input
-        /// Binding. Used by input subsystem to bind actions to physical inputs.
+        /// Constant for a boolean interaction binding '.../input/tertiary_android/click' OpenXR
+        /// Input Binding. Used by input subsystem to bind actions to physical inputs.
         /// </summary>
-        private const string _tertiary = "/input/tertiary/click";
+        private const string _tertiary = "/input/tertiary_android/click";
 
         /// <summary>
-        /// Constant for a Vector2 interaction binding '.../input/scroll/value' OpenXR Input
-        /// Binding. Used by input subsystem to bind actions to physical inputs.
+        /// Constant for a Vector2 interaction binding '.../input/scroll_android/value' OpenXR
+        /// Input Binding. Used by input subsystem to bind actions to physical inputs.
         /// </summary>
-        private const string _scroll = "/input/scroll/value";
+        private const string _scroll = "/input/scroll_android/value";
 
         private const string _deviceLocalizedName = "Android XR Mouse";
 

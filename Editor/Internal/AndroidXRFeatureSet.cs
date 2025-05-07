@@ -28,14 +28,17 @@ namespace Google.XR.Extensions.Editor.Internal
         FeatureIds = new string[] {
             XRSessionFeature.FeatureId,
             XREnvironmentBlendModeFeature.FeatureId,
-            XRTrackableFeature.FeatureId,
-            XRAnchorFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
+            XRMarkerTrackingFeature.FeatureId,
+            XRQrCodeTrackingFeature.FeatureId,
             XRFaceTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
             XRHandMeshFeature.FeatureId,
             XRFoveationFeature.FeatureId,
             XRUnboundedRefSpaceFeature.FeatureId,
+            XRBodyTrackingFeature.FeatureId,
+            XRSceneMeshingFeature.FeatureId,
+            XRSystemStateFeature.FeatureId,
         },
         // Features enabled and disabled along with selecting and deselecting the feature set
         // from Editor.
@@ -45,13 +48,12 @@ namespace Google.XR.Extensions.Editor.Internal
         // Features enabled along with selecting the feature set from Editor,
         // desired to include all XR_ANDROID_* features provided by this package.
         DefaultFeatureIds = new string[] {
-            XRTrackableFeature.FeatureId,
-            XRAnchorFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
+            XRMarkerTrackingFeature.FeatureId,
+            XRQrCodeTrackingFeature.FeatureId,
             XRFaceTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
             XRHandMeshFeature.FeatureId,
-
         },
         UiName = "Android XR (Extensions)",
         Description = "Feature group that provides Android XR experience and " +
@@ -68,14 +70,18 @@ namespace Google.XR.Extensions.Editor.Internal
         /// </summary>
         internal static readonly string[] _sessionManagementDependentIds = new string[]
         {
-            XRAnchorFeature.FeatureId,
             XREnvironmentBlendModeFeature.FeatureId,
             XRFaceTrackingFeature.FeatureId,
             XRFoveationFeature.FeatureId,
+            XRHandMeshFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
+            XRMarkerTrackingFeature.FeatureId,
+            XRQrCodeTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
-            XRTrackableFeature.FeatureId,
             XRUnboundedRefSpaceFeature.FeatureId,
+            XRBodyTrackingFeature.FeatureId,
+            XRSceneMeshingFeature.FeatureId,
+            XRSystemStateFeature.FeatureId,
         };
     }
 }

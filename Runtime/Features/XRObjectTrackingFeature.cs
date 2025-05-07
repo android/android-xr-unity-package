@@ -33,13 +33,12 @@ namespace Google.XR.Extensions
 #endif
 
     /// <summary>
-    /// This <see cref="OpenXRInteractionFeature"/> configures Android XR extensions
+    /// This <c><see cref="OpenXRInteractionFeature"/></c> configures Android XR extensions
     /// <c>XR_ANDROID_trackables</c> and <c>XR_ANDROID_trackables_object</c> at runtime and provides
     /// <see cref="XRObjectTrackingSubsystem"/> implementation that works on Android XR platform.
     ///
-    /// Note: due to the dependency on <see cref="XRSessionFeature"/> and the shared native provider
-    /// of <see cref="XRTrackableFeature"/>, its priority must be lower than both features so the
-    /// feature registration happens after XrInstanceManager and XrTrackableProvider creation.
+    /// Note: due to the dependency on <see cref="XRSessionFeature"/>, its priority must be lower
+    /// than it so the feature registration happens after XrInstanceManager creation.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
@@ -84,13 +83,13 @@ namespace Google.XR.Extensions
 
         internal static bool? _extensionEnabled = null;
 
-        private XRObjectTrackingSubsystem _trackingSubsystem = null;
+        private XRObjectTrackingSubsystem _subsystemInstance = null;
 
         /// <summary>
         /// Gets if the required OpenXR extension is enabled.
         /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
-        /// whether the XR_ANDROID_trackables and XR_ANDROID_trackables_object extensions are
-        /// available on current device.
+        /// whether the <c>XR_ANDROID_trackables</c> and <c>XR_ANDROID_trackables_object</c>
+        /// extensions are available on current device.
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
 
@@ -144,14 +143,15 @@ namespace Google.XR.Extensions
             XRLoader xrLoader = XRSessionFeature.GetXRLoader();
             if (xrLoader != null)
             {
-                _trackingSubsystem = xrLoader.GetLoadedSubsystem<XRObjectTrackingSubsystem>();
+                _subsystemInstance = xrLoader.GetLoadedSubsystem<XRObjectTrackingSubsystem>();
             }
             else
             {
                 Debug.LogWarning("Failed to find any active loader.");
+                return;
             }
 
-            if (_trackingSubsystem == null)
+            if (_subsystemInstance == null)
             {
                 Debug.LogErrorFormat(
                     "Failed to find descriptor '{0}' - Object Tracking will not do anything!",
@@ -160,42 +160,17 @@ namespace Google.XR.Extensions
             }
             else
             {
-                Debug.LogFormat("Created {0}.", _trackingSubsystem.GetType());
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnSubsystemStart()
-        {
-            Debug.Log($"{ApiConstants.LogTag}:: Start AndroidXRObjectTrackingSubsystem.");
-            if (_trackingSubsystem != null)
-            {
-                // TODO(b/322517976): track long term solution and update accordingly.
-                // Temp solution to workaround subsystem crashes around null library.
-                // It still results in spamming errors from ARTrackedObjectManager.
-                Debug.Log("Setting an empty library before start.");
-                _trackingSubsystem.library = new XRReferenceObjectLibrary();
-                _trackingSubsystem.Start();
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnSubsystemStop()
-        {
-            Debug.Log($"{ApiConstants.LogTag}:: Stop AndroidXRObjectTrackingSubsystem.");
-            if (_trackingSubsystem != null)
-            {
-                _trackingSubsystem.Stop();
+                Debug.LogFormat("Created {0}.", _subsystemInstance.GetType());
             }
         }
 
         /// <inheritdoc/>
         protected override void OnSubsystemDestroy()
         {
-            Debug.Log($"{ApiConstants.LogTag}:: Destroy AndroidXRObjectTrackingSubsystem.");
-            if (_trackingSubsystem != null)
+            if (_subsystemInstance != null)
             {
-                _trackingSubsystem.Destroy();
+                _subsystemInstance.Destroy();
+                _subsystemInstance = null;
             }
         }
     }

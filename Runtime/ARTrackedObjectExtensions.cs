@@ -24,7 +24,7 @@ namespace Google.XR.Extensions
     using UnityEngine.XR.ARFoundation;
 
     /// <summary>
-    /// Extensions to AR Foundation's <see cref="ARTrackedObject"/> class.
+    /// Extensions to AR Foundation's <c><see cref="ARTrackedObject"/></c> class.
     /// </summary>
     public static class ARTrackedObjectExtensions
     {

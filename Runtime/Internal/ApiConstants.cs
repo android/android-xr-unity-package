@@ -32,5 +32,11 @@ namespace Google.XR.Extensions.Internal
 #else
         public const bool AndroidPlatform = false;
 #endif // UNITY_ANDROID && !UNITY_EDITOR
+        public const string MeshingProviderDescriptorId = "AndroidXRMeshProvider";
+
+        /// <summary>
+        /// Library name of the native plugin built within Unity OpenXR Plugin package.
+        /// </summary>
+        public const string UnityOpenXRLib = "UnityOpenXR";
     }
 }

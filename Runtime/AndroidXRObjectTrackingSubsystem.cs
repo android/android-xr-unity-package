@@ -30,8 +30,8 @@ namespace Google.XR.Extensions
     using UnityEngine.XR.ARSubsystems;
 
     /// <summary>
-    /// The Android XR implementation of the <see cref="XRObjectTrackingSubsystem"/> so it can work
-    /// seamlessly with <see cref="ARTrackedObjectManager"/>.
+    /// The Android XR implementation of the <c><see cref="XRObjectTrackingSubsystem"/></c> so it
+    /// can work seamlessly with <c><see cref="ARTrackedObjectManager"/></c>.
     /// </summary>
     [Preserve]
     public sealed class AndroidXRObjectTrackingSubsystem : XRObjectTrackingSubsystem
@@ -66,8 +66,6 @@ namespace Google.XR.Extensions
         {
             internal static readonly string _id = "AndroidXR-ObjectTracking";
 
-            // TODO - b/322517976: temp solution to set reference GUIDs.
-            // Remove once the formal support is settled by AR Foundation upgrade.
             private Dictionary<XRObjectLabel, Guid> _referenceGuids =
                 new Dictionary<XRObjectLabel, Guid>();
 
@@ -116,14 +114,31 @@ namespace Google.XR.Extensions
                         }
                     }
 
-                    XRTrackableApi.UpdateReferenceGuids(_referenceGuids);
+                    XRTrackableApi.UpdateObjectReferenceGuids(_referenceGuids);
                 }
+            }
+
+            /// <inheritdoc/>
+            public override void Start()
+            {
+                // Managed through ARTrackedObjectManager's OnEnable() callback.
+                Debug.Log($"{ApiConstants.LogTag}: Start AndroidXRObjectTrackingSubsystem.");
+                XRTrackableApi.SetTracking(ApiXrTrackableType.Object, true);
+            }
+
+            /// <inheritdoc/>
+            public override void Stop()
+            {
+                // Managed through ARTrackedObjectManager's OnDisable() callback.
+                Debug.Log($"{ApiConstants.LogTag}: Stop AndroidXRObjectTrackingSubsystem.");
+                XRTrackableApi.SetTracking(ApiXrTrackableType.Object, false);
             }
 
             /// <inheritdoc/>
             public override void Destroy()
             {
-                // Object Tracker has been destroyed in Stop().
+                // Managed through OpenXRFeature.OnSubsystemDestroy event.
+                Debug.Log($"{ApiConstants.LogTag}: Destroy AndroidXRObjectTrackingSubsystem.");
             }
 
             /// <inheritdoc/>
@@ -158,18 +173,6 @@ namespace Google.XR.Extensions
                 {
                     XRTrackableApi.ReleaseObjectChanges(objectChanges);
                 }
-            }
-
-            /// <inheritdoc/>
-            public override void Start()
-            {
-                XRTrackableApi.SetTracking(ApiXrTrackableType.Object, true);
-            }
-
-            /// <inheritdoc/>
-            public override void Stop()
-            {
-                XRTrackableApi.SetTracking(ApiXrTrackableType.Object, false);
             }
         }
     }

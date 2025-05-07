@@ -39,19 +39,11 @@ namespace Google.XR.Extensions.Editor.Internal
                         "Android XR reuiqres resizable windows to render pop-ups correctly " +
                         "in immersive view, such as system permission requests.",
                     IsRuleEnabled = AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabled,
-#if UNITY_6000_0_4_OR_NEWER
                     CheckPredicate = () => PlayerSettings.Android.resizeableActivity,
                     FixItMessage =
                         "Go to <b>Project Settings > Player Settings</b>, " +
                         "selet <b>Android</b> tab, then enable <b>Resizable Activity</b>.",
                     FixIt = () => PlayerSettings.Android.resizeableActivity = true,
-#else
-                    CheckPredicate = () => PlayerSettings.Android.resizableWindow,
-                    FixItMessage =
-                        "Go to <b>Project Settings > Player Settings</b>, " +
-                        "selet <b>Android</b> tab, then enable <b>Resizable Window</b>.",
-                    FixIt = () => PlayerSettings.Android.resizableWindow = true,
-#endif
                     FixItAutomatic = true,
                     Error = true,
                 },

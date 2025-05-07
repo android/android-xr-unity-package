@@ -29,11 +29,13 @@ namespace Google.XR.Extensions.Internal
         FaceTracking = 2,
         PassthroughCameraState = 3,
         Passthrough = 9,
-        Anchor = 10,
+        SceneMeshing = 14,
         HandMesh = 15,
         UnboundedRefSpace = 16,
-        DisplayRefreshRate = 17,
         Reserved3 = 18,
+        Reserved4 = 19,
+        BodyTracking = 20,
+        SystemState = 21,
     }
 
     internal class XRInstanceManagerApi

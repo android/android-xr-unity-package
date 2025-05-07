@@ -29,78 +29,137 @@ namespace Google.XR.Extensions.Samples.BlendMode
     public class BlendModeController : MonoBehaviour
     {
         /// <summary>
-        /// The <see cref="XREnvironmentBlendModeFeature"/> settings for Android platform.
-        /// </summary>
-        public XREnvironmentBlendModeFeature BlendFeature = null;
-
-        /// <summary>
         /// Text mesh for displaying debug information.
         /// </summary>
         public TextMesh DebugText;
 
         private const float _configInterval = 3f;
 
+        /// <summary>
+        /// The <see cref="XREnvironmentBlendModeFeature"/> settings for Android platform.
+        /// </summary>
+        private XREnvironmentBlendModeFeature _blendFeature = null;
+
+        /// <summary>
+        /// The <see cref="XRSystemStateFeature"/> for Android platform.
+        /// </summary>
+        private XRSystemStateFeature _systemStateFeature = null;
+
         private int _currentBlendModeIndex = 0;
         private StringBuilder _stringBuilder = new StringBuilder();
         private float _configTimer = 0f;
 
-        private void Update()
+        private void Awake()
         {
-            if (BlendFeature == null)
+            _blendFeature = OpenXRSettings.Instance.GetFeature<XREnvironmentBlendModeFeature>();
+            _systemStateFeature = OpenXRSettings.Instance.GetFeature<XRSystemStateFeature>();
+
+            if (_blendFeature == null)
             {
-                return;
+                Debug.LogErrorFormat(
+                    "Cannot find {0} targeting Android platform.",
+                    XREnvironmentBlendModeFeature.UiName);
             }
 
-            var modes = BlendFeature.SupportedEnvironmentBlendModes;
-            _stringBuilder.Clear();
-            if ((modes?.Count ?? 0) > 0)
+            if (_systemStateFeature == null)
             {
-                _configTimer += Time.deltaTime;
-                if (_configTimer > _configInterval)
-                {
-                    _configTimer = 0;
-                    _currentBlendModeIndex = (_currentBlendModeIndex + 1) % modes.Count;
-                }
+                Debug.LogWarningFormat(
+                    "Cannot find {0} targeting Android platform.",
+                    XRSystemStateFeature.UiName);
+            }
+        }
 
-                BlendFeature.RequestedEnvironmentBlendMode = modes[_currentBlendModeIndex];
-
-                _stringBuilder.Append(
-                    $"RequestMode: {BlendFeature.RequestedEnvironmentBlendMode}\n");
-                _stringBuilder.Append($"CurrentMode: {BlendFeature.CurrentBlendMode}");
+        private void Update()
+        {
+            _stringBuilder.Clear();
+            if (_blendFeature == null)
+            {
+                _stringBuilder.AppendFormat(
+                    "Cannot find {0}.", XREnvironmentBlendModeFeature.UiName);
+            }
+            else if (!_blendFeature.enabled)
+            {
+                _stringBuilder.AppendFormat(
+                    "{0} is disabled.", XREnvironmentBlendModeFeature.UiName);
             }
             else
             {
-                _stringBuilder.Append("No environment blend modes supported.\n");
-                _stringBuilder.Append("Are you running on device?");
+                var modes = _blendFeature.SupportedEnvironmentBlendModes;
+                if ((modes?.Count ?? 0) > 0)
+                {
+                    _configTimer += Time.deltaTime;
+                    if (_configTimer > _configInterval)
+                    {
+                        _configTimer = 0;
+                        _currentBlendModeIndex = (_currentBlendModeIndex + 1) % modes.Count;
+                    }
+
+                    _blendFeature.RequestedEnvironmentBlendMode = modes[_currentBlendModeIndex];
+
+                    _stringBuilder.Append(
+                        $"RequestMode: {_blendFeature.RequestedEnvironmentBlendMode}\n");
+                    _stringBuilder.Append($"CurrentMode: {_blendFeature.CurrentBlendMode}\n");
+                }
+                else
+                {
+                    _stringBuilder.Append("No environment blend modes supported.\n");
+                    _stringBuilder.Append("Are you running on device?\n");
+                }
+            }
+
+            _stringBuilder.Append("\n");
+            if (_systemStateFeature == null)
+            {
+                _stringBuilder.AppendFormat(
+                    "Cannot find {0}.", XRSystemStateFeature.UiName);
+            }
+            else if (!_systemStateFeature.enabled)
+            {
+                _stringBuilder.AppendFormat(
+                    "{0} is disabled.", XRSystemStateFeature.UiName);
+            }
+            else
+            {
+                bool result = XRSystemStateFeature.TryGetSystemState(out XrSystemState systemState);
+                if (result)
+                {
+                    _stringBuilder.Append(
+                        $"Blend mode state: {systemState.BlendModeState}\n");
+                    _stringBuilder.Append(
+                        $"Passthrough opacity: {systemState.PassthroughOpacity}\n");
+                    _stringBuilder.Append(
+                        $"Input modality: {systemState.InputModalityState}");
+                }
+                else
+                {
+                    _stringBuilder.Append("Error getting system state.");
+                }
             }
 
             DebugText.text = _stringBuilder.ToString();
         }
+#if UNITY_EDITOR
 
         private void OnValidate()
         {
-#if UNITY_EDITOR
-            if (BlendFeature == null)
+            var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(
+                UnityEditor.BuildTargetGroup.Android);
+            var blendFeature = settings.GetFeature<XREnvironmentBlendModeFeature>();
+            if (blendFeature == null || !blendFeature.enabled)
             {
-                var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(
-                    UnityEditor.BuildTargetGroup.Android);
-                BlendFeature = settings.GetFeature<XREnvironmentBlendModeFeature>();
-                if (BlendFeature == null)
-                {
-                    Debug.LogErrorFormat(
-                        "Cannot find {0} targeting Android platform.",
-                        XREnvironmentBlendModeFeature.UiName);
-                    return;
-                }
-            }
-
-            if (BlendFeature != null && !BlendFeature.enabled)
-            {
-                Debug.LogWarningFormat(
-                    "{0} is disabled. BlendMode sample will not work correctly.",
+                Debug.LogErrorFormat(
+                    "Cannot find {0} targeting Android platform.",
                     XREnvironmentBlendModeFeature.UiName);
             }
-#endif
+
+            var systemStateFeature = settings.GetFeature<XRSystemStateFeature>();
+            if (systemStateFeature == null || !systemStateFeature.enabled)
+            {
+                Debug.LogWarningFormat(
+                    "Cannot find {0} targeting Android platform.",
+                    XRSystemStateFeature.UiName);
+            }
         }
+#endif // UNITY_EDITOR
     }
 }

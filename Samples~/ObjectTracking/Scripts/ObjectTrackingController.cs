@@ -85,8 +85,6 @@ namespace Google.XR.Extensions.Samples.ObjectTracking
                     Time.frameCount,
                     GetObjectDebugInfo(trackedObject));
 
-                // TODO - b/322517976: temp solution to set reference GUIDs.
-                // Remove once the formal support is settled by AR Foundation upgrade.
                 if (trackedObject.referenceObject != null)
                 {
                     Debug.LogFormat("Reference Object {0} - {1}",
@@ -106,7 +104,7 @@ namespace Google.XR.Extensions.Samples.ObjectTracking
             _permissionUtil = GetComponent<AndroidXRPermissionUtil>();
             if (PlaneManager == null)
             {
-                Debug.LogError("ARPlaneManager is null!");
+                Debug.LogWarning("ARPlaneManager is null!");
             }
 
             if (ObjectManager == null)
@@ -140,46 +138,63 @@ namespace Google.XR.Extensions.Samples.ObjectTracking
 
         private void UpdatePlanes()
         {
-            if (XRTrackableFeature.IsExtensionEnabled == null)
+            if (PlaneManager == null)
             {
                 return;
             }
-            else if (!XRTrackableFeature.IsExtensionEnabled.Value)
+
+            if (PlaneManager.subsystem == null)
             {
-                _stringBuilder.Append("XR_ANDROID_trackables is not enabled.\n");
+                _stringBuilder.Append("XRPlaneSubsystem is null.\n");
             }
-            else if (PlaneManager == null || PlaneManager.subsystem == null)
+            else if (!PlaneManager.subsystem.running)
             {
-                _stringBuilder.Append("Cannot find ARPlaneManager.\n");
+                _stringBuilder.AppendFormat("{0} is not running.\n",
+                    PlaneManager.subsystem.GetType().Name);
             }
             else
             {
                 _stringBuilder.AppendFormat(
-                    $"Planes: ({_planeAdded}, {_planeUpdated}, {_planeRemoved})\n" +
-                    $"{string.Join("\n", _planes.Select(id => id.subId1).ToArray())}\n");
+                    "{0}\n Added: {1}, Updated: {2}, Removed: {3}\n",
+                    PlaneManager.subsystem.GetType().Name,
+                    _planeAdded, _planeUpdated, _planeRemoved);
+                if (_planes.Count > 0 && _planes.Count < 5)
+                {
+                    // id.subId2 should match OpenXR handle.
+                    _stringBuilder.AppendFormat("{0}\n",
+                        string.Join("\n", _planes.Select(id => id.subId2).ToArray()));
+                }
             }
         }
 
         private void UpdateObjects()
         {
-            if (XRObjectTrackingFeature.IsExtensionEnabled == null)
+            if (ObjectManager == null)
             {
                 return;
             }
-            else if (!XRObjectTrackingFeature.IsExtensionEnabled.Value)
+
+            if (ObjectManager.subsystem == null)
             {
-                _stringBuilder.Append("XR_ANDROID_trackables_object is not enabled.\n");
+                _stringBuilder.Append("XRObjectTrackingSubsystem is null.\n");
             }
-            else if (ObjectManager == null || ObjectManager.subsystem == null)
+            else if (!ObjectManager.subsystem.running)
             {
-                _stringBuilder.Append("Cannnot find ARTrackedObjectManager.\n");
+                _stringBuilder.AppendFormat("{0} is not running.\n",
+                    ObjectManager.subsystem.GetType().Name);
             }
             else
             {
-                _stringBuilder.Append($"{ObjectManager.subsystem.GetType()}\n");
                 _stringBuilder.AppendFormat(
-                    $"Objects: ({_objectAdded}, {_objectUpdated}, {_objectRemoved})\n" +
-                    $"{string.Join("\n", _objects.Select(id => id.subId1).ToArray())}\n");
+                    "{0}\n Added: {1}, Updated: {2}, Removed: {3}\n",
+                    ObjectManager.subsystem.GetType().Name,
+                    _objectAdded, _objectUpdated, _objectRemoved);
+                if (_objects.Count > 0)
+                {
+                    // id.subId2 should match OpenXR handle.
+                    _stringBuilder.AppendFormat("{0}\n",
+                        string.Join("\n", _objects.Select(id => id.subId2).ToArray()));
+                }
             }
         }
 
@@ -204,20 +219,6 @@ namespace Google.XR.Extensions.Samples.ObjectTracking
 #if UNITY_EDITOR
             var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(
                 UnityEditor.BuildTargetGroup.Android);
-            var trackableFeature = settings.GetFeature<XRTrackableFeature>();
-            if (trackableFeature == null)
-            {
-                Debug.LogErrorFormat(
-                    "Cannot find {0} targeting Android platform.", XRTrackableFeature.UiName);
-                return;
-            }
-            else if (!trackableFeature.enabled)
-            {
-                Debug.LogWarningFormat(
-                    "{0} is disabled. ObjectTracking sample will not work correctly.",
-                    XRTrackableFeature.UiName);
-            }
-
             var objectTracking = settings.GetFeature<XRObjectTrackingFeature>();
             if (objectTracking == null)
             {

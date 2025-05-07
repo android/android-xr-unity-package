@@ -212,6 +212,21 @@ namespace Google.XR.Extensions
         UpperLipRaiserL = 61,
 
         /// <summary> Upper left lip depresser control parameter. </summary>
-        UpperLipRaiserR = 62
+        UpperLipRaiserR = 62,
+
+        /// <summary> Upper left lip depresser control parameter. </summary>
+        TongueOut = 63,
+
+        /// <summary> Upper left lip depresser control parameter. </summary>
+        TongueLeft = 64,
+
+        /// <summary> Upper left lip depresser control parameter. </summary>
+        TongueRight = 65,
+
+        /// <summary> Upper left lip depresser control parameter. </summary>
+        TongueUp = 66,
+
+        /// <summary> Upper left lip depresser control parameter. </summary>
+        TongueDown = 66
     }
 }

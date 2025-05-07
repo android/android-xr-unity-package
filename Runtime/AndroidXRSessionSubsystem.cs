@@ -27,8 +27,8 @@ namespace Google.XR.Extensions
     using UnityEngine.XR.ARSubsystems;
 
     /// <summary>
-    /// The Android XR implementation of the <see cref="XRSessionSubsystem"/> so it can work
-    /// seamlessly with <see cref="ARSession"/>.
+    /// The Android XR implementation of the <c><see cref="XRSessionSubsystem"/></c> so it can work
+    /// seamlessly with <c><see cref="ARSession"/></c>.
     /// </summary>
     [Preserve]
     public sealed class AndroidXRSessionSubsystem : XRSessionSubsystem
@@ -64,7 +64,6 @@ namespace Google.XR.Extensions
         {
             internal static readonly string _id = "AndroidXR-Session";
 
-            // TODO(b/282712901): Replace by XrSession after refactor.
             private bool _isValid = true;
             private bool _isActive = false;
 
@@ -74,18 +73,24 @@ namespace Google.XR.Extensions
             /// <inheritdoc/>
             public override void Start()
             {
+                // Managed through ARSession's OnEnable() callback.
+                Debug.Log($"{ApiConstants.LogTag}: Start AndroidXRSessionSubsystem.");
                 _isActive = true;
             }
 
             /// <inheritdoc/>
             public override void Stop()
             {
+                // Managed through ARSession's OnDisable() callback.
+                Debug.Log($"{ApiConstants.LogTag}: Stop AndroidXRSessionSubsystem.");
                 _isActive = false;
             }
 
             /// <inheritdoc/>
             public override void Destroy()
             {
+                // Managed through OpenXRFeature.OnSubsystemDestroy event.
+                Debug.Log($"{ApiConstants.LogTag}: Destroy AndroidXRSessionSubsystem.");
                 _isValid = false;
             }
 
