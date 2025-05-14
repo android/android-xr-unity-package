@@ -12,7 +12,10 @@
         "GUID:e7613e527d035461da6942ba7283ee2d",
         "Unity.XR.CompositionLayers"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Android",
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
     "overrideReferences": false,
