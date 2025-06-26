@@ -10,9 +10,6 @@ To enable this sample:
     **OpenXR**.
 *   Switch to the **Android** platform tab.
 *   Select **Android XR (Extensions): Session Management**.
-    *   Known issue: Vulkan Subsampling now causes faulty rendering.
-        To disable it, under the setting menu of **Android XR (Extensions)
-        Session Management**, unselect **Subsampling (Vulkan)**.
 *   Select **Android XR (Extensions): Scene Meshing (Experimental*)**.
     *   NOTE: Applications with experimental features cannot be published in
         Google Play Store.

@@ -350,15 +350,11 @@ namespace Google.XR.Extensions.Editor.Internal
             XRBodyTrackingFeature bodyTracking =
                 AndroidXRBuildUtils.GetActiveFeature<XRBodyTrackingFeature>();
             bodyTrackingInUse = bodyTracking != null && bodyTracking.enabled;
-            bool sceneMeshingInUse = false;
-            XRSceneMeshingFeature sceneMeshing =
-                AndroidXRBuildUtils.GetActiveFeature<XRSceneMeshingFeature>();
-            sceneMeshingInUse = sceneMeshing != null && sceneMeshing.enabled;
             bool systemStateInUse = false;
             XRSystemStateFeature systemState =
                 AndroidXRBuildUtils.GetActiveFeature<XRSystemStateFeature>();
             systemStateInUse = systemState != null && systemState.enabled;
-            return bodyTrackingInUse || sceneMeshingInUse || systemStateInUse;
+            return bodyTrackingInUse || systemStateInUse;
         }
     }
 }

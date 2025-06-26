@@ -214,19 +214,19 @@ namespace Google.XR.Extensions
         /// <summary> Upper left lip depresser control parameter. </summary>
         UpperLipRaiserR = 62,
 
-        /// <summary> Upper left lip depresser control parameter. </summary>
+        /// <summary> Tongue stick out control parameter. </summary>
         TongueOut = 63,
 
-        /// <summary> Upper left lip depresser control parameter. </summary>
+        /// <summary> Tongue move left control parameter. </summary>
         TongueLeft = 64,
 
-        /// <summary> Upper left lip depresser control parameter. </summary>
+        /// <summary> Tongue move right control parameter. </summary>
         TongueRight = 65,
 
-        /// <summary> Upper left lip depresser control parameter. </summary>
+        /// <summary> Tongue move up control parameter. </summary>
         TongueUp = 66,
 
-        /// <summary> Upper left lip depresser control parameter. </summary>
-        TongueDown = 66
+        /// <summary> Tongue move down control parameter. </summary>
+        TongueDown = 67
     }
 }

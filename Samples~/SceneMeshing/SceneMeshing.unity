@@ -216,69 +216,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &563492293
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 563492295}
-  - component: {fileID: 563492296}
-  - component: {fileID: 563492297}
-  m_Layer: 0
-  m_Name: Controller
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &563492295
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563492293}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &563492296
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563492293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 020be0254b2eb4423832ec90c82d8a62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AndroidXRPermissions: 01000000
-  GenernalAndroidPermissions: []
-  PermissionRationale: Required for scene meshing.
---- !u!114 &563492297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563492293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0bc2f5614b1b4d77bc26f7297f2a5a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PermissionUtil: {fileID: 563492296}
-  SceneMeshPrefab: {fileID: 6084916207506699768, guid: 7a1aaa6915a0b4e04a8197873eddef9e, type: 3}
-  XROrigin: {fileID: 1357933510}
 --- !u!1 &644723534
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,6 +461,8 @@ GameObject:
   - component: {fileID: 1357933510}
   - component: {fileID: 1357933509}
   - component: {fileID: 1357933508}
+  - component: {fileID: 1357933512}
+  - component: {fileID: 1357933511}
   m_Layer: 0
   m_Name: XR Origin (VR)
   m_TagString: Untagged
@@ -577,10 +516,38 @@ Transform:
   - {fileID: 654137655}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1357933511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357933507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0bc2f5614b1b4d77bc26f7297f2a5a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PermissionUtil: {fileID: 1357933512}
+  SceneMeshPrefab: {fileID: 6084916207506699768, guid: 7a1aaa6915a0b4e04a8197873eddef9e, type: 3}
+--- !u!114 &1357933512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357933507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 020be0254b2eb4423832ec90c82d8a62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AndroidXRPermissions: 01000000
+  GenernalAndroidPermissions: []
+  PermissionRationale: Required to enable Android XR feature at runtime.
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 563492295}
   - {fileID: 555152895}
   - {fileID: 1357933510}

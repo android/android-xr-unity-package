@@ -20,6 +20,7 @@
 namespace Google.XR.Extensions.Samples.SceneMeshing
 {
     using System.Collections.Generic;
+    using Unity.XR.CoreUtils;
     using UnityEngine;
     using UnityEngine.XR;
     using UnityEngine.XR.OpenXR;
@@ -29,6 +30,7 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
     /// Used to test the scene meshing extension.
     /// </summary>
     [RequireComponent(typeof(AndroidXRPermissionUtil))]
+    [RequireComponent(typeof(XROrigin))]
     public class SceneMeshingController : MonoBehaviour
     {
         /// <summary>
@@ -42,11 +44,6 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
         /// template for a scene mesh.
         /// </summary>
         public GameObject SceneMeshPrefab;
-
-        /// <summary>
-        /// The XROrigin (origin of the XR Session).
-        /// </summary>
-        public Transform XROrigin;
 
         private Dictionary<MeshId, MeshFilter> _sceneMeshes;
         private uint _generatingCount = 0;
@@ -99,7 +96,7 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
             {
                 foreach (MeshInfo info in meshInfos)
                 {
-                    if (!XRMeshSubsystemExtension.IsSceneMeshId(info.MeshId))
+                    if (!_meshSubsystem.IsSceneMeshId(info.MeshId))
                     {
                         //// This might be a hand mesh id
                         continue;
@@ -111,7 +108,7 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
                         MeshFilter mf;
                         if (!_sceneMeshes.TryGetValue(info.MeshId, out mf))
                         {
-                            mf = Instantiate(SceneMeshPrefab).GetComponent<MeshFilter>();
+                            mf = Instantiate(SceneMeshPrefab, transform).GetComponent<MeshFilter>();
                             mf.gameObject.name = "SceneMesh" + info.MeshId;
                             mf.mesh = new Mesh();
                             _sceneMeshes.Add(info.MeshId, mf);
@@ -128,11 +125,19 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
 
                         _generatingCount++;
                     }
+                    else if (info.ChangeState == MeshChangeState.Removed)
+                    {
+                        if (_sceneMeshes.TryGetValue(info.MeshId, out MeshFilter mf))
+                        {
+                            Destroy(mf.gameObject);
+                            _sceneMeshes.Remove(info.MeshId);
+                        }
+                    }
                 }
             }
         }
 
-        void DecrementGeneratingCount()
+        private void DecrementGeneratingCount()
         {
             _generatingCount--;
         }
@@ -140,7 +145,7 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
         private void OnMeshGenerated(MeshGenerationResult result)
         {
             //// Give enough time for the mesh to be displayed
-            Invoke("DecrementGeneratingCount", 1.0f);
+            Invoke("DecrementGeneratingCount", 0.5f);
             if (_sceneMeshes.TryGetValue(result.MeshId, out MeshFilter mf))
             {
                 mf.transform.localPosition = result.Position;

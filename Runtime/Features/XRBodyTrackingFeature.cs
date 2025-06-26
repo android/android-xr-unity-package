@@ -73,7 +73,7 @@ namespace Google.XR.Extensions
         public const string ExtensionString = "XR_ANDROIDX_body_tracking";
 
         /// <summary>
-        /// Runtime permission requried to enable body tracking.
+        /// Runtime permission required to enable body tracking.
         /// </summary>
         public static readonly AndroidXRPermission RequiredPermission =
             AndroidXRPermission.BodyTracking;

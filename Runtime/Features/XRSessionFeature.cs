@@ -95,7 +95,7 @@ namespace Google.XR.Extensions
         private static bool _arSessionFeatureInUse = false;
 
         [SerializeField]
-        private bool _vulkanSubsampling = false;
+        private bool _vulkanSubsampling = true;
 
         [SerializeField]
         private bool _spacewarp = false;
@@ -312,5 +312,66 @@ namespace Google.XR.Extensions
                 _sessionSubsystem = null;
             }
         }
+
+#if UNITY_EDITOR
+        /// <inheritdoc/>
+        protected override void GetValidationChecks(
+            List<ValidationRule> results, BuildTargetGroup targetGroup)
+        {
+            if (targetGroup != BuildTargetGroup.Android)
+            {
+                return;
+            }
+
+            results.Add(new ValidationRule(this)
+            {
+                message = "Foveation feature is required for <b>Subsampling (Vulkan)</b>.",
+                checkPredicate = () =>
+                {
+                    if (!VulkanSubsampling)
+                    {
+                        return true;
+                    }
+
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
+                    if (settings == null)
+                    {
+                        return false;
+                    }
+
+                    var foveation = GraphicsSettings.defaultRenderPipeline == null ?
+                      settings.GetFeature<XRFoveationFeature>() as OpenXRFeature:
+                      settings.GetFeature<FoveatedRenderingFeature>();
+                    return foveation != null && foveation.enabled;
+                },
+                fixItMessage = "Enable Foveation feature for <b>Subsampling (Vulkan)</b>.",
+                fixIt = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
+                    if (settings == null)
+                    {
+                        Debug.LogWarningFormat(
+                            "Autofix failed with missing OpenXRSettings on {0} platform.",
+                            targetGroup);
+                        return;
+                    }
+
+                    var foveation = GraphicsSettings.defaultRenderPipeline == null ?
+                      settings.GetFeature<XRFoveationFeature>() as OpenXRFeature :
+                      settings.GetFeature<FoveatedRenderingFeature>();
+                    if (foveation == null)
+                    {
+                        Debug.LogWarningFormat(
+                            "Autofix failed with missing Foveation feature on {0} platform.",
+                            targetGroup);
+                        return;
+                    }
+
+                    foveation.enabled = true;
+                },
+                error = true
+            });
+        }
+#endif // UNITY_EDITOR
     }
 }

@@ -2,16 +2,19 @@
 
 The Android XR Extensions for Unity provide APIs for the following:
 
-1.  Anchor.
-2.  Object Tracking.
-3.  Passthrough Composition Layer.
-4.  Plane.
-5.  Session Management.
-6.  Face Tracking.
-7.  Unbounded Reference Space.
-8.  Environment Blend Mode.
-9.  Foveation (Legacy).
-10. Mouse Interaction Profile.
+1.  Session Management: required for all Android XR Extensions' features.
+2.  Environment Blend Mode.
+3.  Object Tracking.
+4.  Face Tracking.
+5.  Marker Tracking.
+6.  QR Code Tracking.
+7.  Hand Mesh.
+8.  Scene Meshing.
+9.  Unbounded Reference Space.
+10. Passthrough Composition Layer.
+11. Mouse Interaction Profile.
+12. Body Tracking *(Experimental)*.
+13. System State *(Experimental)*.
 
 ## How to use
 
@@ -22,8 +25,11 @@ The Android XR Extensions for Unity provide APIs for the following:
     then check **OpenXR** as the plug-in provider at OpenXR runtime.
 3.  Under **XR Plug-in Management > OpenXR**, switch to **Android** tab, select
     **Android XR (Extensions)** feature group, or select individual features
-    that your want to use at OpenXR runtime. Some of them might be incompatible
-    with another, refer to the *README.md* from each sample for more details.
+    that your want to use at OpenXR runtime.
+
+    NOTE: Some of them might have additional requirements or configuration,
+    refer to the *README.md* from each sample for more details.
+
 4.  Under **XR Plug-in Management > Project Validation**, fix all **OpenXR**
     related issues. This will help to configure your **Player Settings**.
 5.  In **Player > Android > Identification > Minimal API Level**, select 24 or

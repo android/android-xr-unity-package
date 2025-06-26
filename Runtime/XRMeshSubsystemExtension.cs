@@ -25,6 +25,26 @@ namespace Google.XR.Extensions
     using UnityEngine.XR;
 
     /// <summary>
+    /// An enum representing the scene mesh tracking state.
+    /// </summary>
+    public enum XRSceneMeshTrackingState
+    {
+        /// <summary> The internal tracker is not yet ready to provide mesh data. </summary>
+        INITIALIZING = 0,
+
+        /// <summary> The internal tracker is actively tracking. </summary>
+        TRACKING = 1,
+
+        /// <summary> The internal tracker is waiting for valid measurements to integrate since the
+        /// last mesh update. </summary>
+        WAITING = 2,
+
+        /// <summary> The internal tracker has not received valid measurements for multiple cycles
+        /// and is in an error state. </summary>
+        ERROR = 3,
+    }
+
+    /// <summary>
     /// An enum representing the vertex semantics of a scene mesh.
     /// </summary>
     public enum XRMeshSemantics : byte
@@ -53,24 +73,44 @@ namespace Google.XR.Extensions
         /// <summary>
         /// Checks if the given mesh id is a scene mesh id.
         /// </summary>
+        /// <param name="subsystem">The XRMeshSubsystem to use.</param>
         /// <param name="meshId">The mesh id to check.</param>
         /// <returns>True if the mesh id is a scene mesh id, false otherwise.</returns>
-        public static bool IsSceneMeshId(MeshId meshId)
+        public static bool IsSceneMeshId(this XRMeshSubsystem subsystem, MeshId meshId)
         {
+            if (!subsystem.running)
+            {
+                return false;
+            }
+
             return XRSceneMeshingApi.IsSceneMeshId(ref meshId);
         }
 
         /// <summary>
         /// Gets the vertex semantics of the given mesh id.
         /// </summary>
+        /// <param name="subsystem">The XRMeshSubsystem to use.</param>
         /// <param name="meshId">The mesh id to get the vertex semantics of.</param>
         /// <returns>
         /// The vertex semantics of the mesh id as an array of <c>XRMeshSemantics</c>enums. If the
         /// mesh id is invalid or if the semantics could not be retrieved, the function will return
         /// null.
         /// </returns>
-        public static XRMeshSemantics[] GetMeshSemantics(MeshId meshId)
+        public static XRMeshSemantics[] GetMeshSemantics(
+            this XRMeshSubsystem subsystem, MeshId meshId)
         {
+            if (!subsystem.running)
+            {
+                UnityEngine.Debug.LogError("XRMeshSubsystem is not running");
+                return null;
+            }
+
+            if (subsystem.GetSceneMeshTrackingState() != XRSceneMeshTrackingState.TRACKING)
+            {
+                UnityEngine.Debug.LogError("Scene mesh is not tracking");
+                return null;
+            }
+
             XRMeshSemantics[] result = null;
             uint count = 0;
             IntPtr semantics = XRSceneMeshingApi.GetMeshSemantics(ref meshId, ref count);
@@ -83,6 +123,19 @@ namespace Google.XR.Extensions
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Get the current tracking state of the scene meshing.
+        /// </summary>
+        /// <param name="subsystem">The XRMeshSubsystem to use.</param>
+        /// <returns>
+        /// The scene mesh tracking state as a <c>XRSceneMeshTrackingState</c>enums.
+        /// </returns>
+        public static XRSceneMeshTrackingState GetSceneMeshTrackingState(
+            this XRMeshSubsystem subsystem)
+        {
+            return XRSceneMeshingApi.GetSceneMeshTrackingState();
         }
     }
 }

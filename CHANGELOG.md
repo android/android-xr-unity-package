@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-06-27
+
+### Editor version and package compatibility
+
+  * This version of the package requires minimal Unity Editor version `6000.1.0b12`. You can install the official **Unity 6.1** (e.g. `6000.1.0f1` or newer) from the Unity Hub.
+  * Verified compatible packages:
+    * Unity OpenXR Android XR (`com.unity.xr.androidxr-openxr`) 1.0.0-pre.3
+
+### Known issues
+  * None
+
+### Added
+  * None
+
+### Changed
+  * **Subsampling (Vulkan)** is now enabled by default in **Android XR (Extensions): Session Management**. To use it at runtime:
+    * Foveation feature is required for **Subsampling (Vulkan)**. Otherwise, the application may result in rendering faulty.
+    * For projects with Universal Render Pipeline (URP), select **Foveated Rendering** featurem. Check [Foveated rendering in OpenXR](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.12/manual/features/foveatedrendering.html) for more details.
+    * For projects with Built-in Render Pipeline (BiRP), select **Foveation (Legacy)** feature for legacy support.
+  * **Scene Meshing** is promoted from experimental feature to release feature.
+
+### Deprecated
+  * None
+
+### Removed
+  * None
+
+### Fixed
+  * Fixed [issue#7](https://github.com/android/android-xr-unity-package/issues/7): Compile Errors with Google.XR.Extensions on Non-Android Platforms.
+  * Fixed enum value and comments in `XRFaceParameterIndices`.
+
 ## [1.0.0] - 2025-05-07
 
 ### Editor version and package compatibility

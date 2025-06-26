@@ -11,9 +11,6 @@ To enable the sample:
     **OpenXR**.
 *   Switch to the **Android** tab.
 *   Select **Android XR (Extensions): Session Management**.
-    *   Known issue: Vulkan Subsampling now causes offset of image tracking.
-        To disable it, under the setting menu of **Android XR (Extensions)
-        Session Management**, unselect **Subsampling (Vulkan)**.
 *   Select **Android XR (Extensions): Image Tracking (QR Code)**.
 *   Select **Android XR (Extensions): Image Tracking (Marker)**.
 *   Select **Environment Blend Mode** and open **Setting** menu, set **Request

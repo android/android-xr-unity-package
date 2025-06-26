@@ -31,7 +31,7 @@ namespace Google.XR.Extensions
 #endif  // UNITY_EDITOR
 
     /// <summary>
-    /// This feature provides access to the <c>XR_ANDROIDX_scene_meshing</c> extension.
+    /// This feature provides access to the <c>XR_ANDROID_scene_meshing</c> extension.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(
@@ -50,7 +50,7 @@ namespace Google.XR.Extensions
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
         /// validation errors and expected fixes.
         /// </summary>
-        public const string UiName = "Android XR (Extensions): Scene Meshing (Experimental*)";
+        public const string UiName = "Android XR (Extensions): Scene Meshing";
 
         /// <summary>
         /// The feature ID string.
@@ -60,7 +60,7 @@ namespace Google.XR.Extensions
         /// <summary>
         /// The required OpenXR extension.
         /// </summary>
-        public const string ExtensionString = "XR_ANDROIDX_scene_meshing";
+        public const string ExtensionString = "XR_ANDROID_scene_meshing";
 
         /// <summary>
         /// Runtime permission required to enable scene understanding fine.
@@ -73,7 +73,7 @@ namespace Google.XR.Extensions
         /// <summary>
         /// Gets if the required OpenXR extension is enabled.
         /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
-        /// whether the <c>XR_ANDROIDX_scene_meshing</c> extensions is
+        /// whether the <c>XR_ANDROID_scene_meshing</c> extensions is
         /// available on current device.
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
@@ -108,7 +108,7 @@ namespace Google.XR.Extensions
         /// <inheritdoc/>
         protected override void OnSubsystemStart()
         {
-            XRSceneMeshingApi.Enable();
+            XRSceneMeshingApi.SetEnabled(true);
             //// Currently, this feature is not compatible with ARMeshManager due to ARMeshManager
             //// creating and destroying meshes very fast. Expect to use XRMeshSubsystem directly
             //// and rely on OpenXRFeature's subsystem callbacks to manage XRMeshSubsystem's
@@ -119,7 +119,7 @@ namespace Google.XR.Extensions
         /// <inheritdoc/>
         protected override void OnSubsystemStop()
         {
-            XRSceneMeshingApi.Disable();
+            XRSceneMeshingApi.SetEnabled(false);
             //// Currently, this feature is not compatible with ARMeshManager due to ARMeshManager
             //// creating and destroying meshes very fast. Expect to use XRMeshSubsystem directly
             //// and rely on OpenXRFeature's subsystem callbacks to manage XRMeshSubsystem's
@@ -132,20 +132,5 @@ namespace Google.XR.Extensions
         {
             DestroySubsystem<XRMeshSubsystem>();
         }
-
-#if UNITY_EDITOR
-        /// <inheritdoc/>
-        protected override void GetValidationChecks(
-            List<ValidationRule> results, BuildTargetGroup targetGroup)
-        {
-            if (targetGroup != BuildTargetGroup.Android)
-            {
-                return;
-            }
-
-            results.Add(AndroidXRFeatureUtils.GetExperimentalFeatureValidationCheck(
-                this, UiName, targetGroup));
-        }
-#endif // UNITY_EDITOR
     }
 }

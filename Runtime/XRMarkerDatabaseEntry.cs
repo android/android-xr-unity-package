@@ -78,7 +78,7 @@ namespace Google.XR.Extensions
         /// When <paramref name="allMarkers"/> is not set, specify the marker id from the
         /// <paramref name="dictionary"/>.</param>
         /// <param name="physicalEdge">
-        /// When <paramref name="allMarkers"/> is not set, specify the physial Edge (meters).
+        /// When <paramref name="allMarkers"/> is not set, specify the physical Edge (meters).
         /// </param>
         public XRMarkerDatabaseEntry(
             XRMarkerDictionary dictionary, bool allMarkers, uint markerId, float physicalEdge)

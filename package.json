@@ -1,7 +1,7 @@
 {
     "name": "com.google.xr.extensions",
     "displayName": "Android XR Extensions for Unity",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "unity": "6000.1",
     "unityRelease": "0b12",
     "description": "Android XR Extensions package. This package provides additional XR features that are not yet supported by Unity OpenXR Android XR and OpenXR Plugin packages.",

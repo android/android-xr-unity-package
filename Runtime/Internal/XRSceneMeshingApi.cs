@@ -25,14 +25,9 @@ namespace Google.XR.Extensions.Internal
 
     internal class XRSceneMeshingApi
     {
-        public static bool Enable()
+        public static void SetEnabled(bool enabled)
         {
-            return ExternalApi.XrSceneMeshing_enableSceneMeshing(XRInstanceManagerApi.GetIntPtr());
-        }
-
-        public static bool Disable()
-        {
-            return ExternalApi.XrSceneMeshing_disableSceneMeshing(XRInstanceManagerApi.GetIntPtr());
+            ExternalApi.XrSceneMeshing_setEnabled(XRInstanceManagerApi.GetIntPtr(), enabled);
         }
 
         public static bool IsSceneMeshId(ref MeshId mesh_id)
@@ -47,19 +42,27 @@ namespace Google.XR.Extensions.Internal
                 XRInstanceManagerApi.GetIntPtr(), ref mesh_id, ref count);
         }
 
+        public static XRSceneMeshTrackingState GetSceneMeshTrackingState()
+        {
+            XRSceneMeshTrackingState state = XRSceneMeshTrackingState.ERROR;
+            ExternalApi.XrSceneMeshing_getSceneMeshTrackingState(
+                XRInstanceManagerApi.GetIntPtr(), ref state);
+            return state;
+        }
+
         private struct ExternalApi
         {
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrSceneMeshing_enableSceneMeshing(IntPtr manager);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrSceneMeshing_disableSceneMeshing(IntPtr manager);
+            public static extern bool XrSceneMeshing_setEnabled(IntPtr manager, bool enabled);
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool XrSceneMeshing_isSceneMeshId(
                 IntPtr manager, ref MeshId mesh_id);
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern IntPtr XrSceneMeshing_getMeshSemantics(
                 IntPtr manager, ref MeshId mesh_id, ref uint count);
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern void XrSceneMeshing_getSceneMeshTrackingState(
+                IntPtr manager, ref XRSceneMeshTrackingState out_state);
         }
     }
 }

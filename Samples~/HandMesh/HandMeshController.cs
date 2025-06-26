@@ -20,7 +20,9 @@
 namespace Google.XR.Extensions.Samples.HandMesh
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using Unity.XR.CoreUtils;
     using UnityEngine;
     using UnityEngine.XR;
     using UnityEngine.XR.OpenXR;
@@ -30,6 +32,7 @@ namespace Google.XR.Extensions.Samples.HandMesh
     /// Used to test the hand mesh extension.
     /// </summary>
     [RequireComponent(typeof(AndroidXRPermissionUtil))]
+    [RequireComponent(typeof(XROrigin))]
     public class HandMeshController : MonoBehaviour
     {
         /// <summary>
@@ -51,7 +54,7 @@ namespace Google.XR.Extensions.Samples.HandMesh
         public MeshFilter RightHand;
 
         private XRMeshSubsystem _meshSubsystem;
-        private MeshFilter[] _hands;
+        private HandMeshData[] _hands;
 
         private void Start()
         {
@@ -63,6 +66,25 @@ namespace Google.XR.Extensions.Samples.HandMesh
                 return;
             }
 
+            _hands = new HandMeshData[2]
+            {
+                new HandMeshData { Filter = LeftHand },
+                new HandMeshData { Filter = RightHand }
+            };
+
+            foreach (HandMeshData data in _hands)
+            {
+                // Generated meshes should be children of XROrigin
+                data.Filter.transform.SetParent(transform);
+            }
+
+            StartCoroutine(InitSubsystem());
+        }
+
+        private IEnumerator InitSubsystem()
+        {
+            yield return new WaitUntil(PermissionUtil.AllPermissionGranted);
+
             List<XRMeshSubsystem> meshSubsystems = new List<XRMeshSubsystem>();
             SubsystemManager.GetSubsystems(meshSubsystems);
             if (meshSubsystems.Count != 1)
@@ -70,11 +92,12 @@ namespace Google.XR.Extensions.Samples.HandMesh
                 Debug.LogError("Unexpected number of mesh subsystems."
                     + "Expected 1, got {meshSubsystems.Count}.");
                 enabled = false;
-                return;
+                yield break;
             }
 
             _meshSubsystem = meshSubsystems[0];
-            _hands = new MeshFilter[2] { LeftHand, RightHand };
+            _meshSubsystem.Stop();
+            _meshSubsystem.Start();
         }
 
         private void Update()
@@ -84,7 +107,7 @@ namespace Google.XR.Extensions.Samples.HandMesh
                 return;
             }
 
-            if (!_meshSubsystem.running)
+            if (_meshSubsystem == null || !_meshSubsystem.running)
             {
                 return;
             }
@@ -95,20 +118,48 @@ namespace Google.XR.Extensions.Samples.HandMesh
                 int index = 0;
                 foreach (MeshInfo info in meshInfos)
                 {
-                    if (XRMeshSubsystemExtension.IsSceneMeshId(info.MeshId))
+                    if (_meshSubsystem.IsSceneMeshId(info.MeshId))
                     {
                         continue;
                     }
                     if (info.ChangeState == MeshChangeState.Added
                         || info.ChangeState == MeshChangeState.Updated)
                     {
-                        Mesh hand = _hands[index].mesh;
-                        _meshSubsystem.GenerateMeshAsync(info.MeshId, hand,
-                            null, MeshVertexAttributes.Normals, result => { });
+                        _hands[index].Id = info.MeshId;
+                        Mesh hand = _hands[index].Filter.mesh;
+                        _meshSubsystem.GenerateMeshAsync(info.MeshId, hand, null,
+                            MeshVertexAttributes.Normals, OnMeshGenerated,
+                            MeshGenerationOptions.ConsumeTransform);
                         index++;
                     }
                 }
             }
+        }
+
+        private void OnMeshGenerated(MeshGenerationResult result)
+        {
+            if (result.Status == MeshGenerationStatus.Success)
+            {
+                foreach (HandMeshData data in _hands)
+                {
+                    if (result.MeshId == data.Id)
+                    {
+                        Transform handTransform = data.Filter.transform;
+
+                        handTransform.localPosition = result.Position;
+                        handTransform.localRotation = result.Rotation;
+                        handTransform.localScale = result.Scale;
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        private struct HandMeshData
+        {
+            public MeshId Id;
+            public MeshFilter Filter;
         }
     }
 }

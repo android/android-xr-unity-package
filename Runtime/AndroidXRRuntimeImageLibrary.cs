@@ -27,7 +27,7 @@ namespace Google.XR.Extensions
 
     /// <summary>
     /// Constructs a <see cref="RuntimeReferenceImageLibrary"/> which stores reference images
-    /// for QR Code trackng at Android XR devices.
+    /// for Marker Tracking and QR Code trackng at Android XR devices.
     /// </summary>
     [SuppressMessage(
         "UnityRules.UnityStyleRules", "US1109:PublicPropertiesMustBeUpperCamelCase",
@@ -235,9 +235,9 @@ namespace Google.XR.Extensions
 #endif // UNITY_EDITOR
 
         /// <summary>
-        /// Determine if the given refernce image is a QR code reference.
+        /// Determine if the given reference image is a QR code reference.
         /// </summary>
-        /// <param name="image">The refernce image with QR code name.</param>
+        /// <param name="image">The reference image with QR code name.</param>
         /// <returns>
         /// <c>true</c>, if it's a valid QR code reference.
         /// </returns>
@@ -247,9 +247,9 @@ namespace Google.XR.Extensions
         }
 
         /// <summary>
-        /// Determine if the given refernce image is a marker reference.
+        /// Determine if the given reference image is a marker reference.
         /// </summary>
-        /// <param name="image">The refernce image with marker name or generated from
+        /// <param name="image">The reference image with marker name or generated from
         /// <see cref="XRMarkerDatabase"/>.</param>
         /// <returns>
         /// <c>true</c>, if it's a valid marker reference.
