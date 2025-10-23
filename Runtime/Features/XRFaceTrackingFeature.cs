@@ -30,13 +30,19 @@ namespace Google.XR.Extensions
     using UnityEditor.XR.OpenXR.Features;
 #endif
 
+#if UNITY_OPEN_XR_ANDROID_XR_1_1_0
+    using ARFaceFeature = UnityEngine.XR.OpenXR.Features.Android.ARFaceFeature;
+#endif
+
     /// <summary>
     /// This <c><see cref="OpenXRInteractionFeature"/></c> configures new extension
     /// <c>XR_ANDROID_face_tracking</c> and provides face blendshape parameter vectors at runtime.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
-        BuildTargetGroups = new[] { BuildTargetGroup.Android },
+        BuildTargetGroups = new[] {
+            BuildTargetGroup.Android,
+        },
         Company = "Google",
         OpenxrExtensionStrings = FaceTrackingExtensionString,
         Desc = "Allow user face expressions to influence an avatar.",
@@ -91,6 +97,9 @@ namespace Google.XR.Extensions
 
             if (!_faceTrackingExtensionEnabled.Value)
             {
+                Debug.LogErrorFormat(
+                    "{0} is not supported by current runtime, failed to enable {1}.",
+                    FaceTrackingExtensionString, UiName);
                 return false;
             }
 
@@ -103,7 +112,40 @@ namespace Google.XR.Extensions
         {
             XRInstanceManagerApi.Unregister(ApiXrFeature.FaceTracking);
         }
+#if UNITY_EDITOR
+        /// <inheritdoc/>
+        protected override void GetValidationChecks(
+            List<ValidationRule> results, BuildTargetGroup targetGroup)
+        {
+            if (targetGroup != BuildTargetGroup.Android)
+            {
+                return;
+            }
+#if UNITY_OPEN_XR_ANDROID_XR_1_1_0
+            const string arFaceFeatureName = "Android XR: AR Face";
+            results.Add(new ValidationRule(this)
+            {
+                message = string.Format(
+                    "{0} is duplicate with this feature. " +
+                    "To integrate with AR Foundation's ARFaceManager, please use {0}. " +
+                    "For custom component and calibration state, please use {1}.",
+                    arFaceFeatureName, UiName),
+                checkPredicate = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
+                    if (settings == null)
+                    {
+                        return false;
+                    }
 
+                    var arFaceFeature = settings.GetFeature<ARFaceFeature>();
+                    return arFaceFeature == null || !arFaceFeature.enabled;
+                },
+                error = false,
+            });
+#endif // UNITY_OPEN_XR_ANDROID_XR_1_1_0
+        }
+#endif // UNITY_EDITOR
         private void OnValidate()
         {
             if (enabled)

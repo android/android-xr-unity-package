@@ -36,6 +36,8 @@ namespace Google.XR.Extensions.Internal
         Reserved4 = 19,
         BodyTracking = 20,
         SystemState = 21,
+        Reserved7 = 22,
+        Reserved8 = 23,
     }
 
     internal class XRInstanceManagerApi

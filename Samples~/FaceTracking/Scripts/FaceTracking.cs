@@ -162,19 +162,21 @@ namespace Google.XR.Extensions.Samples.FaceTracking
             DebugTextBottomCenter.alignment = TextAlignment.Center;
             yield return new WaitForSeconds(2);
 
-            DebugTextBottomCenter.text = string.Empty;
             if (_faceManager.IsFaceCalibrated())
             {
                 DebugTextBottomCenter.color = Color.green;
                 DebugTextBottomCenter.text = "Face Is Calibrated: True";
                 yield return new WaitForSeconds(2);
+                DebugTextBottomCenter.text = string.Empty;
             }
             else
             {
-                DebugTextBottomCenter.color = Color.red;
-                DebugTextBottomCenter.text = "Face Is Calibrated: False"
-                + "\nFace calibration is required."
-                + "\nPlease exit the app, calibrate face in Settings, and relaunch.";
+                DebugTextBottomCenter.color = Color.magenta;
+                DebugTextBottomCenter.text = string.Join("\n",
+                                                        "Face Is Calibrated: False",
+                                                        "Face calibration is required.",
+                                                        "Please exit the app, calibrate",
+                                                        "face in Settings, and relaunch.");
                 yield return null;
             }
         }

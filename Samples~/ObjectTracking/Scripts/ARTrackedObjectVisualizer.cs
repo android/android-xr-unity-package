@@ -1,3 +1,4 @@
+//-----------------------------------------------------------------------
 // <copyright file="ARTrackedObjectVisualizer.cs" company="Google LLC">
 //
 // Copyright 2024 Google LLC

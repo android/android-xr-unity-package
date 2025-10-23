@@ -22,16 +22,16 @@ namespace Google.XR.Extensions.Internal
     internal static class ApiConstants
     {
         public const string LogTag = "GoogleAndroidXRExtensions";
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_EDITOR_WIN
+        // Support scenarios:
+        // 1. Targeting Android platform and running in runtime.
+        // 2. Running in Windows Editor.
         public const string OpenXRAndroidApi = "unity_openxr_android";
-#else
-        public const string OpenXRAndroidApi = "NOT_AVAILABLE";
-#endif // UNITY_ANDROID
-#if UNITY_ANDROID && !UNITY_EDITOR
         public const bool AndroidPlatform = true;
 #else
+        public const string OpenXRAndroidApi = "NOT_AVAILABLE";
         public const bool AndroidPlatform = false;
-#endif // UNITY_ANDROID && !UNITY_EDITOR
+#endif // UNITY_ANDROID || UNITY_EDITOR_WIN
         public const string MeshingProviderDescriptorId = "AndroidXRMeshProvider";
 
         /// <summary>

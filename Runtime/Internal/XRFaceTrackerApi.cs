@@ -54,9 +54,13 @@ namespace Google.XR.Extensions.Internal
             ExternalApi.XrFaceTracking_setTrackingEnabled(XRInstanceManagerApi.GetIntPtr(), enable);
         }
 
-        public static bool IsFaceCalibrated()
+        // Returns true if the we successfully queried the calibration state.
+        // Caller should check the return value and the output parameter to determine if the face
+        // is calibrated.
+        public static bool IsFaceCalibrated(ref bool isCalibrated)
         {
-            return ExternalApi.XrFaceTracking_isFaceCalibrated(XRInstanceManagerApi.GetIntPtr());
+            return ExternalApi.XrFaceTracking_isFaceCalibrated(XRInstanceManagerApi.GetIntPtr(),
+                ref isCalibrated);
         }
 
         private struct ExternalApi
@@ -77,7 +81,8 @@ namespace Google.XR.Extensions.Internal
                 IntPtr manager, bool enable);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrFaceTracking_isFaceCalibrated(IntPtr manager);
+            public static extern bool XrFaceTracking_isFaceCalibrated(IntPtr manager,
+                ref bool out_is_calibrated);
         }
     }
 }

@@ -32,6 +32,10 @@ namespace Google.XR.Extensions
     using UnityEditor.XR.OpenXR.Features;
 #endif
 
+#if UNITY_OPEN_XR_ANDROID_XR_1_1_0
+    using ARBoundingBoxFeature = UnityEngine.XR.OpenXR.Features.Android.ARBoundingBoxFeature;
+#endif
+
     /// <summary>
     /// This <c><see cref="OpenXRInteractionFeature"/></c> configures Android XR extensions
     /// <c>XR_ANDROID_trackables</c> and <c>XR_ANDROID_trackables_object</c> at runtime and provides
@@ -42,7 +46,9 @@ namespace Google.XR.Extensions
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
-        BuildTargetGroups = new[] { BuildTargetGroup.Android },
+        BuildTargetGroups = new[] {
+            BuildTargetGroup.Android,
+        },
         Company = "Google",
         OpenxrExtensionStrings = ExtensionStrings,
         Desc = "Enable Android XR Object Tracking at runtime. " +
@@ -173,5 +179,40 @@ namespace Google.XR.Extensions
                 _subsystemInstance = null;
             }
         }
+
+#if UNITY_EDITOR
+        /// <inheritdoc/>
+        protected override void GetValidationChecks(
+            List<ValidationRule> results, BuildTargetGroup targetGroup)
+        {
+            if (targetGroup != BuildTargetGroup.Android)
+            {
+                return;
+            }
+#if UNITY_OPEN_XR_ANDROID_XR_1_1_0
+            const string arBoundingBoxFeatureName = "Android XR: AR Bounding Box";
+            results.Add(new ValidationRule(this)
+            {
+                message = string.Format(
+                    "{0} is duplicate with this feature. " +
+                    "To integrate with ARBoundingBoxManager, please use {0}. " +
+                    "To integrate with ARTrackedObjectManager, please use {1}.",
+                    arBoundingBoxFeatureName, UiName),
+                checkPredicate = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
+                    if (settings == null)
+                    {
+                        return false;
+                    }
+
+                    var arBoundingBoxFeature = settings.GetFeature<ARBoundingBoxFeature>();
+                    return arBoundingBoxFeature == null || !arBoundingBoxFeature.enabled;
+                },
+                error = false,
+            });
+#endif // UNITY_OPEN_XR_ANDROID_XR_1_1_0
+        }
+#endif // UNITY_EDITOR
     }
 }

@@ -40,22 +40,14 @@ namespace Google.XR.Extensions.Editor.Internal
             "<b>Foveation (Legacy)</b> for legacy support. " +
             "Otherwise, the application will result in rendering faulty.";
 
-        private const string _spacewarpFieldName = "_spacewarp";
-        private const string _spacewarpTooltip =
-            "Enable URP Spacewarp (Vulkan) to unlock extra computation power for suitable content.";
-
         private static readonly GUIContent _immersiveXRLabel = new GUIContent(
             "Immersive XR", _immersiveXRTooltip);
 
         private static readonly GUIContent _subsamplingLabel = new GUIContent(
             "Subsampling (Vulkan)", _subsamplingTooltip);
 
-        private static readonly GUIContent _spacewarpLabel = new GUIContent(
-            "URP SpaceWarp (Vulkan)", _spacewarpTooltip);
-
         private SerializedProperty _immersiveXR;
         private SerializedProperty _subsampling;
-        private SerializedProperty _spacewarp;
 
         /// <inheritdoc/>
         public override void OnInspectorGUI()
@@ -67,7 +59,6 @@ namespace Google.XR.Extensions.Editor.Internal
                 _immersiveXRLabel, _immersiveXR.boolValue);
             _subsampling.boolValue = EditorGUILayout.Toggle(
                 _subsamplingLabel, _subsampling.boolValue);
-            _spacewarp.boolValue = EditorGUILayout.Toggle(_spacewarpLabel, _spacewarp.boolValue);
             serializedObject.ApplyModifiedProperties();
 
             EditorGUIUtility.labelWidth = 0f;
@@ -77,7 +68,6 @@ namespace Google.XR.Extensions.Editor.Internal
         {
             _immersiveXR = serializedObject.FindProperty(_immersiveXRFieldName);
             _subsampling = serializedObject.FindProperty(_subsamplingFieldName);
-            _spacewarp = serializedObject.FindProperty(_spacewarpFieldName);
         }
     }
 }

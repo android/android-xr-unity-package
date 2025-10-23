@@ -12,7 +12,6 @@ To enable this sample:
 *   Select **Android XR (Extensions): Session Management**.
 *   Select **Android XR (Extensions): Hand Mesh**.
 *   Select **Environment Blend Mode**, open the settings editor for the feature
-    and select **Override Blend Mode** and change the **Request Mode** to
-    **Alpha Blend**.
+    and set the **Request Mode** to **Alpha Blend**.
 *   Under **XR Plug-in Management > Project Validation**, fix all **OpenXR**
     related issues. This will help to configure your **Player Settings**.

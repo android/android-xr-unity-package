@@ -20,6 +20,8 @@
 namespace Google.XR.Extensions
 {
     using System;
+    using System.Collections.Generic;
+    using System.Threading;
     using Google.XR.Extensions.Internal;
     using UnityEngine;
     using UnityEngine.Android;
@@ -47,7 +49,8 @@ namespace Google.XR.Extensions
         /// <returns>Returns true if calibrated, false otherwise.</returns>
         public bool IsFaceCalibrated()
         {
-            return XRFaceTrackerApi.IsFaceCalibrated();
+            bool isCalibrated = false;
+            return XRFaceTrackerApi.IsFaceCalibrated(ref isCalibrated) && isCalibrated;
         }
 
         private void Awake()

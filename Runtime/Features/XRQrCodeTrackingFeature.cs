@@ -112,7 +112,7 @@ namespace Google.XR.Extensions
                 return false;
             }
 
-            string[] extensions = ExtensionStrings.Split(" ");
+            string[] extensions = ExtensionStrings.Split();
             _extensionEnabled = false;
             foreach (string extension in extensions)
             {

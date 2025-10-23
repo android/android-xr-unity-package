@@ -20,9 +20,18 @@
 namespace Google.XR.Extensions
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Google.XR.Extensions.Internal;
     using UnityEngine;
+    using UnityEngine.Rendering;
+#if UNITY_URP
+    using UnityEngine.Rendering.Universal;
+#endif
+    using UnityEngine.XR.OpenXR;
     using UnityEngine.XR.OpenXR.Features;
+#if UNITY_OPEN_XR_ANDROID_XR
+    using UnityEngine.XR.OpenXR.Features.Android;
+#endif
     using UnityEngine.XR.OpenXR.NativeTypes;
 
 #if UNITY_EDITOR
@@ -37,7 +46,9 @@ namespace Google.XR.Extensions
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
-        BuildTargetGroups = new[] { BuildTargetGroup.Android },
+        BuildTargetGroups = new[] {
+            BuildTargetGroup.Android,
+        },
         Company = "Google",
         Desc = "Configure environment blend mode at runtime.",
         Version = "1.0.0",
@@ -143,5 +154,121 @@ namespace Google.XR.Extensions
             // until we have a view configuration
             _systemId = xrSystem;
         }
+
+#if UNITY_EDITOR
+        /// <inheritdoc/>
+        protected override void GetValidationChecks(
+            List<ValidationRule> results, BuildTargetGroup targetGroup)
+        {
+            if (targetGroup != BuildTargetGroup.Android ||
+                RequestedEnvironmentBlendMode != XrEnvironmentBlendMode.AlphaBlend)
+            {
+                return;
+            }
+
+#if UNITY_OPEN_XR_ANDROID_XR
+            var arCameraEnabled = new ValidationRule(this)
+            {
+                message = "Enabling <b>" + UiName + "</b> is unnecessary with <b>Android XR: AR Camera</b>.",
+                checkPredicate = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
+                    if (settings == null)
+                    {
+                        return false;
+                    }
+
+                    var arCamera = settings.GetFeature<ARCameraFeature>() as OpenXRFeature;
+                    return arCamera == null || !arCamera.enabled;
+                },
+                fixItMessage = "Disable <b>" + UiName + "</b>",
+                fixIt = () =>
+                {
+                    enabled = false;
+                },
+                error = false
+            };
+            results.Add(arCameraEnabled);
+
+            if (!arCameraEnabled.checkPredicate())
+            {
+                return;
+            }
+#endif // UNITY_OPEN_XR_ANDROID_XR
+
+#if UNITY_URP
+            var urpAsset = GraphicsSettings.defaultRenderPipeline as UniversalRenderPipelineAsset;
+
+            if (urpAsset == null)
+            {
+                return;
+            }
+
+            var rendererExistsCheck = new ValidationRule(this)
+            {
+                message = "The active URP Asset must have at least one Universal Renderer in its "
+                    + "Renderer List.",
+                error = true,
+                checkPredicate = () =>
+                {
+                    return urpAsset.rendererDataList.ToArray()
+                           .OfType<UniversalRendererData>().Any();
+                }
+            };
+            results.Add(rendererExistsCheck);
+
+            var featureEnabledCheck = new ValidationRule(this)
+            {
+                message = "The 'TransparentBackgroundRendererFeature' must be added and enabled in "
+                    + "at least one Universal Renderer.",
+                error = true,
+                checkPredicate = () =>
+                {
+                    var universalRenderers = urpAsset.rendererDataList.ToArray()
+                        .OfType<UniversalRendererData>().ToList();
+
+                    if (!universalRenderers.Any())
+                        return true;
+
+                    return universalRenderers.Any(rendererData =>
+                        rendererData.rendererFeatures.Any(feature =>
+                            feature is TransparentBackgroundRendererFeature && feature.isActive));
+                },
+                fixItMessage = "Add and Enable 'TransparentBackgroundRendererFeature'",
+                fixIt = () =>
+                {
+                    var rendererData = urpAsset.rendererDataList.ToArray()
+                        .OfType<UniversalRendererData>().FirstOrDefault();
+
+                    if (rendererData == null)
+                    {
+                        Debug.LogError("Could not find a Universal Renderer Data asset to modify.");
+                        return;
+                    }
+
+                    var existingFeature = rendererData.rendererFeatures
+                        .OfType<TransparentBackgroundRendererFeature>().FirstOrDefault();
+
+                    if (existingFeature != null)
+                    {
+                        existingFeature.SetActive(true);
+                    }
+                    else
+                    {
+                        var newFeature = CreateInstance<TransparentBackgroundRendererFeature>();
+                        newFeature.name = "TransparentBackgroundRendererFeature";
+                        rendererData.rendererFeatures.Add(newFeature);
+                        AssetDatabase.AddObjectToAsset(newFeature, rendererData);
+                    }
+
+                    EditorUtility.SetDirty(rendererData);
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                }
+            };
+            results.Add(featureEnabledCheck);
+#endif // UNITY_URP
+        }
+#endif // UNITY_EDITOR
     }
 }

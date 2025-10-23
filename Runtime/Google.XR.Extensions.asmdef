@@ -10,7 +10,9 @@
         "Unity.XR.CoreUtils",
         "Unity.InputSystem",
         "GUID:e7613e527d035461da6942ba7283ee2d",
-        "Unity.XR.CompositionLayers"
+        "Unity.XR.CompositionLayers",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [
         "Android",
@@ -32,9 +34,19 @@
             "define": "UNITY_OPEN_XR_ANDROID_XR"
         },
         {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "1.0.9",
+            "define": "UNITY_OPEN_XR_ANDROID_XR_1_1_0"
+        },
+        {
             "name": "com.unity.xr.compositionlayers",
             "expression": "1.0.0",
             "define": "XR_COMPOSITION_LAYERS"
+        },
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "17.1.0",
+            "define": "UNITY_URP"
         }
     ],
     "noEngineReferences": false

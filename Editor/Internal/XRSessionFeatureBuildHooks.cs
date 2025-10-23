@@ -240,11 +240,6 @@ namespace Google.XR.Extensions.Editor.Internal
                 + needsFragmentDensityMapEnabled);
             builder.SetBootConfigBoolean("xr-vulkan-extension-fragment-density-map-enabled",
                 needsFragmentDensityMapEnabled);
-
-            bool spacewarpEnabled = sessionFeature != null &&
-                sessionFeature.enabled && sessionFeature.SpaceWarp;
-            Debug.LogFormat("SetBootConfigBoolean: xr-meta-enabled=" + spacewarpEnabled);
-            builder.SetBootConfigBoolean("xr-meta-enabled", spacewarpEnabled);
         }
 
         /// <inheritdoc/>
@@ -354,7 +349,8 @@ namespace Google.XR.Extensions.Editor.Internal
             XRSystemStateFeature systemState =
                 AndroidXRBuildUtils.GetActiveFeature<XRSystemStateFeature>();
             systemStateInUse = systemState != null && systemState.enabled;
-            return bodyTrackingInUse || systemStateInUse;
+            bool advancedLightingInUse = false;
+            return bodyTrackingInUse || systemStateInUse || advancedLightingInUse;
         }
     }
 }

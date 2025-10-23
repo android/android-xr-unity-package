@@ -230,7 +230,7 @@ namespace Google.XR.Extensions
                 error = true
             });
 #else
-            const string packageName = "XR Composition Layers (v1.0.0)";
+            const string packageName = "XR Composition Layers (v2.1.0)";
             results.Add(new ValidationRule(this)
             {
                 message = string.Format("{0} package is required for this feature.", packageName),
@@ -240,7 +240,7 @@ namespace Google.XR.Extensions
                 },
                 fixIt = () =>
                 {
-                    const string packageIdentifier = "com.unity.xr.compositionlayers@1.0.0";
+                    const string packageIdentifier = "com.unity.xr.compositionlayers@2.1.0";
                     if (_addRequest == null)
                     {
                         _addRequest = UnityEditor.PackageManager.Client.Add(packageIdentifier);

@@ -19,13 +19,17 @@
 
 namespace Google.XR.Extensions.Editor.Internal
 {
+    using System.Linq;
     using Unity.XR.CoreUtils.Editor;
     using UnityEditor;
     using UnityEditor.XR.OpenXR.Features;
 
     internal static class AndroidXRProjectValidationRules
     {
-        const string _catergory = "Android XR (Extensions)";
+        const string _category = "Android XR (Extensions)";
+        const string _playerSettings = "<b>Project Settings > Player Settings</b>";
+        const string _openxrSettings = "<b>Project Settings > XR Plug-in Management > OpenXR</b>";
+        const string _androidTab = "<b>Android</b> tab";
 
         [InitializeOnLoadMethod]
         static void AddAndroidXRProjectValidationRules()
@@ -34,56 +38,61 @@ namespace Google.XR.Extensions.Editor.Internal
             {
                 new BuildValidationRule
                 {
-                    Category = _catergory,
+                    Category = _category,
                     Message =
                         "Android XR reuiqres resizable windows to render pop-ups correctly " +
                         "in immersive view, such as system permission requests.",
-                    IsRuleEnabled = AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabled,
+                    IsRuleEnabled = AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabledForAndroid,
                     CheckPredicate = () => PlayerSettings.Android.resizeableActivity,
-                    FixItMessage =
-                        "Go to <b>Project Settings > Player Settings</b>, " +
-                        "selet <b>Android</b> tab, then enable <b>Resizable Activity</b>.",
+                    FixItMessage = string.Format(
+                        "Go to {0}, under {1}, enable <b>Resizable Activity</b>.",
+                        _playerSettings, _androidTab),
                     FixIt = () => PlayerSettings.Android.resizeableActivity = true,
                     FixItAutomatic = true,
                     Error = true,
                 },
                 new BuildValidationRule
                 {
-                    Category = _catergory,
+                    Category = _category,
                     Message =
                         "Android XR features require Application Entry Point set to GameActivity.",
-                    IsRuleEnabled = AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabled,
+                    IsRuleEnabled = AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabledForAndroid,
                     CheckPredicate = () => PlayerSettings.Android.applicationEntry ==
                         AndroidApplicationEntry.GameActivity,
-                    FixItMessage =
-                        "Go to <b>Project Settings > Player Settings</b>, " +
-                        "selet <b>Android</b> tab, in <b>Application Entry Point</b>, " +
+                    FixItMessage = string.Format(
+                        "Go to {0}, under {1}, for <b>Application Entry Point</b>" +
                         "select only <b>GameActivity</b>.",
+                        _playerSettings, _androidTab),
                     FixItAutomatic = true,
                     FixIt = () => PlayerSettings.Android.applicationEntry =
                         AndroidApplicationEntry.GameActivity,
                     Error = true,
                 },
-                new BuildValidationRule
-                {
-                    Category = _catergory,
-                    Message = string.Format(
-                        "Android XR (Extensions) features use {0} for OpenXR lifecycle management.",
-                        XRSessionFeature.UiName),
-                    IsRuleEnabled = AndroidXRBuildUtils.IsAnySessionDependentEnabled,
-                    CheckPredicate = () => FeatureHelpers.GetFeatureWithIdForBuildTarget(
-                        BuildTargetGroup.Android, XRSessionFeature.FeatureId).enabled,
-                    FixItMessage = string.Format(
-                        "Go to <b>Project Settings > XR Plug-in Management > OpenXR </b>, " +
-                        "selet <b>Android</b> tab, select <b>{0}</b>.",
-                        XRSessionFeature.UiName),
-                    FixIt = () => FeatureHelpers.GetFeatureWithIdForBuildTarget(
-                        BuildTargetGroup.Android, XRSessionFeature.FeatureId).enabled = true,
-                    Error = true,
-                }
+                GetSessionDependentRule(BuildTargetGroup.Android),
             };
 
             BuildValidator.AddRules(BuildTargetGroup.Android, androidXRProjectRules);
+        }
+
+        static BuildValidationRule GetSessionDependentRule(BuildTargetGroup buildTarget)
+        {
+            return new BuildValidationRule
+            {
+                Category = _category,
+                Message = string.Format(
+                        "Android XR (Extensions) features use {0} for OpenXR lifecycle management.",
+                        XRSessionFeature.UiName),
+                IsRuleEnabled = () =>
+                    AndroidXRBuildUtils.IsAnySessionDependentEnabled(buildTarget),
+                CheckPredicate = () => FeatureHelpers.GetFeatureWithIdForBuildTarget(
+                    buildTarget, XRSessionFeature.FeatureId).enabled,
+                FixItMessage = string.Format(
+                        "Go to {0}, under <b>{1}</b> tab, select <b>{2}</b>.",
+                        _openxrSettings, buildTarget, XRSessionFeature.UiName),
+                FixIt = () => FeatureHelpers.GetFeatureWithIdForBuildTarget(
+                    buildTarget, XRSessionFeature.FeatureId).enabled = true,
+                Error = true,
+            };
         }
     }
 }

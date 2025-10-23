@@ -47,7 +47,9 @@ namespace Google.XR.Extensions
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
-        BuildTargetGroups = new[] { BuildTargetGroup.Android },
+        BuildTargetGroups = new[] {
+            BuildTargetGroup.Android,
+        },
         Company = "Google",
         Desc = "Manage OpenXR sessions for all extened Android XR features, " +
             "and provide Android XR Session subsystem as needed.",
@@ -74,7 +76,7 @@ namespace Google.XR.Extensions
         /// The OpenXR Extension string. Used to check if this extensions is
         /// available or enabled.
         /// </summary>
-        public const string ExtensionStrings = _subsamplingExtensions + " " + _spacewarpExtensions;
+        public const string ExtensionStrings = _subsamplingExtensions;
 
         /// <summary>
         /// A boolean that indicates the activity starts in XR Immersive mode,
@@ -89,16 +91,11 @@ namespace Google.XR.Extensions
             "XR_FB_foveation_configuration " +
             "XR_FB_swapchain_update_state";
 
-        private const string _spacewarpExtensions = "XR_FB_space_warp";
-
         // XRSessionSubsystem implementation provided by Unity OpenXR: Android XR package.
         private static bool _arSessionFeatureInUse = false;
 
         [SerializeField]
         private bool _vulkanSubsampling = true;
-
-        [SerializeField]
-        private bool _spacewarp = false;
 
         private XRSessionSubsystem _sessionSubsystem = null;
 
@@ -117,26 +114,6 @@ namespace Google.XR.Extensions
                 _vulkanSubsampling = value;
 #if !UNITY_EDITOR
                 UnityOpenXRNativeApi.MetaSetSubsampledLayout(_vulkanSubsampling);
-#endif
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to enable the usage of URP Space Warp.
-        /// It requires Vulkan graphics API.
-        ///
-        /// Note: To toggle URP Space Warp at runtime, you can set this field with <c>true</c>
-        /// in Editor so the project can build with necessary BootConfig, then toggle this property
-        /// at runtime.
-        /// </summary>
-        public bool SpaceWarp
-        {
-            get => _spacewarp;
-            set
-            {
-                _spacewarp = value;
-#if !UNITY_EDITOR
-                UnityOpenXRNativeApi.MetaSetSpaceWarp(_spacewarp);
 #endif
             }
         }
@@ -178,24 +155,30 @@ namespace Google.XR.Extensions
                 return false;
             }
 
-            string[] extensions = ExtensionStrings.Split();
-            foreach (string extension in extensions)
+            bool shouldSkipCheck = false;
+#if UNITY_EDITOR
+            // Currently Vulkan subsampling is not supported at editor runtime.
+            shouldSkipCheck = true;
+#endif // !UNITY_EDITOR
+            if (!shouldSkipCheck)
             {
-                bool extensionEnabled = OpenXRRuntime.IsExtensionEnabled(extension);
-                if (!extensionEnabled)
+                string[] extensions = ExtensionStrings.Split();
+                foreach (string extension in extensions)
                 {
-                    return false;
+                    bool extensionEnabled = OpenXRRuntime.IsExtensionEnabled(extension);
+                    if (!extensionEnabled)
+                    {
+                        Debug.LogErrorFormat(
+                            "{0} is not supported by current runtime, failed to enable {1}.",
+                            extension, UiName);
+                        return false;
+                    }
                 }
-            }
 
-            if (_vulkanSubsampling)
-            {
-                UnityOpenXRNativeApi.MetaSetSubsampledLayout(true);
-            }
-
-            if (_spacewarp)
-            {
-                UnityOpenXRNativeApi.MetaSetSpaceWarp(true);
+                if (_vulkanSubsampling)
+                {
+                    UnityOpenXRNativeApi.MetaSetSubsampledLayout(true);
+                }
             }
 
             return XRInstanceManagerApi.Create(xrInstance, xrGetInstanceProcAddr);
@@ -204,8 +187,9 @@ namespace Google.XR.Extensions
         /// <inheritdoc/>
         protected override void OnInstanceDestroy(ulong xrInstance)
         {
+#if !UNITY_EDITOR
             UnityOpenXRNativeApi.MetaSetSubsampledLayout(false);
-            UnityOpenXRNativeApi.MetaSetSpaceWarp(false);
+#endif // !UNITY_EDITOR
             XRInstanceManagerApi.Destroy();
         }
 
@@ -340,7 +324,7 @@ namespace Google.XR.Extensions
                     }
 
                     var foveation = GraphicsSettings.defaultRenderPipeline == null ?
-                      settings.GetFeature<XRFoveationFeature>() as OpenXRFeature:
+                      settings.GetFeature<XRFoveationFeature>() as OpenXRFeature :
                       settings.GetFeature<FoveatedRenderingFeature>();
                     return foveation != null && foveation.enabled;
                 },

@@ -55,13 +55,16 @@ namespace Google.XR.Extensions.Editor.Internal
             XRPassthroughFeature.FeatureId,
             XRHandMeshFeature.FeatureId,
         },
-        UiName = "Android XR (Extensions)",
+        UiName = _uiName,
         Description = "Feature group that provides Android XR experience and " +
             "subsystem implementation for AR Foundation functionality.",
         FeatureSetId = _featureSetId,
-        SupportedBuildTargets = new BuildTargetGroup[] { BuildTargetGroup.Android })]
+        SupportedBuildTargets = new BuildTargetGroup[] {
+            BuildTargetGroup.Android,
+        })]
     internal class AndroidXRFeatureSet
     {
+        internal const string _uiName = "Android XR (Extensions)";
         internal const string _featureSetId = "com.google.androidxr.features";
 
         /// <summary>

@@ -109,10 +109,6 @@ namespace Google.XR.Extensions
         protected override void OnSubsystemStart()
         {
             XRSceneMeshingApi.SetEnabled(true);
-            //// Currently, this feature is not compatible with ARMeshManager due to ARMeshManager
-            //// creating and destroying meshes very fast. Expect to use XRMeshSubsystem directly
-            //// and rely on OpenXRFeature's subsystem callbacks to manage XRMeshSubsystem's
-            //// lifecycle.
             StartSubsystem<XRMeshSubsystem>();
         }
 
@@ -120,10 +116,6 @@ namespace Google.XR.Extensions
         protected override void OnSubsystemStop()
         {
             XRSceneMeshingApi.SetEnabled(false);
-            //// Currently, this feature is not compatible with ARMeshManager due to ARMeshManager
-            //// creating and destroying meshes very fast. Expect to use XRMeshSubsystem directly
-            //// and rely on OpenXRFeature's subsystem callbacks to manage XRMeshSubsystem's
-            //// lifecycle.
             StopSubsystem<XRMeshSubsystem>();
         }
 

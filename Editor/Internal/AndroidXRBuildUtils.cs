@@ -53,26 +53,29 @@ namespace Google.XR.Extensions.Editor.Internal
             return string.Format("Path: {0}{1}", element, attributes);
         }
 
-        internal static bool IsAnyAndroidXRFeatureEnabled()
+        internal static bool IsAnyAndroidXRFeatureEnabledForBuildTarget(
+            BuildTargetGroup buildTarget)
         {
             var featureIds = OpenXRFeatureSetManager.GetFeatureSetWithId(
-                BuildTargetGroup.Android, AndroidXRFeatureSet._featureSetId).featureIds;
+                buildTarget, AndroidXRFeatureSet._featureSetId).featureIds;
             var features = FeatureHelpers.GetFeaturesWithIdsForBuildTarget(
-                BuildTargetGroup.Android, featureIds);
-            bool isAnyFeatureActive = features.Any(feature => feature.enabled);
+                buildTarget, featureIds);
+            return features.Any(feature => feature.enabled);
+        }
 
+        internal static bool IsAnyAndroidXRFeatureEnabledForAndroid()
+        {
+            bool isAnyFeatureActive = IsAnyAndroidXRFeatureEnabledForBuildTarget(
+                BuildTargetGroup.Android);
             return isAnyFeatureActive &&
                 EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android;
         }
 
-        internal static bool IsAnySessionDependentEnabled()
+        internal static bool IsAnySessionDependentEnabled(BuildTargetGroup buildTarget)
         {
             var features = FeatureHelpers.GetFeaturesWithIdsForBuildTarget(
-                BuildTargetGroup.Android, AndroidXRFeatureSet._sessionManagementDependentIds);
-            bool isAnyFeatureActive = features.Any(feature => feature.enabled);
-
-            return isAnyFeatureActive &&
-                EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android;
+                buildTarget, AndroidXRFeatureSet._sessionManagementDependentIds);
+            return features.Any(feature => feature.enabled);
         }
 
         internal static bool IsUnityAndroidXRActive()

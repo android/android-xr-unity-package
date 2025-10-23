@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-09-30
+
+### Editor version and package compatibility
+
+  * This version of the package requires minimal Unity Editor version `6000.1.17f1`. You can install the official **Unity 6.1** (e.g. `6000.1.17f1` or newer) from the Unity Hub.
+  * Package dependencies updated in this version:
+    * OpenXR Plugin (`com.unity.xr.openxr`) 1.15.1
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.2.0
+    * XR Plugin Management (`com.unity.xr.management`): 4.5.1
+  * Verified compatible packages:
+    * Unity OpenXR Android XR (`com.unity.xr.androidxr-openxr`) 1.1.0-pre.1
+    * OpenXR Plugin (`com.unity.xr.openxr`) 1.15.1
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.3.0-pre.1
+    * Composition Layer (`com.unity.xr.compositionlayers`) 2.1.0
+    * XR Hands (`com.unity.xr.hands`) 1.6.1
+    * Universal Render Pipeline (`com.unity.render-pipelines.universal`) 17.1.0
+
+### Known issues
+  * `SpaceWarpFeature` generates motion vectors in the wrong NDC space.
+    * Unity has released the fix in **6000.1.13f1** and OpenXR Plugin **1.5.1**. Please upgrade Unity Editor and OpenXR packages to include the change.
+    * Under **Application SpaceWarp** setting menu, check **Use Right Handed NDC** to apply the correct space on Android XR.
+    * Also noted, on Android XR headsets, SpaceWarp does not need to be updated with the main camera's current position or rotation.
+    * See more details in [Application SpaceWarp in OpenXR](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.15/manual/features/spacewarp.html).
+
+### Added
+  * Added extension function `XRMeshSubsystem.IsSceneMeshId(TrackableId)`.
+
+### Changed
+  * None.
+
+### Deprecated
+  * None.
+
+### Removed
+  * Removed editor settings `SpaceWarp` from `XRSessionFeature`. Please use `SpaceWarpFeature` from **OpenXR Plugins** instead.
+
+### Fixed
+  * Fixed `ARMeshManager` compatibility issue with `XRSceneMeshingFeature`.
+  * Fixed alpha environment blend mode compatibility issue with URP.
+
 ## [1.1.0] - 2025-06-27
 
 ### Editor version and package compatibility

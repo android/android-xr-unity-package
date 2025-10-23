@@ -23,6 +23,7 @@ namespace Google.XR.Extensions
     using System.Runtime.InteropServices;
     using Google.XR.Extensions.Internal;
     using UnityEngine.XR;
+    using TrackableId = UnityEngine.XR.ARSubsystems.TrackableId;
 
     /// <summary>
     /// An enum representing the scene mesh tracking state.
@@ -87,6 +88,23 @@ namespace Google.XR.Extensions
         }
 
         /// <summary>
+        /// Checks if the given trackable id is a scene mesh id.
+        /// </summary>
+        /// <param name="subsystem">The XRMeshSubsystem to use.</param>
+        /// <param name="trackableId">The trackable id to check.</param>
+        /// <returns>True if the trackable id is a scene mesh id, false otherwise.</returns>
+        public static bool IsSceneMeshId(this XRMeshSubsystem subsystem, TrackableId trackableId)
+        {
+            if (!subsystem.running)
+            {
+                return false;
+            }
+
+            MeshId meshId = TrackableIdToMeshId(trackableId);
+            return XRSceneMeshingApi.IsSceneMeshId(ref meshId);
+        }
+
+        /// <summary>
         /// Gets the vertex semantics of the given mesh id.
         /// </summary>
         /// <param name="subsystem">The XRMeshSubsystem to use.</param>
@@ -136,6 +154,11 @@ namespace Google.XR.Extensions
             this XRMeshSubsystem subsystem)
         {
             return XRSceneMeshingApi.GetSceneMeshTrackingState();
+        }
+
+        internal static unsafe MeshId TrackableIdToMeshId(TrackableId trackableId)
+        {
+            return *(MeshId*)&trackableId;
         }
     }
 }
