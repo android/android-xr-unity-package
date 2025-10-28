@@ -27,7 +27,6 @@ namespace Google.XR.Extensions.Samples.XRController
     /// </summary>
     public class XRControllerDisplay : MonoBehaviour
     {
-#pragma warning disable CS0649 // Serialized fields don't need assignment
         [Header("Cached")]
         [SerializeField] private Transform _thumbStick;
         [SerializeField] private Transform _upperButton;
@@ -53,11 +52,14 @@ namespace Google.XR.Extensions.Samples.XRController
         [SerializeField] private InputAction _systemButtonPressedInput;
         [SerializeField] private InputAction _triggerInput;
         [SerializeField] private InputAction _gripInput;
-        [SerializeField] private bool _inverseThumbStickX;
-        [SerializeField] private bool _inverseThumbStickY;
+        
+        [Header("Pivot")]
+        [SerializeField] private Vector3 _thumbStickPivotX;
+        [SerializeField] private Vector3 _thumbStickPivotY;
+        [SerializeField] private bool _inverseThumbStickUp;
         [SerializeField] private Vector3 _gripRotationPivot;
         [SerializeField] private Vector3 _triggerRotationPivot;
-#pragma warning restore CS0649
+        [SerializeField] private bool _inverseButtonUp;
 
         private Quaternion _initThumbStickRot;
         private Vector3 _initThumbStickPos;
@@ -132,12 +134,10 @@ namespace Google.XR.Extensions.Samples.XRController
         private void ThumbStickInputPerformed(InputAction.CallbackContext obj)
         {
             Vector2 value = obj.ReadValue<Vector2>();
-            float axisX = Mathf.Lerp(0f, _maxThumbStickRot.x, Mathf.Abs(value.y))
-                          * -Mathf.Sign(value.y) * (_inverseThumbStickX ? -1f : 1f);
-            float axisY = Mathf.Lerp(0f, _maxThumbStickRot.y, Mathf.Abs(value.x))
-                          * -Mathf.Sign(value.x) * (_inverseThumbStickY ? -1f : 1f);
-            _thumbStick.localRotation = Quaternion.Euler(
-                _initThumbStickRot.eulerAngles + new Vector3(axisX, axisY, 0f));
+            float axisX = Mathf.Lerp(0f, _maxThumbStickRot.x, Mathf.Abs(value.y)) * -Mathf.Sign(value.y);
+            float axisY = Mathf.Lerp(0f, _maxThumbStickRot.y, Mathf.Abs(value.x)) * -Mathf.Sign(value.x);
+            Vector3 axis = _thumbStickPivotX * axisX + _thumbStickPivotY * axisY;
+            _thumbStick.localRotation = Quaternion.Euler(_initThumbStickRot.eulerAngles + axis);
         }
 
         private void ThumbStickInputCanceled(InputAction.CallbackContext obj)
@@ -147,8 +147,7 @@ namespace Google.XR.Extensions.Samples.XRController
 
         private void ThumbStickPressedInputStarted(InputAction.CallbackContext obj)
         {
-            Vector3 targetPos = transform.TransformPoint(_initThumbStickPos) -
-                                (_thumbStick.up * _pressedThumbStickOffset);
+            Vector3 targetPos = transform.TransformPoint(_initThumbStickPos) - _thumbStick.up * (_inverseThumbStickUp ? -1f: 1f) * _pressedThumbStickOffset;
             _thumbStick.position = targetPos;
         }
 
@@ -159,8 +158,7 @@ namespace Google.XR.Extensions.Samples.XRController
 
         private void UpperButtonPressedInputStarted(InputAction.CallbackContext obj)
         {
-            Vector3 targetPos = transform.TransformPoint(_initUpperButtonPos) -
-                                (_upperButton.up * _pressedUpperBtnOffset);
+            Vector3 targetPos = transform.TransformPoint(_initUpperButtonPos) - _upperButton.forward * (_inverseButtonUp ? -1f : 1f) * _pressedUpperBtnOffset;
             _upperButton.position = targetPos;
         }
 
@@ -171,8 +169,7 @@ namespace Google.XR.Extensions.Samples.XRController
 
         private void LowerButtonPressedInputStarted(InputAction.CallbackContext obj)
         {
-            Vector3 targetPos = transform.TransformPoint(_initLowerButtonPos) -
-                                (_lowerButton.up * _pressedLowerBtnOffset);
+            Vector3 targetPos = transform.TransformPoint(_initLowerButtonPos) - _lowerButton.forward * (_inverseButtonUp ? -1f : 1f) * _pressedLowerBtnOffset;
             _lowerButton.position = targetPos;
         }
 
@@ -183,8 +180,7 @@ namespace Google.XR.Extensions.Samples.XRController
 
         private void SystemButtonPressedInputStarted(InputAction.CallbackContext obj)
         {
-            Vector3 targetPos = transform.TransformPoint(_initSystemButtonPos) -
-                                (_systemButton.up * _pressedSystemBtnOffset);
+            Vector3 targetPos = transform.TransformPoint(_initSystemButtonPos) - _systemButton.forward * (_inverseButtonUp ? -1f : 1f) * _pressedSystemBtnOffset;
             _systemButton.position = targetPos;
         }
 
@@ -197,8 +193,7 @@ namespace Google.XR.Extensions.Samples.XRController
         {
             float value = obj.ReadValue<float>();
             float rot = Mathf.Lerp(0f, _maxTriggerRot, Mathf.Abs(value));
-            _trigger.localRotation = Quaternion.Euler(_initTriggerRot.eulerAngles +
-                                                      _triggerRotationPivot * rot);
+            _trigger.localRotation = Quaternion.Euler(_initTriggerRot.eulerAngles + _triggerRotationPivot * rot);
         }
 
         private void TriggerInputCanceled(InputAction.CallbackContext obj)
@@ -210,8 +205,7 @@ namespace Google.XR.Extensions.Samples.XRController
         {
             float value = obj.ReadValue<float>();
             float rot = Mathf.Lerp(0f, _maxGripRot, Mathf.Abs(value));
-            _grip.localRotation = Quaternion.Euler(_initGripRot.eulerAngles +
-                                                  _gripRotationPivot * rot);
+            _grip.localRotation = Quaternion.Euler(_initGripRot.eulerAngles + _gripRotationPivot * rot);
         }
 
         private void GripInputCanceled(InputAction.CallbackContext obj)
