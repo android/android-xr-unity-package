@@ -47,7 +47,7 @@ Shader "SamsungUX/ControllerLed_Builtin"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float mask = tex2D (_Mask, i.uv).r;
+                float mask = tex2D (_Mask, i.uv).a;
                 float3 color = mask * _LedColor * _LedIntensity;
                 float alpha = mask * min(1, _LedIntensity);
                 return fixed4(color, alpha);

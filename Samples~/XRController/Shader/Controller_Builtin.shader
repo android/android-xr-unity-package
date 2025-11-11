@@ -1,11 +1,10 @@
-Shader "SamsungUX/Controller_Builtin"
+Shader "SamsungUX/Controller_Gltf_Builtin"
 {
     Properties
     {        
         _BaseColor ("Base Color", 2D) = "white" {}
         _Normal ("Normal", 2D) = "bump" {}
-        _Roughness ("Roughness", 2D) = "White" {}
-        _Metallic ("Metallic", 2D) = "Black" {}
+        _AoRoughnessMetallic ("AoRoughnessMetallic", 2D) = "White" {}
     }
     SubShader
     {
@@ -21,8 +20,7 @@ Shader "SamsungUX/Controller_Builtin"
 
         sampler2D _BaseColor;
         sampler2D _Normal;
-        sampler2D _Roughness;
-        sampler2D _Metallic;
+        sampler2D _AoRoughnessMetallic;
 
         struct Input
         {
@@ -33,8 +31,11 @@ Shader "SamsungUX/Controller_Builtin"
         {
             o.Albedo = tex2D (_BaseColor, IN.uv_BaseColor).rgb;
             o.Normal = UnpackNormal(tex2D(_Normal, IN.uv_BaseColor));
-            o.Metallic = tex2D (_Metallic, IN.uv_BaseColor);
-            o.Smoothness = 1 - tex2D(_Roughness, IN.uv_BaseColor);            
+            
+            float3 arm = tex2D (_AoRoughnessMetallic, IN.uv_BaseColor);
+            o.Metallic = arm.b;
+            o.Smoothness = 1 - arm.g;
+            o.Occlusion = 1;            
         }
         ENDCG
     }

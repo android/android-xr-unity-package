@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ControllerLed_Builtin
-  m_Shader: {fileID: 4800000, guid: f8f3f5fe6a5841c4c9cfb3c491e07fde, type: 3}
+  m_Shader: {fileID: 4800000, guid: 8b45684e8afb3214ca3b6efe9b7026e0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -33,7 +33,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mask:
-        m_Texture: {fileID: 2800000, guid: bdbd248e432eddc439d75aae0c3ea620, type: 3}
+        m_Texture: {fileID: 2800000, guid: b162726f5358bce4ea3716bdab543629, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Metallic:
@@ -69,7 +69,7 @@ Material:
     - _QueueOffset: 0
     m_Colors:
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 0}
-    - _LedColor: {r: 1, g: 1, b: 1, a: 1}
+    - _LedColor: {r: 0, g: 0.5016849, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &6414468939250447496

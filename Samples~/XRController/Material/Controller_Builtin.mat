@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Controller_Builtin
-  m_Shader: {fileID: 4800000, guid: eb5336d079712514c94e1781669117e2, type: 3}
+  m_Shader: {fileID: 4800000, guid: 5763f3f03376b9a48bcac2f5cdaecd27, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,8 +23,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AoRoughnessMetallic:
+        m_Texture: {fileID: 2800000, guid: 3bd2ea1964fbaff4bb0838332916a177, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseColor:
-        m_Texture: {fileID: 2800000, guid: c946160d5d7352540961f872933d579d, type: 3}
+        m_Texture: {fileID: 2800000, guid: bcecee3fd3866b445ad54407bc8ade8c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Metallic:
@@ -32,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: 1e8963024c48e7548a19efa6d50282ad, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7c167e4459d975341a1967516daecf9a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Roughness:
