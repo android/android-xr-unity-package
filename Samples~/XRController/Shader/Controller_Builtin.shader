@@ -1,14 +1,17 @@
 Shader "SamsungUX/Controller_Gltf_Builtin"
 {
     Properties
-    {        
+    {
         _BaseColor ("Base Color", 2D) = "white" {}
         _Normal ("Normal", 2D) = "bump" {}
         _AoRoughnessMetallic ("AoRoughnessMetallic", 2D) = "White" {}
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags
+        {
+            "RenderType"="Opaque"
+        }
         LOD 200
 
         CGPROGRAM
@@ -24,18 +27,18 @@ Shader "SamsungUX/Controller_Gltf_Builtin"
 
         struct Input
         {
-            float2 uv_BaseColor; 
-        };        
-        
-        void surf (Input IN, inout SurfaceOutputStandard o)
+            float2 uv_BaseColor;
+        };
+
+        void surf(Input IN, inout SurfaceOutputStandard o)
         {
-            o.Albedo = tex2D (_BaseColor, IN.uv_BaseColor).rgb;
+            o.Albedo = tex2D(_BaseColor, IN.uv_BaseColor).rgb;
             o.Normal = UnpackNormal(tex2D(_Normal, IN.uv_BaseColor));
-            
-            float3 arm = tex2D (_AoRoughnessMetallic, IN.uv_BaseColor);
+
+            float3 arm = tex2D(_AoRoughnessMetallic, IN.uv_BaseColor);
             o.Metallic = arm.b;
             o.Smoothness = 1 - arm.g;
-            o.Occlusion = 1;            
+            o.Occlusion = arm.r;
         }
         ENDCG
     }
