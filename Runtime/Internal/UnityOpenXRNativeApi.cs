@@ -35,7 +35,7 @@ namespace Google.XR.Extensions.Internal
         {
             int result = ExternalApi.MetaSetSubsampledLayout(enabled);
             Debug.LogFormat("MetaSetSubsampledLayout({0}): {1} with status {2}.",
-                enabled, result >= 0  ? "succeed" : "failed", result);
+                enabled, result >= 0 ? "succeed" : "failed", result);
         }
 
         public static void FBSetFoveationLevel(

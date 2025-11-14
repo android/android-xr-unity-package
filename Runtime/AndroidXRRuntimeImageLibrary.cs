@@ -214,7 +214,8 @@ namespace Google.XR.Extensions
             for (int i = 0; i < imageLibrary.count; i++)
             {
                 if (XRMarkerDatabaseEntry.TryParse(
-                    imageLibrary[i].name, out XRMarkerDatabaseEntry entry)) {
+                    imageLibrary[i].name, out XRMarkerDatabaseEntry entry))
+                {
                     data.AddEntry(entry, false);
                 }
             }
