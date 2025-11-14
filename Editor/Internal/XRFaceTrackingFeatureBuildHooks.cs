@@ -33,13 +33,13 @@ namespace Google.XR.Extensions.Editor.Internal
     internal class XRFaceTrackingFeatureBuildHooks : OpenXRFeatureBuildHooks
     {
         private static readonly ManifestElement _permissionManifest = new ManifestElement()
+        {
+            ElementPath = new List<string> { "manifest", "uses-permission" },
+            Attributes = new Dictionary<string, string>
             {
-                ElementPath = new List<string> { "manifest", "uses-permission" },
-                Attributes = new Dictionary<string, string>
-                {
-                    { "name", XRFaceTrackingFeature.RequiredPermission.ToPermissionString() }
-                }
-            };
+                { "name", XRFaceTrackingFeature.RequiredPermission.ToPermissionString() }
+            }
+        };
 
         /// <inheritdoc/>
         [SuppressMessage("UnityRules.UnityStyleRules",
