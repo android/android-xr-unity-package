@@ -1,4 +1,4 @@
-// <copyright file="XRControllerDisplay.cs" company="Google LLC">
+﻿// <copyright file="XRControllerDisplay.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
 //
@@ -32,8 +32,8 @@ namespace Google.XR.Extensions.Samples.XRController
         private readonly List<(InputAction action,
             Action<InputAction.CallbackContext> onStarted,
             Action<InputAction.CallbackContext> onPerformed,
-            Action<InputAction.CallbackContext> onCanceled)> _bindings = new ();
-        
+            Action<InputAction.CallbackContext> onCanceled)> _bindings = new();
+
 #pragma warning disable CS0649 // Serialized fields don't need assignment.
         [Header("Buttons")]
         [SerializeField] private XrControllerButtonInfo _thumbstick;
@@ -64,7 +64,9 @@ namespace Google.XR.Extensions.Samples.XRController
         private void OnEnable()
         {
             if (_thumbstickTransform != null)
+            {
                 _thumbstickInitialRotation = _thumbstickTransform.localRotation;
+            }
 
             EnableActions(
                 _thumbstickPressAction,
@@ -73,8 +75,7 @@ namespace Google.XR.Extensions.Samples.XRController
                 _systemButtonPressAction,
                 _triggerAxisAction,
                 _gripAxisAction,
-                _thumbstickAxisAction
-            );
+                _thumbstickAxisAction);
 
             BindPress(_thumbstickPressAction, _thumbstick);
             BindPress(_upperButtonPressAction, _upperButton);
@@ -91,10 +92,25 @@ namespace Google.XR.Extensions.Samples.XRController
         {
             foreach (var (action, onStarted, onPerformed, onCanceled) in _bindings)
             {
-                if (action == null) continue;
-                if (onStarted != null) action.started -= onStarted;
-                if (onPerformed != null) action.performed -= onPerformed;
-                if (onCanceled != null) action.canceled -= onCanceled;
+                if (action == null)
+                {
+                    continue;
+                }
+
+                if (onStarted != null)
+                {
+                    action.started -= onStarted;
+                }
+
+                if (onPerformed != null)
+                {
+                    action.performed -= onPerformed;
+                }
+
+                if (onCanceled != null)
+                {
+                    action.canceled -= onCanceled;
+                }
             }
 
             _bindings.Clear();
@@ -106,15 +122,17 @@ namespace Google.XR.Extensions.Samples.XRController
                 _systemButtonPressAction,
                 _triggerAxisAction,
                 _gripAxisAction,
-                _thumbstickAxisAction
-            );
+                _thumbstickAxisAction);
 
             ResetAll();
         }
 
         private void BindPress(InputAction action, XrControllerButtonInfo target)
         {
-            if (action == null || target == null) return;
+            if (action == null || target == null)
+            {
+                return;
+            }
 
             Action<InputAction.CallbackContext> started = _ => target.SetStatus(1f);
             Action<InputAction.CallbackContext> canceled = _ => target.SetStatus(0f);
@@ -127,7 +145,10 @@ namespace Google.XR.Extensions.Samples.XRController
 
         private void BindAxis(InputAction action, XrControllerButtonInfo target)
         {
-            if (action == null || target == null) return;
+            if (action == null || target == null)
+            {
+                return;
+            }
 
             Action<InputAction.CallbackContext> performed = ctx =>
                 target.SetStatus(ctx.ReadValue<float>());
@@ -141,7 +162,10 @@ namespace Google.XR.Extensions.Samples.XRController
 
         private void BindThumbstickVector2(InputAction action, Transform stickTransform)
         {
-            if (action == null || stickTransform == null) return;
+            if (action == null || stickTransform == null)
+            {
+                return;
+            }
 
             var initial = _thumbstickInitialRotation;
 
@@ -172,12 +196,18 @@ namespace Google.XR.Extensions.Samples.XRController
 
         private void EnableActions(params InputAction[] actions)
         {
-            foreach (var a in actions) a?.Enable();
+            foreach (var a in actions)
+            {
+                a?.Enable();
+            }
         }
 
         private void DisableActions(params InputAction[] actions)
         {
-            foreach (var a in actions) a?.Disable();
+            foreach (var a in actions)
+            {
+                a?.Disable();
+            }
         }
 
         private void ResetAll()
@@ -190,7 +220,9 @@ namespace Google.XR.Extensions.Samples.XRController
             _gripButton?.SetStatus(0f);
 
             if (_thumbstickTransform != null)
+            {
                 _thumbstickTransform.localRotation = _thumbstickInitialRotation;
+            }
         }
     }
 
@@ -214,7 +246,11 @@ namespace Google.XR.Extensions.Samples.XRController
         /// </summary>
         public void SetStatus(float t)
         {
-            if (_targetObject == null) return;
+            if (_targetObject == null)
+            {
+                return;
+            }
+
             t = Mathf.Clamp01(t);
 
             _targetObject.localPosition = Vector3.Lerp(_releasedPosition, _pressedPosition, t);

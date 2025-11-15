@@ -1,4 +1,4 @@
-Shader "SamsungUX/ControllerLed_Builtin"
+Shader "ControllerLed_Builtin"
 {
     Properties
     {

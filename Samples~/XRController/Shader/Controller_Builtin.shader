@@ -1,4 +1,4 @@
-Shader "SamsungUX/Controller_Gltf_Builtin"
+Shader "Controller_Gltf_Builtin"
 {
     Properties
     {
