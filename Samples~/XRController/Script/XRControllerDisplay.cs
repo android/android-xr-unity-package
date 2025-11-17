@@ -19,6 +19,8 @@
 
 namespace Google.XR.Extensions.Samples.XRController
 {
+    using System;
+    using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.InputSystem;
 
@@ -27,196 +29,236 @@ namespace Google.XR.Extensions.Samples.XRController
     /// </summary>
     public class XRControllerDisplay : MonoBehaviour
     {
-#pragma warning disable CS0649 // Serialized fields don't need assignment
-        [Header("Cached")]
-        [SerializeField] private Transform _thumbStick;
-        [SerializeField] private Transform _upperButton;
-        [SerializeField] private Transform _lowerButton;
-        [SerializeField] private Transform _systemButton;
-        [SerializeField] private Transform _trigger;
-        [SerializeField] private Transform _grip;
+        private readonly List<(InputAction action,
+            Action<InputAction.CallbackContext> onStarted,
+            Action<InputAction.CallbackContext> onPerformed,
+            Action<InputAction.CallbackContext> onCanceled)> _bindings = new ();
 
-        [Header("Parameter")]
-        [SerializeField] private Vector2 _maxThumbStickRot;
-        [SerializeField] private float _pressedThumbStickOffset;
-        [SerializeField] private float _pressedUpperBtnOffset;
-        [SerializeField] private float _pressedLowerBtnOffset;
-        [SerializeField] private float _pressedSystemBtnOffset;
-        [SerializeField] private float _maxTriggerRot;
-        [SerializeField] private float _maxGripRot;
+#pragma warning disable CS0649 // Serialized fields don't need assignment.
+        [Header("Buttons")]
+        [SerializeField] private XrControllerButtonInfo _thumbstick;
+        [SerializeField] private XrControllerButtonInfo _upperButton;
+        [SerializeField] private XrControllerButtonInfo _lowerButton;
+        [SerializeField] private XrControllerButtonInfo _systemButton;
+        [SerializeField] private XrControllerButtonInfo _triggerButton;
+        [SerializeField] private XrControllerButtonInfo _gripButton;
 
-        [Header("Input")]
-        [SerializeField] private InputAction _thumbStickInput;
-        [SerializeField] private InputAction _thumbStickPressedInput;
-        [SerializeField] private InputAction _upperButtonPressedInput;
-        [SerializeField] private InputAction _lowerButtonPressedInput;
-        [SerializeField] private InputAction _systemButtonPressedInput;
-        [SerializeField] private InputAction _triggerInput;
-        [SerializeField] private InputAction _gripInput;
-        [SerializeField] private bool _inverseThumbStickX;
-        [SerializeField] private bool _inverseThumbStickY;
-        [SerializeField] private Vector3 _gripRotationPivot;
-        [SerializeField] private Vector3 _triggerRotationPivot;
+        [Header("Input Actions")]
+        [SerializeField] private InputAction _thumbstickPressAction;
+        [SerializeField] private InputAction _upperButtonPressAction;
+        [SerializeField] private InputAction _lowerButtonPressAction;
+        [SerializeField] private InputAction _systemButtonPressAction;
+        [SerializeField] private InputAction _triggerAxisAction;
+        [SerializeField] private InputAction _gripAxisAction;
+
+        [Header("Thumbstick")]
+        [SerializeField] private Transform _thumbstickTransform;
+        [SerializeField] private Vector2 _maxThumbstickRot;
+        [SerializeField] private bool _inverseThumbstickX;
+        [SerializeField] private bool _inverseThumbstickY;
+        [SerializeField] private InputAction _thumbstickAxisAction;
 #pragma warning restore CS0649
 
-        private Quaternion _initThumbStickRot;
-        private Vector3 _initThumbStickPos;
-        private Vector3 _initUpperButtonPos;
-        private Vector3 _initLowerButtonPos;
-        private Vector3 _initSystemButtonPos;
-        private Quaternion _initTriggerRot;
-        private Quaternion _initGripRot;
+        private Quaternion _thumbstickInitialRotation;
 
         private void OnEnable()
         {
-            _thumbStickInput.Enable();
-            _thumbStickPressedInput.Enable();
-            _upperButtonPressedInput.Enable();
-            _lowerButtonPressedInput.Enable();
-            _systemButtonPressedInput.Enable();
-            _triggerInput.Enable();
-            _gripInput.Enable();
+            if (_thumbstickTransform != null)
+            {
+                _thumbstickInitialRotation = _thumbstickTransform.localRotation;
+            }
 
-            _thumbStickInput.performed += ThumbStickInputPerformed;
-            _thumbStickInput.canceled += ThumbStickInputCanceled;
-            _thumbStickPressedInput.started += ThumbStickPressedInputStarted;
-            _thumbStickPressedInput.canceled += ThumbStickPressedInputCanceled;
-            _upperButtonPressedInput.started += UpperButtonPressedInputStarted;
-            _upperButtonPressedInput.canceled += UpperButtonPressedInputCanceled;
-            _lowerButtonPressedInput.started += LowerButtonPressedInputStarted;
-            _lowerButtonPressedInput.canceled += LowerButtonPressedInputCanceled;
-            _systemButtonPressedInput.started += SystemButtonPressedInputStarted;
-            _systemButtonPressedInput.canceled += SystemButtonPressedInputCanceled;
-            _triggerInput.performed += TriggerInputPerformed;
-            _triggerInput.canceled += TriggerInputCanceled;
-            _gripInput.performed += GripInputPerformed;
-            _gripInput.canceled += GripInputCanceled;
+            EnableActions(
+                _thumbstickPressAction,
+                _upperButtonPressAction,
+                _lowerButtonPressAction,
+                _systemButtonPressAction,
+                _triggerAxisAction,
+                _gripAxisAction,
+                _thumbstickAxisAction);
+
+            BindPress(_thumbstickPressAction, _thumbstick);
+            BindPress(_upperButtonPressAction, _upperButton);
+            BindPress(_lowerButtonPressAction, _lowerButton);
+            BindPress(_systemButtonPressAction, _systemButton);
+
+            BindAxis(_triggerAxisAction, _triggerButton);
+            BindAxis(_gripAxisAction, _gripButton);
+
+            BindThumbstickVector2(_thumbstickAxisAction, _thumbstickTransform);
         }
 
         private void OnDisable()
         {
-            _thumbStickInput.Disable();
-            _thumbStickPressedInput.Disable();
-            _upperButtonPressedInput.Disable();
-            _lowerButtonPressedInput.Disable();
-            _triggerInput.Disable();
-            _gripInput.Disable();
+            foreach (var (action, onStarted, onPerformed, onCanceled) in _bindings)
+            {
+                if (action == null)
+                {
+                    continue;
+                }
 
-            _thumbStickInput.performed -= ThumbStickInputPerformed;
-            _thumbStickInput.canceled -= ThumbStickInputCanceled;
-            _thumbStickPressedInput.started -= ThumbStickPressedInputStarted;
-            _thumbStickPressedInput.canceled -= ThumbStickPressedInputCanceled;
-            _upperButtonPressedInput.started -= UpperButtonPressedInputStarted;
-            _upperButtonPressedInput.started -= UpperButtonPressedInputCanceled;
-            _lowerButtonPressedInput.started -= LowerButtonPressedInputStarted;
-            _lowerButtonPressedInput.started -= LowerButtonPressedInputCanceled;
-            _systemButtonPressedInput.started -= SystemButtonPressedInputStarted;
-            _systemButtonPressedInput.started -= SystemButtonPressedInputCanceled;
-            _triggerInput.performed -= TriggerInputPerformed;
-            _triggerInput.canceled -= TriggerInputCanceled;
-            _gripInput.performed -= GripInputPerformed;
-            _gripInput.canceled -= GripInputCanceled;
+                if (onStarted != null)
+                {
+                    action.started -= onStarted;
+                }
+
+                if (onPerformed != null)
+                {
+                    action.performed -= onPerformed;
+                }
+
+                if (onCanceled != null)
+                {
+                    action.canceled -= onCanceled;
+                }
+            }
+
+            _bindings.Clear();
+
+            DisableActions(
+                _thumbstickPressAction,
+                _upperButtonPressAction,
+                _lowerButtonPressAction,
+                _systemButtonPressAction,
+                _triggerAxisAction,
+                _gripAxisAction,
+                _thumbstickAxisAction);
+
+            ResetAll();
         }
 
-        private void Start()
+        private void BindPress(InputAction action, XrControllerButtonInfo target)
         {
-            _initThumbStickRot = _thumbStick.localRotation;
-            _initThumbStickPos = _thumbStick.localPosition;
-            _initUpperButtonPos = _upperButton.localPosition;
-            _initLowerButtonPos = _lowerButton.localPosition;
-            _initSystemButtonPos = _systemButton.localPosition;
-            _initTriggerRot = _trigger.localRotation;
-            _initGripRot = _grip.localRotation;
+            if (action == null || target == null)
+            {
+                return;
+            }
+
+            Action<InputAction.CallbackContext> started = _ => target.SetStatus(1f);
+            Action<InputAction.CallbackContext> canceled = _ => target.SetStatus(0f);
+
+            action.started += started;
+            action.canceled += canceled;
+
+            _bindings.Add((action, started, null, canceled));
         }
 
-        private void ThumbStickInputPerformed(InputAction.CallbackContext obj)
+        private void BindAxis(InputAction action, XrControllerButtonInfo target)
         {
-            Vector2 value = obj.ReadValue<Vector2>();
-            float axisX = Mathf.Lerp(0f, _maxThumbStickRot.x, Mathf.Abs(value.y))
-                          * -Mathf.Sign(value.y) * (_inverseThumbStickX ? -1f : 1f);
-            float axisY = Mathf.Lerp(0f, _maxThumbStickRot.y, Mathf.Abs(value.x))
-                          * -Mathf.Sign(value.x) * (_inverseThumbStickY ? -1f : 1f);
-            _thumbStick.localRotation = Quaternion.Euler(
-                _initThumbStickRot.eulerAngles + new Vector3(axisX, axisY, 0f));
+            if (action == null || target == null)
+            {
+                return;
+            }
+
+            Action<InputAction.CallbackContext> performed = ctx =>
+                target.SetStatus(ctx.ReadValue<float>());
+            Action<InputAction.CallbackContext> canceled = _ => target.SetStatus(0f);
+
+            action.performed += performed;
+            action.canceled += canceled;
+
+            _bindings.Add((action, null, performed, canceled));
         }
 
-        private void ThumbStickInputCanceled(InputAction.CallbackContext obj)
+        private void BindThumbstickVector2(InputAction action, Transform stickTransform)
         {
-            _thumbStick.localRotation = _initThumbStickRot;
+            if (action == null || stickTransform == null)
+            {
+                return;
+            }
+
+            var initial = _thumbstickInitialRotation;
+
+            Action<InputAction.CallbackContext> performed = ctx =>
+            {
+                var value = ctx.ReadValue<Vector2>();
+                float axisX = Mathf.Lerp(0f, _maxThumbstickRot.x, Mathf.Abs(value.y))
+                              * -Mathf.Sign(value.y)
+                              * (_inverseThumbstickX ? -1f : 1f);
+                float axisY = Mathf.Lerp(0f, _maxThumbstickRot.y, Mathf.Abs(value.x))
+                              * -Mathf.Sign(value.x)
+                              * (_inverseThumbstickY ? -1f : 1f);
+
+                stickTransform.localRotation = Quaternion.Euler(
+                    initial.eulerAngles + new Vector3(axisX, 0f, axisY));
+            };
+
+            Action<InputAction.CallbackContext> canceled = _ =>
+            {
+                stickTransform.localRotation = initial;
+            };
+
+            action.performed += performed;
+            action.canceled += canceled;
+
+            _bindings.Add((action, null, performed, canceled));
         }
 
-        private void ThumbStickPressedInputStarted(InputAction.CallbackContext obj)
+        private void EnableActions(params InputAction[] actions)
         {
-            Vector3 targetPos = transform.TransformPoint(_initThumbStickPos) -
-                                (_thumbStick.up * _pressedThumbStickOffset);
-            _thumbStick.position = targetPos;
+            foreach (var a in actions)
+            {
+                a?.Enable();
+            }
         }
 
-        private void ThumbStickPressedInputCanceled(InputAction.CallbackContext obj)
+        private void DisableActions(params InputAction[] actions)
         {
-            _thumbStick.position = transform.TransformPoint(_initThumbStickPos);
+            foreach (var a in actions)
+            {
+                a?.Disable();
+            }
         }
 
-        private void UpperButtonPressedInputStarted(InputAction.CallbackContext obj)
+        private void ResetAll()
         {
-            Vector3 targetPos = transform.TransformPoint(_initUpperButtonPos) -
-                                (_upperButton.up * _pressedUpperBtnOffset);
-            _upperButton.position = targetPos;
-        }
+            _thumbstick?.SetStatus(0f);
+            _upperButton?.SetStatus(0f);
+            _lowerButton?.SetStatus(0f);
+            _systemButton?.SetStatus(0f);
+            _triggerButton?.SetStatus(0f);
+            _gripButton?.SetStatus(0f);
 
-        private void UpperButtonPressedInputCanceled(InputAction.CallbackContext obj)
-        {
-            _upperButton.position = transform.TransformPoint(_initUpperButtonPos);
+            if (_thumbstickTransform != null)
+            {
+                _thumbstickTransform.localRotation = _thumbstickInitialRotation;
+            }
         }
+    }
 
-        private void LowerButtonPressedInputStarted(InputAction.CallbackContext obj)
-        {
-            Vector3 targetPos = transform.TransformPoint(_initLowerButtonPos) -
-                                (_lowerButton.up * _pressedLowerBtnOffset);
-            _lowerButton.position = targetPos;
-        }
+    /// <summary>
+    /// Holds released/pressed poses for a controller button and applies
+    /// the interpolated transform to a target object.
+    /// </summary>
+    [Serializable]
+    public class XrControllerButtonInfo
+    {
+#pragma warning disable CS0649 // Serialized fields don't need assignment.
+        [SerializeField] private Transform _targetObject;
+        [SerializeField] private Vector3 _releasedPosition;
+        [SerializeField] private Vector3 _pressedPosition;
+        [SerializeField] private Vector3 _releasedRotation;
+        [SerializeField] private Vector3 _pressedRotation;
+#pragma warning restore CS0649
 
-        private void LowerButtonPressedInputCanceled(InputAction.CallbackContext obj)
+        /// <summary>
+        /// Applies the pressed/released interpolation to the target object's local transform.
+        /// </summary>
+        /// <param name="t">The interpolation parameter.</param>
+        public void SetStatus(float t)
         {
-            _lowerButton.position = transform.TransformPoint(_initLowerButtonPos);
-        }
+            if (_targetObject == null)
+            {
+                return;
+            }
 
-        private void SystemButtonPressedInputStarted(InputAction.CallbackContext obj)
-        {
-            Vector3 targetPos = transform.TransformPoint(_initSystemButtonPos) -
-                                (_systemButton.up * _pressedSystemBtnOffset);
-            _systemButton.position = targetPos;
-        }
+            t = Mathf.Clamp01(t);
 
-        private void SystemButtonPressedInputCanceled(InputAction.CallbackContext obj)
-        {
-            _systemButton.position = transform.TransformPoint(_initSystemButtonPos);
-        }
-
-        private void TriggerInputPerformed(InputAction.CallbackContext obj)
-        {
-            float value = obj.ReadValue<float>();
-            float rot = Mathf.Lerp(0f, _maxTriggerRot, Mathf.Abs(value));
-            _trigger.localRotation = Quaternion.Euler(_initTriggerRot.eulerAngles +
-                                                      _triggerRotationPivot * rot);
-        }
-
-        private void TriggerInputCanceled(InputAction.CallbackContext obj)
-        {
-            _trigger.localRotation = _initTriggerRot;
-        }
-
-        private void GripInputPerformed(InputAction.CallbackContext obj)
-        {
-            float value = obj.ReadValue<float>();
-            float rot = Mathf.Lerp(0f, _maxGripRot, Mathf.Abs(value));
-            _grip.localRotation = Quaternion.Euler(_initGripRot.eulerAngles +
-                                                  _gripRotationPivot * rot);
-        }
-
-        private void GripInputCanceled(InputAction.CallbackContext obj)
-        {
-            _grip.localRotation = _initGripRot;
+            _targetObject.localPosition = Vector3.Lerp(_releasedPosition, _pressedPosition, t);
+            _targetObject.localRotation = Quaternion.Lerp(
+                Quaternion.Euler(_releasedRotation),
+                Quaternion.Euler(_pressedRotation),
+                t);
         }
     }
 }
