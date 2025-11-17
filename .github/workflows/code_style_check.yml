@@ -1,0 +1,48 @@
+name: C# Code Style Check
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  quality_check_and_build:
+    runs-on: ubuntu-latest
+    
+    env:
+      FORMAT_PROJECT_FILE: TempFormat.csproj
+      PACKAGE_PATH: my-package
+      PACKAGE_NAME: com.google.xr.extensions
+
+    steps:
+    
+    ## Step 1: Checkout and Environment Setup
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        path: ${{ env.PACKAGE_PATH }}
+        fetch-depth: 0
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    ## Step 2: C# Style & Formatting Check
+    - name: Create Temporary Formatting Project
+      run: |
+        echo '<Project Sdk="Microsoft.NET.Sdk">' > ${{ env.FORMAT_PROJECT_FILE }}
+        echo '  <PropertyGroup>' >> ${{ env.FORMAT_PROJECT_FILE }}
+        echo '    <TargetFramework>netstandard2.0</TargetFramework>' >> ${{ env.FORMAT_PROJECT_FILE }}
+        echo '    <IsPackable>false</IsPackable>' >> ${{ env.FORMAT_PROJECT_FILE }}
+        echo '  </PropertyGroup>' >> ${{ env.FORMAT_PROJECT_FILE }}
+        echo '  <ItemGroup>' >> ${{ env.FORMAT_PROJECT_FILE }}
+        echo '    <Compile Include="./**/*.cs" Exclude="**/*.Generated.cs;**/*.g.cs" />' >> ${{ env.FORMAT_PROJECT_FILE }}
+        echo '  </ItemGroup>' >> ${{ env.FORMAT_PROJECT_FILE }}
+        echo '</Project>' >> ${{ env.FORMAT_PROJECT_FILE }}
+
+    - name: Run DotNet Format Check
+      run: |
+        dotnet format TempFormat.csproj --verify-no-changes --verbosity normal
+        rm ${{ env.FORMAT_PROJECT_FILE }}
