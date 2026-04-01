@@ -49,6 +49,7 @@ namespace Google.XR.Extensions
     [OpenXRFeature(UiName = UiName,
         BuildTargetGroups = new[] {
             BuildTargetGroup.Android,
+            BuildTargetGroup.Standalone,
         },
         Company = "Google",
         Desc = "Manage OpenXR sessions for all extened Android XR features, " +
@@ -76,7 +77,7 @@ namespace Google.XR.Extensions
         /// The OpenXR Extension string. Used to check if this extensions is
         /// available or enabled.
         /// </summary>
-        public const string ExtensionStrings = _subsamplingExtensions;
+        public const string ExtensionStrings = "";
 
         /// <summary>
         /// A boolean that indicates the activity starts in XR Immersive mode,
@@ -84,18 +85,21 @@ namespace Google.XR.Extensions
         /// </summary>
         public bool ImmersiveXR = true;
 
-        private const string _subsamplingExtensions =
-            "XR_META_vulkan_swapchain_create_info " +
-            "XR_META_foveation_eye_tracked " +
-            "XR_FB_foveation " +
-            "XR_FB_foveation_configuration " +
-            "XR_FB_swapchain_update_state";
-
         // XRSessionSubsystem implementation provided by Unity OpenXR: Android XR package.
         private static bool _arSessionFeatureInUse = false;
 
         [SerializeField]
-        private bool _vulkanSubsampling = true;
+        private bool _vulkanSubsampling = false;
+
+        [SerializeField]
+        private bool _useSpatialApi = true;
+
+        [SerializeField]
+        private bool _spatialApiRequired = true;
+
+        [SerializeField]
+        private XRSpatialSdkVersions _spatialApiTargetVersion =
+            XRSpatialSdkVersions.XRSpatialApiLevelAuto;
 
         private XRSessionSubsystem _sessionSubsystem = null;
 
@@ -106,17 +110,33 @@ namespace Google.XR.Extensions
         /// in Editor so the project can build with necessary BootConfig, then toggle this property
         /// at runtime.
         /// </summary>
+        [Obsolete(
+            "VulkanSubsampling is deprecated. " +
+            "Please use FoveatedRenderingFeature.TrySetSubsampledLayoutEnabled(bool) instead.")]
         public bool VulkanSubsampling
         {
             get => _vulkanSubsampling;
-            set
-            {
-                _vulkanSubsampling = value;
-#if !UNITY_EDITOR
-                UnityOpenXRNativeApi.MetaSetSubsampledLayout(_vulkanSubsampling);
-#endif
-            }
+            set => _vulkanSubsampling = value;
         }
+
+        /// <summary>
+        /// Gets property if XR Spatial API is in use.
+        /// </summary>
+        public bool UseXRSpatialApi => _useSpatialApi;
+
+        /// <summary>
+        /// Gets property whether the XR Spatial API is required.
+        ///
+        /// Note: This field only takes effect when <see cref="UseXRSpatialApi"/> has set to true.
+        /// </summary>
+        public bool XRSpatailApiRequired => _spatialApiRequired;
+
+        /// <summary>
+        /// Gets the target XR Spatial API level.
+        ///
+        /// Note: This field only takes effect when <see cref="UseXRSpatialApi"/> has set to true.
+        /// </summary>
+        public XRSpatialSdkVersions TargetApiVersion => _spatialApiTargetVersion;
 
         internal static XRLoader GetXRLoader()
         {
@@ -155,29 +175,23 @@ namespace Google.XR.Extensions
                 return false;
             }
 
-            bool shouldSkipCheck = false;
-#if UNITY_EDITOR
-            // Currently Vulkan subsampling is not supported at editor runtime.
-            shouldSkipCheck = true;
-#endif // !UNITY_EDITOR
-            if (!shouldSkipCheck)
+            string[] extensions = ExtensionStrings.Split();
+            foreach (string extension in extensions)
             {
-                string[] extensions = ExtensionStrings.Split();
-                foreach (string extension in extensions)
+                if (string.IsNullOrEmpty(extension))
                 {
-                    bool extensionEnabled = OpenXRRuntime.IsExtensionEnabled(extension);
-                    if (!extensionEnabled)
-                    {
-                        Debug.LogErrorFormat(
-                            "{0} is not supported by current runtime, failed to enable {1}.",
-                            extension, UiName);
-                        return false;
-                    }
+                    // ExtensionStrings.Split() creates an array of size one where the first element
+                    // is an empty string if the input string is empty.
+                    continue;
                 }
 
-                if (_vulkanSubsampling)
+                bool extensionEnabled = OpenXRRuntime.IsExtensionEnabled(extension);
+                if (!extensionEnabled)
                 {
-                    UnityOpenXRNativeApi.MetaSetSubsampledLayout(true);
+                    Debug.LogErrorFormat(
+                        "{0} is not supported by current runtime, failed to enable {1}.",
+                        extension, UiName);
+                    return false;
                 }
             }
 
@@ -187,9 +201,6 @@ namespace Google.XR.Extensions
         /// <inheritdoc/>
         protected override void OnInstanceDestroy(ulong xrInstance)
         {
-#if !UNITY_EDITOR
-            UnityOpenXRNativeApi.MetaSetSubsampledLayout(false);
-#endif // !UNITY_EDITOR
             XRInstanceManagerApi.Destroy();
         }
 
@@ -307,54 +318,46 @@ namespace Google.XR.Extensions
                 return;
             }
 
+#pragma warning disable CS0618 // Type or member is obsolete
             results.Add(new ValidationRule(this)
             {
-                message = "Foveation feature is required for <b>Subsampling (Vulkan)</b>.",
+                message = "VulkanSubsampling option is deprecated. Please use " +
+                    "FoveatedRenderingFeature.TrySetSubsampledLayoutEnabled(bool) instead.",
                 checkPredicate = () =>
                 {
-                    if (!VulkanSubsampling)
-                    {
-                        return true;
-                    }
-
-                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
-                    if (settings == null)
-                    {
-                        return false;
-                    }
-
-                    var foveation = GraphicsSettings.defaultRenderPipeline == null ?
-                      settings.GetFeature<XRFoveationFeature>() as OpenXRFeature :
-                      settings.GetFeature<FoveatedRenderingFeature>();
-                    return foveation != null && foveation.enabled;
+                    return !VulkanSubsampling;
                 },
-                fixItMessage = "Enable Foveation feature for <b>Subsampling (Vulkan)</b>.",
+                fixItMessage = "Disable <b>Subsampling (Vulkan)</b>.",
                 fixIt = () =>
                 {
-                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
-                    if (settings == null)
-                    {
-                        Debug.LogWarningFormat(
-                            "Autofix failed with missing OpenXRSettings on {0} platform.",
-                            targetGroup);
-                        return;
-                    }
-
-                    var foveation = GraphicsSettings.defaultRenderPipeline == null ?
-                      settings.GetFeature<XRFoveationFeature>() as OpenXRFeature :
-                      settings.GetFeature<FoveatedRenderingFeature>();
-                    if (foveation == null)
-                    {
-                        Debug.LogWarningFormat(
-                            "Autofix failed with missing Foveation feature on {0} platform.",
-                            targetGroup);
-                        return;
-                    }
-
-                    foveation.enabled = true;
+                    VulkanSubsampling = false;
                 },
                 error = true
             });
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            if (_useSpatialApi)
+            {
+                XRSpatialSdkVersions minVersion = XRSpatialSdkVersions.XRSpatialApiLevel1;
+                List<string> featureNames = new List<string>();
+                bool predicate = _spatialApiTargetVersion.ValidateActiveFeatures(
+                    ref minVersion, ref featureNames);
+                results.Add(new ValidationRule(this)
+                {
+                    message = string.Format(
+                        "Following feature(s) are not supported by {0} " +
+                        "which may not work properly at runtime: {2}\n" +
+                        "Recommand to select {1} or handle unsupported cases accordingly.",
+                        _spatialApiTargetVersion.GetDisplayOption(),
+                        minVersion.GetDisplayOption(),
+                        string.Join(", ", featureNames)),
+                    checkPredicate = () => predicate,
+                    fixItMessage = string.Format("Select target version {0}.",
+                        minVersion.GetDisplayOption()),
+                    fixIt = () => _spatialApiTargetVersion = minVersion,
+                    error = false,
+                });
+            }
         }
 #endif // UNITY_EDITOR
     }

@@ -85,19 +85,15 @@ namespace Google.XR.Extensions
                                 case "Unknown":
                                     label = XRObjectLabel.Unknown;
                                     break;
-
                                 case "Keyboard":
                                     label = XRObjectLabel.Keyboard;
                                     break;
-
                                 case "Mouse":
                                     label = XRObjectLabel.Mouse;
                                     break;
-
                                 case "Laptop":
                                     label = XRObjectLabel.Laptop;
                                     break;
-
                                 default:
                                     continue;
                             }

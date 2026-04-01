@@ -12,8 +12,6 @@ To enable the sample:
 *   Switch to the **Android** tab.
 *   Select **Android XR (Extensions): Session Management**.
 *   Select **Android XR (Extensions): Object Tracking**.
-*   Select **Environment Blend Mode** and open **Setting** menu, set **Request
-    Mode** to **Alpha Blend** which gives a better visual result.
 *   Under **XR Plug-in Management > Project Validation**, fix all **OpenXR**
     related issues. This will help to configure your **Player Settings**.
 
@@ -25,6 +23,14 @@ tracking with following steps to render planes as the baseline:
 *   Select **Android XR: Plane**, providing plane tracking on Android XR.
 *   Under **XR Plug-in Management > Project Validation**, fix all **OpenXR**
     related issues.
+
+If you have **Unity OpenXR Android XR** imported, you can also enable
+passthrough by:
+
+*   Select **Android XR: AR Camera**.
+*   Refer to manual
+    [AR Camera](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/camera.html#passthrough)
+    for more details.
 
 NOTE: Although `AndroidXRObjectTrackingSubsystem` doesn't use reference
 libraries on object detection, a default `XRReferenceObjectLibrary` is required

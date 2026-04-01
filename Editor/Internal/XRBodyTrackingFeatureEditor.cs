@@ -28,6 +28,9 @@ namespace Google.XR.Extensions.Editor.Internal
     [CustomEditor(typeof(XRBodyTrackingFeature))]
     internal class XRBodyTrackingFeatureEditor : Editor
     {
+        private const string _jointSetFieldName = "_jointSet";
+        private const string _jointSetTooltip = "Configure the joint set to be tracked at runtime.";
+
         private const string _autoCalibrationFieldName = "_autoCalibration";
         private const string _autoCalibrationTooltip =
             "Determines whether to enable automatic calibration at runtime.";
@@ -37,12 +40,16 @@ namespace Google.XR.Extensions.Editor.Internal
             "Optional avatar proportions for the rest pose skeleton computation. " +
             "It only takes effect when automatic calibration is disabled.";
 
+        private static readonly GUIContent _jointSetLabel =
+            new GUIContent("Joint Set", _jointSetTooltip);
+
         private static readonly GUIContent _autoCalibrationLabel =
             new GUIContent("Auto Calibration", _autoCalibrationTooltip);
 
         private static readonly GUIContent _proportionsLabel =
             new GUIContent("Human Body Proportions", _proportionsTooltip);
 
+        private SerializedProperty _jointSet;
         private SerializedProperty _autoCalibration;
         private SerializedProperty _proportions;
 
@@ -52,6 +59,12 @@ namespace Google.XR.Extensions.Editor.Internal
             EditorGUIUtility.labelWidth = 170.0f;
 
             serializedObject.Update();
+
+            XRBodyJointSet currentSelect = (XRBodyJointSet)_jointSet.intValue;
+            currentSelect = (XRBodyJointSet)EditorGUILayout.EnumPopup(
+                _jointSetLabel, currentSelect);
+            _jointSet.intValue = (int)currentSelect;
+
             EditorGUILayout.PropertyField(_autoCalibration, _autoCalibrationLabel);
             if (!_autoCalibration.boolValue)
             {
@@ -65,6 +78,7 @@ namespace Google.XR.Extensions.Editor.Internal
 
         private void OnEnable()
         {
+            _jointSet = serializedObject.FindProperty(_jointSetFieldName);
             _autoCalibration = serializedObject.FindProperty(_autoCalibrationFieldName);
             _proportions = serializedObject.FindProperty(_proportionsFieldName);
         }

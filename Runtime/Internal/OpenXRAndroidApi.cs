@@ -26,38 +26,6 @@ namespace Google.XR.Extensions.Internal
 
     internal class OpenXRAndroidApi
     {
-        public static void SetBlendMode(XrEnvironmentBlendMode mode)
-        {
-            ExternalApi.OpenXRAndroid_setBlendMode(XRInstanceManagerApi.GetIntPtr(), mode);
-        }
-
-        public static XrEnvironmentBlendMode GetBlendMode()
-        {
-            XrEnvironmentBlendMode mode = XrEnvironmentBlendMode.Additive;
-            ExternalApi.OpenXRAndroid_getBlendMode(XRInstanceManagerApi.GetIntPtr(), ref mode);
-            return mode;
-        }
-
-        public static XrEnvironmentBlendMode[] EnumerateEnvironmentBlendModes(
-            int view_configuration_type, ulong system_id)
-        {
-            const uint MaxBlendModes = 16;
-            XrEnvironmentBlendMode[] blendModes = new XrEnvironmentBlendMode[MaxBlendModes];
-            unsafe
-            {
-                fixed (XrEnvironmentBlendMode* blendModesPtr = blendModes)
-                {
-                    uint numBlendModes = 0;
-                    ExternalApi.OpenXRAndroid_enumerateEnvironmentBlendModes(
-                                    XRInstanceManagerApi.GetIntPtr(), view_configuration_type,
-                                    system_id, blendModesPtr, MaxBlendModes, ref numBlendModes);
-                    Array.Resize(ref blendModes, (int)numBlendModes);
-                }
-            }
-
-            return blendModes;
-        }
-
         public static bool TryGetSystemState(ref XrSystemState systemState)
         {
             return ExternalApi.OpenXRAndroid_getSystemState(
@@ -66,19 +34,6 @@ namespace Google.XR.Extensions.Internal
 
         private struct ExternalApi
         {
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void OpenXRAndroid_setBlendMode(
-                IntPtr manager, XrEnvironmentBlendMode mode);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void OpenXRAndroid_getBlendMode(
-                IntPtr manager, ref XrEnvironmentBlendMode out_mode);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static unsafe extern IntPtr OpenXRAndroid_enumerateEnvironmentBlendModes(
-                IntPtr manager, int view_configuration_type, ulong system_id,
-                XrEnvironmentBlendMode* blend_modes, uint capacity, ref uint count_output);
-
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool OpenXRAndroid_getSystemState(
                 IntPtr manager, ref XrSystemState systemState);

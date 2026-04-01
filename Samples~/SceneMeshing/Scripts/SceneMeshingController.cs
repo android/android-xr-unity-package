@@ -98,7 +98,7 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
                 {
                     if (!_meshSubsystem.IsSceneMeshId(info.MeshId))
                     {
-                        //// This might be a hand mesh id
+                        //// This not a scene mesh id, so ignore it.
                         continue;
                     }
 

@@ -25,9 +25,10 @@ namespace Google.XR.Extensions.Internal
 
     internal class XRSceneMeshingApi
     {
-        public static void SetEnabled(bool enabled)
+        public static void SetProviderAvailable(bool available)
         {
-            ExternalApi.XrSceneMeshing_setEnabled(XRInstanceManagerApi.GetIntPtr(), enabled);
+            ExternalApi.XrSceneMeshing_setProviderAvailable(
+                XRInstanceManagerApi.GetIntPtr(), available);
         }
 
         public static bool IsSceneMeshId(ref MeshId mesh_id)
@@ -53,7 +54,8 @@ namespace Google.XR.Extensions.Internal
         private struct ExternalApi
         {
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrSceneMeshing_setEnabled(IntPtr manager, bool enabled);
+            public static extern bool XrSceneMeshing_setProviderAvailable(
+                IntPtr manager, bool available);
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool XrSceneMeshing_isSceneMeshId(
                 IntPtr manager, ref MeshId mesh_id);

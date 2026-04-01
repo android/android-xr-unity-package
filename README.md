@@ -3,18 +3,18 @@
 The Android XR Extensions for Unity provide APIs for the following:
 
 1.  Session Management: required for all Android XR Extensions' features.
-2.  Environment Blend Mode.
-3.  Object Tracking.
-4.  Face Tracking.
-5.  Marker Tracking.
-6.  QR Code Tracking.
-7.  Hand Mesh.
-8.  Scene Meshing.
-9.  Unbounded Reference Space.
-10. Passthrough Composition Layer.
-11. Mouse Interaction Profile.
-12. Body Tracking *(Experimental)*.
-13. System State *(Experimental)*.
+2.  Object Tracking.
+3.  Marker Tracking.
+4.  QR Code Tracking.
+5.  Scene Meshing.
+6.  Unbounded Reference Space.
+7.  Passthrough Composition Layer.
+8.  Mouse Interaction Profile.
+9.  Body Tracking *(Experimental)*.
+10. System State *(Experimental)*.
+11. Fine Eye.
+12. XR Streaming.
+13. Cubemap Light Estimation.
 
 ## How to use
 

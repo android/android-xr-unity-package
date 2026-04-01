@@ -29,6 +29,19 @@ namespace Google.XR.Extensions.Internal
 
     internal class XRBodyTrackingApi
     {
+        public static void SetJointSet(XRBodyJointSet jointSet)
+        {
+            ExternalApi.XrBodyTracking_setJointSet(
+                XRInstanceManagerApi.GetIntPtr(), jointSet.ToApiBodyJointSet());
+        }
+
+        public static XRBodyJointSet GetJointSet()
+        {
+            ApiBodyJointSet jointSet = ApiBodyJointSet.UpperBody;
+            ExternalApi.XrBodyTracking_getJointSet(XRInstanceManagerApi.GetIntPtr(), ref jointSet);
+            return jointSet.ToXRBodyJointSet();
+        }
+
         public static void SetTracking(bool enable)
         {
             ExternalApi.XrBodyTracking_setTrackingEnabled(XRInstanceManagerApi.GetIntPtr(), enable);
@@ -40,11 +53,12 @@ namespace Google.XR.Extensions.Internal
                 XRInstanceManagerApi.GetIntPtr(), automatic, ref proportions);
         }
 
-        public static unsafe void GetSkeleton(TrackableId id, NativeArray<XRHumanBodyJoint> joints)
+        public static unsafe uint GetSkeleton(TrackableId id, NativeArray<XRHumanBodyJoint> joints)
         {
             uint size = (uint)joints.Length;
             ExternalApi.XrBodyTracking_getSkeleton(
                 XRInstanceManagerApi.GetIntPtr(), id, ref size, (IntPtr)joints.GetUnsafePtr());
+            return size;
         }
 
         public static IntPtr AcquireChanges(ref IntPtr outAddedList, ref uint outAddedCount,
@@ -68,6 +82,14 @@ namespace Google.XR.Extensions.Internal
 
         private struct ExternalApi
         {
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern void XrBodyTracking_setJointSet(
+                IntPtr manager, ApiBodyJointSet jointSet);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern void XrBodyTracking_getJointSet(
+                IntPtr manager, ref ApiBodyJointSet jointSet);
+
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrBodyTracking_setTrackingEnabled(
                 IntPtr manager, bool enabled);

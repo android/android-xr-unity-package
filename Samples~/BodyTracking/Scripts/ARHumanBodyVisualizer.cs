@@ -22,6 +22,7 @@ namespace Google.XR.Extensions.Samples.BodyTracking
     using UnityEngine;
     using UnityEngine.XR.ARFoundation;
     using UnityEngine.XR.ARSubsystems;
+    using UnityEngine.XR.OpenXR;
 
     /// <summary>
     /// Body visualizer to render hand joints.
@@ -62,11 +63,9 @@ namespace Google.XR.Extensions.Samples.BodyTracking
         /// </summary>
         public bool DrawJoints = true;
 
-        private GameObject[] _jointGOs =
-            new GameObject[XRAvatarSkeletonJointIDUtility.JointCount()];
-
-        private LineRenderer[] _bones =
-            new LineRenderer[XRAvatarSkeletonJointIDUtility.JointCount()];
+        private XRBodyJointSet _jointSet;
+        private GameObject[] _jointGOs = new GameObject[0];
+        private LineRenderer[] _bones = new LineRenderer[0];
 
         private ARHumanBody _body;
         private MeshRenderer _rootMesh;
@@ -96,6 +95,19 @@ namespace Google.XR.Extensions.Samples.BodyTracking
 
         private void Awake()
         {
+            var bodyTracking = OpenXRSettings.Instance.GetFeature<XRBodyTrackingFeature>();
+            if (bodyTracking == null)
+            {
+                Debug.LogErrorFormat("{0} is not available at current platform.",
+                    XRBodyTrackingFeature.UiName);
+                return;
+            }
+
+            _jointSet = bodyTracking.RequestedJointSet;
+            int jointCount = XRBodyJointSetUtility.JointCount(_jointSet.GetJointSetType());
+            _jointGOs = new GameObject[jointCount];
+            _bones = new LineRenderer[jointCount];
+
             _body = GetComponent<ARHumanBody>();
             _rootMesh = GetComponent<MeshRenderer>();
             if (JointPrefab == null)
@@ -110,7 +122,21 @@ namespace Google.XR.Extensions.Samples.BodyTracking
                 _jointGOs[index] = Instantiate(JointPrefab, transform);
                 _jointGOs[index].transform.localPosition = Vector3.zero;
                 _jointGOs[index].transform.localRotation = Quaternion.identity;
-                _jointGOs[index].name = XRAvatarSkeletonJointIDUtility.FromIndex(index).ToString();
+                if (_jointSet == XRBodyJointSet.FullBody)
+                {
+                    XRBodyJointSetUtility.FromIndex(index, out XRFullBodyJointID jointId);
+                    _jointGOs[index].name = jointId.ToString();
+                }
+                else if (_jointSet == XRBodyJointSet.UpperBody)
+                {
+                    XRBodyJointSetUtility.FromIndex(index, out XRUpperBodyJointID jointId);
+                    _jointGOs[index].name = jointId.ToString();
+                }
+                else
+                {
+                    _jointGOs[index].name = "Unknown";
+                }
+
                 _bones[index] = _jointGOs[index].GetComponent<LineRenderer>();
                 if (_bones[index])
                 {
@@ -174,13 +200,13 @@ namespace Google.XR.Extensions.Samples.BodyTracking
 
                 if (!DrawJoints || index >= _body.joints.Length || !_body.joints[index].tracked)
                 {
-                    _bones[index].enabled = false;
                     continue;
                 }
 
                 _bones[index].SetPosition(0, Vector3.zero);
                 if (_body.joints[index].parentIndex >= 0 &&
-                    _body.joints[index].parentIndex < XRAvatarSkeletonJointIDUtility.JointCount())
+                    _body.joints[index].parentIndex <
+                        XRBodyJointSetUtility.JointCount(_jointSet.GetJointSetType()))
                 {
                     Pose pose = _body.joints[index].anchorPose;
                     Pose parent = _body.joints[_body.joints[index].parentIndex].anchorPose;
@@ -203,16 +229,11 @@ namespace Google.XR.Extensions.Samples.BodyTracking
                 _rootMesh.enabled = DrawMesh && visible;
             }
 
-            for (int index = 0; index < XRAvatarSkeletonJointIDUtility.JointCount(); index++)
+            for (int index = 0; index < _jointGOs.Length; index++)
             {
                 if (_jointGOs[index])
                 {
                     _jointGOs[index].SetActive(DrawJoints && visible);
-                }
-
-                if (_bones[index])
-                {
-                    _bones[index].enabled = DrawJoints && visible;
                 }
             }
         }

@@ -30,6 +30,7 @@ namespace Google.XR.Extensions.Editor.Internal
         const string _playerSettings = "<b>Project Settings > Player Settings</b>";
         const string _openxrSettings = "<b>Project Settings > XR Plug-in Management > OpenXR</b>";
         const string _androidTab = "<b>Android</b> tab";
+        const string _standaloneTab = "<b>Standalone</b> tab";
 
         [InitializeOnLoadMethod]
         static void AddAndroidXRProjectValidationRules()
@@ -72,6 +73,104 @@ namespace Google.XR.Extensions.Editor.Internal
             };
 
             BuildValidator.AddRules(BuildTargetGroup.Android, androidXRProjectRules);
+
+            const string xrsCategory = XRStreamingFeature.UiName;
+            var standaloneProjectRules = new[]
+            {
+#if UNITY_EDITOR_WIN
+                new BuildValidationRule
+                {
+                    Category = xrsCategory,
+                    Message = string.Format(
+                        "{0} feature is required for running Android XR in Editor <b>PlayMode</b>.",
+                        XRStreamingFeature.UiName),
+                    IsRuleEnabled = AndroidXRBuildUtils.IsAndroidXRRunningInEditor,
+                    CheckPredicate = () => FeatureHelpers.GetFeatureWithIdForBuildTarget(
+                        BuildTargetGroup.Standalone, XRStreamingFeature.FeatureId).enabled,
+                    FixItMessage = string.Format(
+                        "Go to {0}, under {1}, select <b>{2}</b>.",
+                        _openxrSettings, _standaloneTab, XRStreamingFeature.UiName),
+                    FixIt = () => FeatureHelpers.GetFeatureWithIdForBuildTarget(
+                        BuildTargetGroup.Standalone, XRStreamingFeature.FeatureId).enabled = true,
+                    Error = true,
+                },
+                new BuildValidationRule
+                {
+                    Category = xrsCategory,
+                    Message = string.Format(
+                        "XR Streaming Runtime is not available. " +
+                        "Please follow instructions to install XR Streaming SDK."),
+                    IsRuleEnabled = AndroidXRBuildUtils.IsAndroidXRRunningInEditor,
+                    CheckPredicate = OpenXRRuntimeDetector.IsXrStreamingRuntimeAvailable,
+                    Error = true,
+                },
+                new BuildValidationRule
+                {
+                    Category = xrsCategory,
+                    Message = string.Format(
+                        "XR Streaming Runtime is required for runing Android XR in " +
+                        "Editor <b>PlayMode</b>."),
+                    IsRuleEnabled = () =>
+                    {
+                        return AndroidXRBuildUtils.IsAndroidXRRunningInEditor()
+                            && OpenXRRuntimeDetector.IsXrStreamingRuntimeAvailable();
+                    },
+                    CheckPredicate = OpenXRRuntimeDetector.IsXrStreamingRuntimeSelected,
+                    FixItMessage = string.Format(
+                        "Go to {0}, under {1}, for <b>Play Mode OpenXR Runtime</b>, " +
+                        " select <b>{2}</b>.",
+                        _openxrSettings, _standaloneTab,
+                        OpenXRRuntimeDetector.GetXrStreamingRuntimeDisplayName()),
+                    FixIt = OpenXRRuntimeDetector.SelectXrStreamingRuntime,
+                    Error = true,
+                },
+                GetSessionDependentRule(BuildTargetGroup.Standalone),
+#else
+                new BuildValidationRule
+                {
+                    Category = xrsCategory,
+                    Message = string.Format(
+                        "Android XR Features under {0} is only supported by Windows Editor.",
+                        _standaloneTab),
+                    IsRuleEnabled = () =>
+                    {
+                        return AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabledForBuildTarget(
+                            BuildTargetGroup.Standalone);
+                    },
+                    CheckPredicate = () =>
+                    {
+                        return !AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabledForBuildTarget(
+                            BuildTargetGroup.Standalone);
+                    },
+                    FixItMessage = string.Format(
+                        "Go to {0}, under {1}, disable all features from <b>{2}</b> feature group.",
+                        _openxrSettings, _standaloneTab, AndroidXRFeatureSet._uiName),
+                    FixIt = () =>
+                    {
+                        var buildTarget = BuildTargetGroup.Standalone;
+                        var featureSets =
+                            OpenXRFeatureSetManager.FeatureSetsForBuildTarget(buildTarget);
+                        foreach (var featureSet in featureSets)
+                        {
+                            if (featureSet.featureSetId.Equals(AndroidXRFeatureSet._featureSetId))
+                            {
+                                featureSet.isEnabled = false;
+                                break;
+                            }
+                        }
+
+                        var featureIds = OpenXRFeatureSetManager.GetFeatureSetWithId(
+                            buildTarget, AndroidXRFeatureSet._featureSetId).featureIds;
+                        var features = FeatureHelpers.GetFeaturesWithIdsForBuildTarget(
+                            buildTarget, featureIds);
+                        features.ToList().ForEach(feature => feature.enabled = false);
+                    },
+                    Error = false,
+                },
+#endif
+            };
+
+            BuildValidator.AddRules(BuildTargetGroup.Standalone, standaloneProjectRules);
         }
 
         static BuildValidationRule GetSessionDependentRule(BuildTargetGroup buildTarget)

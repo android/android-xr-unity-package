@@ -71,6 +71,19 @@ namespace Google.XR.Extensions.Editor.Internal
                 EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android;
         }
 
+        internal static bool IsAndroidXRRunningInEditor()
+        {
+#if UNITY_EDITOR_WIN
+            // Currently, it only supports windows.
+            bool activeOnEditor = IsAnyAndroidXRFeatureEnabledForBuildTarget(
+                BuildTargetGroup.Standalone);
+
+            return activeOnEditor;
+#else
+            return false;
+#endif
+        }
+
         internal static bool IsAnySessionDependentEnabled(BuildTargetGroup buildTarget)
         {
             var features = FeatureHelpers.GetFeaturesWithIdsForBuildTarget(

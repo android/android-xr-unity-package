@@ -1,6 +1,7 @@
 // <copyright file="XRTrackableApi.cs" company="Google LLC">
 //
 // Copyright 2024 Google LLC
+// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +29,12 @@ namespace Google.XR.Extensions.Internal
 
     internal class XRTrackableApi
     {
+        public static bool TryGetSystemSupport(ApiXrTrackableType type, ref bool supported)
+        {
+            return ExternalApi.XrTrackable_getSystemSupport(
+                XRInstanceManagerApi.GetIntPtr(), type, ref supported);
+        }
+
         public static void SetTracking(ApiXrTrackableType type, bool enable)
         {
             ExternalApi.XrTrackable_setTracking(XRInstanceManagerApi.GetIntPtr(), type, enable);
@@ -167,6 +174,10 @@ namespace Google.XR.Extensions.Internal
 
         private struct ExternalApi
         {
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrTrackable_getSystemSupport(
+                IntPtr manager, ApiXrTrackableType type, ref bool out_support);
+
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrTrackable_setTracking(
                 IntPtr manager, ApiXrTrackableType type, bool enable);

@@ -53,7 +53,7 @@ namespace Google.XR.Extensions
         FeatureId = FeatureId,
         Priority = 97)]
 #endif
-    public class XRBodyTrackingFeature : OpenXRFeature
+    public class XRBodyTrackingFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -70,7 +70,7 @@ namespace Google.XR.Extensions
         /// The OpenXR Extension string. Used to check if this extensions is
         /// available or enabled.
         /// </summary>
-        public const string ExtensionString = "XR_ANDROIDX_body_tracking";
+        public const string ExtensionString = "XR_ANDROIDX1_body_tracking";
 
         /// <summary>
         /// Runtime permission required to enable body tracking.
@@ -79,6 +79,9 @@ namespace Google.XR.Extensions
             AndroidXRPermission.BodyTracking;
 
         internal static bool? _extensionEnabled = null;
+
+        [SerializeField]
+        private XRBodyJointSet _jointSet = XRBodyJointSet.UpperBody;
 
         [SerializeField]
         private bool _autoCalibration = false;
@@ -94,6 +97,11 @@ namespace Google.XR.Extensions
         /// whether the XR_ANDROIDX_body_tracking extension is available on current device.
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
+
+        /// <summary>
+        /// Gets the requested joint set to be tracked at runtime.
+        /// </summary>
+        public XRBodyJointSet RequestedJointSet => _jointSet;
 
         /// <summary>
         /// Gets or sets a value indicating whether to use automatic calibration at runtime.
@@ -134,6 +142,12 @@ namespace Google.XR.Extensions
                 }
 #endif
             }
+        }
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel3;
         }
 
         /// <inheritdoc/>
@@ -196,6 +210,7 @@ namespace Google.XR.Extensions
             else
             {
                 Debug.LogFormat("Created {0}.", _subsystemInstance.GetType());
+                _subsystemInstance._jointSet = _jointSet;
                 if (_autoCalibration)
                 {
                     _subsystemInstance.AutoCalibrationRequested = _autoCalibration;

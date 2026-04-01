@@ -1,6 +1,7 @@
 // <copyright file="AndroidXRImageTrackingSubsystem.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
+// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,7 +64,7 @@ namespace Google.XR.Extensions
         /// <param name="dictionary">The <see cref="XRMarkerDictionary"/> it belongs to.</param>
         /// <param name="markId">The id from the <paramref name="dictionary"/>.</param>
         /// <returns><c>True</c> if it gets marker data successfully.</returns>
-        public bool TryGetMarkeData(
+        public bool TryGetMarkerData(
             TrackableId marker, out XRMarkerDictionary dictionary, out int markId)
         {
             XRMarkerDictionary md = XRMarkerDictionary.ArUco4x4_50;
@@ -82,10 +83,10 @@ namespace Google.XR.Extensions
             }
         }
 
-        internal void SetPreferEstimation(ApiXrTrackableType type, bool prefer)
+        internal void InitTracking(ApiXrTrackableType type, bool preferSizeEstimation)
         {
             AndroidXRProvider androidXRProvider = provider as AndroidXRProvider;
-            androidXRProvider.SetPreferEstimation(type, prefer);
+            androidXRProvider?.InitTracking(type, preferSizeEstimation);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -130,7 +131,6 @@ namespace Google.XR.Extensions
             private bool _markerSupportEstimation = false;
             private uint _markerMaxCount = 0;
 
-            private int _currentMaxMovingImages = 0;
             private int _requestedMaxMovingImages = 0;
             private bool _preferQrCodeEstimation = false;
             private bool _preferMarkerEstimation = false;
@@ -151,25 +151,21 @@ namespace Google.XR.Extensions
             {
                 get
                 {
-                    if (_currentMaxMovingImages == 0)
+                    if (_isQrCodeActive && _qrCodeMaxCount == 0)
                     {
-                        if (_qrCodeMaxCount == 0)
-                        {
-                            XRTrackableApi.TryGetQrCodeProperties(
-                                ref _qrCodeMaxCount, ref _qrCodeSupportEstimation);
-                        }
-
-                        if (_markerMaxCount == 0)
-                        {
-                            XRTrackableApi.TryGetMarkerProperties(
-                                ref _markerMaxCount, ref _markerSupportEstimation);
-                        }
-
-                        _currentMaxMovingImages += _isQrCodeActive ? (int)_qrCodeMaxCount : 0;
-                        _currentMaxMovingImages += _isMarkerActive ? (int)_markerMaxCount : 0;
+                        XRTrackableApi.TryGetQrCodeProperties(
+                            ref _qrCodeMaxCount, ref _qrCodeSupportEstimation);
                     }
 
-                    return _currentMaxMovingImages;
+                    if (_isMarkerActive && _markerMaxCount == 0)
+                    {
+                        XRTrackableApi.TryGetMarkerProperties(
+                            ref _markerMaxCount, ref _markerSupportEstimation);
+                    }
+
+                    var qr = _isQrCodeActive ? (int)_qrCodeMaxCount : 0;
+                    var marker = _isMarkerActive ? (int)_markerMaxCount : 0;
+                    return qr + marker;
                 }
             }
 
@@ -287,17 +283,17 @@ namespace Google.XR.Extensions
                 }
             }
 
-            internal void SetPreferEstimation(ApiXrTrackableType type, bool prefer)
+            internal void InitTracking(ApiXrTrackableType type, bool preferSizeEstimation)
             {
                 switch (type)
                 {
                     case ApiXrTrackableType.QrCode:
                         _isQrCodeActive = true;
-                        _preferQrCodeEstimation = prefer;
+                        _preferQrCodeEstimation = preferSizeEstimation;
                         return;
                     case ApiXrTrackableType.Marker:
                         _isMarkerActive = true;
-                        _preferMarkerEstimation = prefer;
+                        _preferMarkerEstimation = preferSizeEstimation;
                         return;
                     default:
                         return;

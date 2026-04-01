@@ -8,6 +8,64 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-02-19
+
+### Editor version and package compatibility
+  * This version of the package requires minimal Unity Editor version `6000.3.6f1`. You can install the official **Unity 6.3** (e.g. `6000.3.5f2` or newer) from the Unity Hub.
+  * Package dependencies updated in this version:
+    * OpenXR Plugin (`com.unity.xr.openxr`) 1.17.0-pre.1
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.3.3
+    * XR Plugin Management (`com.unity.xr.management`): 4.5.4
+  * Verified compatible packages:
+    * Unity OpenXR Android XR (`com.unity.xr.androidxr-openxr`) 1.2.0
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.4.0
+    * Composition Layer (`com.unity.xr.compositionlayers`) 2.3.0
+    * XR Hands (`com.unity.xr.hands`) 1.7.3
+    * Universal Render Pipeline (`com.unity.render-pipelines.universal`) 17.3.0
+
+### Known issues
+  * Regression issue found in **OpenXR Plugin 1.16.1** where projects hit validation issues with a error icon on the OpenXR Feature but no message showing under **XR Plug-in Management > Project Validation** panel.
+    * Workaround: check individual samples' `README.md` on how to set up the sample or [Android XR devsite](https://developer.android.com/develop/xr/unity) for more instructions.
+    * To include a formal fix, please upgrade to **OpenXR Plugin 1.17.0-pre.1** or newer versions.
+  * Regression issue found in Unity Editors where **Package Manager** shows invalid signature errors under public packages.
+    * Workaround: In case it blocks package importing, navigate to the problemaitc package, click **Manage** dropdown and select **customize** to include a customized copy of the package source into your project. You can then dismiss the Editor error and use it as before.
+    * To include a formal fix, please upgrade Editor to `6000.3.5f2` or newer. See more details in [Community Discussions](https://discussions.unity.com/t/package-manager-invalid-signatures-issue/1705385/103).
+    * Also check out [Export and sign your UPM package](https://docs.unity3d.com/6000.3/Documentation/Manual/cus-export.html) about the package signature.
+
+### Added
+  * XR Spatial API support:
+    * Provide public API under `XRSessionFeature` to configure `uses-feature` element for `android.software.xr.api.SPATIAL` on the application's manifest file.
+    * Implement `IXRSpatialSdk` interface for OpenXR features with XR Spatial API requirements.
+    * For more details, check examples from [PackageManager features for XR apps](https://developer.android.com/develop/xr/jetpack-xr-sdk/build-immersive#packagemanager-features).
+  * Fine Eye:
+    * New OpenXR Feature **Android XR (Extensions): Fine Eye** which is a supplement to **Unity OpenXR Android XR**'s **Android XR: AR Face** feature and provides access to fine eye poses.
+    * Provide extension method `TryGetFineEyePoses(this ARFace, out AndroidOpenXREyeTrackingStates,out Pose, out Pose)`.
+    * See more details in [Unity OpenXR Android XR | Face Tracking](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/faces.html)
+  * Android XR Streaming:
+    * New OpenXR Feature **Android XR Streaming** which provides instructions on how to prepare projects ready for **Android XR Direct Preview**.
+    * Added a Dynamic-link library (DLL) build of the native plugin to support **PlayMode** on **Windows** Editor.
+    * For more information about **Android XR Direct Preview**, refer to [Android XR devsite](https://www.android.com/xr/) updates.
+  * Light Estimation Cubemap:
+    * New OpenXR Feature `XRCubemapLightEstimation` which provides lighting environment probes via `AREnvironmentProbeManager`.
+
+### Changed
+  * `IsExtensionEnabled` in each OpenXR Feature now reflects both extension availability and system supportness to better report runtime capabilities. Applications should check `IsExtensionEnabled.HasValue` and `IsExtensionEnabled.Value` before accessing other feature APIs, and handle unsupported features accordingly.
+  * Updated samples **ObjectTracking**, **ImageTracking**, **XRControllerSample**, **SceneMeshing** with **AR Camera Mananger** which prepare for passthrough usage from [AR Camera](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/camera.html#passthrough).
+  * Added new settings **Joint Set** under `XRBodyTrackingFeature`. It defaults to `XRBodyJointSet.UpperBody` to match previous behavior.
+    * Introduces two `XRBodyJointSet` types. `XRAvatarSkeletonJointID` is replaced by corresponding enum types `XRUpperBodyJointID` and `XRFullBodyJointID`.
+    * `XRAvatarSkeletonJointIDUtility` is replaced by `XRBodyJointSetUtility` to support multiple joint sets.
+
+### Deprecated
+  * Deprecated **Subsampling (Vulkan)** option in **Android XR (Extensions): Session Management** feature. Please use `FoveatedRenderingFeature.TrySetSubsampledLayoutEnabled(bool)` from **OpenXR Plugin** package instead. See details in [Subsampled layout](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.16/manual/features/subsampledlayout.html).
+
+### Removed
+  * Removed feature **Android XR (Extensions): Hand Mesh**. Please use [Hand Mesh Data](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/hand-mesh-data.html) from **Unity OpenXR Android XR** instead.
+  * Removed feature **Environment Blend Mode** and `TransparentBackgroundRendererFeature`. Please use [AR Camera](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/camera.html#passthrough) from **Unity OpenXR Android XR** to enable passthrough background.
+  * Remove feature **Android XR: Face Tracking**. Please use [AR Face](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/faces.html) from **Unity OpenXR Android XR** instead.
+
+### Fixed
+  * Fixed a typo in public API `TryGetMarkerData` within `AndroidXRImageTrackingSubsystem`.
+
 ## [1.2.0] - 2025-09-30
 
 ### Editor version and package compatibility

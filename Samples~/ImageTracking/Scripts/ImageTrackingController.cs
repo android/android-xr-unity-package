@@ -1,6 +1,7 @@
 // <copyright file="ImageTrackingController.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
+// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -102,25 +103,36 @@ namespace Google.XR.Extensions.Samples.ImageTracking
 
         private void UpdateImages()
         {
-            if (XRQrCodeTrackingFeature.IsExtensionEnabled == null)
-            {
-                return;
-            }
-            else if (!XRQrCodeTrackingFeature.IsExtensionEnabled.Value)
+            var isQrCodeExtensionEnabled =
+                XRQrCodeTrackingFeature.IsExtensionEnabled.GetValueOrDefault();
+            if (!isQrCodeExtensionEnabled)
             {
                 _stringBuilder.Append("XR_ANDROID_trackables_qr_code is not enabled.\n");
             }
-            else if (ImageManager == null || ImageManager.subsystem == null)
+
+            var isMarkerExtensionEnabled =
+                XRMarkerTrackingFeature.IsExtensionEnabled.GetValueOrDefault();
+            if (!isMarkerExtensionEnabled)
             {
-                _stringBuilder.Append("Cannnot find ARTrackedImageManager.\n");
+                _stringBuilder.Append("XR_ANDROID_trackables_marker is not enabled.\n");
             }
-            else
+
+            if (!isQrCodeExtensionEnabled && isMarkerExtensionEnabled)
             {
-                _stringBuilder.Append($"{ImageManager.subsystem.GetType()}\n");
-                _stringBuilder.AppendFormat(
-                    $"Images: ({_imageAdded}, {_imageUpdated}, {_imageRemoved})\n" +
-                    $"{string.Join("\n", _images.Select(id => id.subId1).ToArray())}\n");
+                // no image tracking feature is enabled.
+                return;
             }
+
+            if (ImageManager == null || ImageManager.subsystem == null)
+            {
+                _stringBuilder.Append("Cannot find ARTrackedImageManager.\n");
+                return;
+            }
+
+            _stringBuilder.Append($"{ImageManager.subsystem.GetType()}\n");
+            _stringBuilder.AppendFormat(
+                $"Images: ({_imageAdded}, {_imageUpdated}, {_imageRemoved})\n" +
+                $"{string.Join("\n", _images.Select(id => id.subId1).ToArray())}\n");
         }
 
         private string GetImageDebugInfo(ARTrackedImage trackable)
@@ -164,7 +176,6 @@ namespace Google.XR.Extensions.Samples.ImageTracking
             {
                 Debug.LogErrorFormat(
                     "Cannot find {0} targeting Android platform.", XRQrCodeTrackingFeature.UiName);
-                return;
             }
             else if (!qrCodeFeature.enabled)
             {

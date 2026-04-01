@@ -48,6 +48,7 @@ namespace Google.XR.Extensions
     [OpenXRFeature(UiName = UiName,
         BuildTargetGroups = new[] {
             BuildTargetGroup.Android,
+            BuildTargetGroup.Standalone,
         },
         Company = "Google",
         OpenxrExtensionStrings = ExtensionStrings,
@@ -58,7 +59,7 @@ namespace Google.XR.Extensions
         FeatureId = FeatureId,
         Priority = 97)]
 #endif
-    public class XRObjectTrackingFeature : OpenXRFeature
+    public class XRObjectTrackingFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -98,6 +99,12 @@ namespace Google.XR.Extensions
         /// extensions are available on current device.
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
+        }
 
         /// <inheritdoc/>
         protected override bool OnInstanceCreate(ulong xrInstance)

@@ -47,7 +47,7 @@ namespace Google.XR.Extensions
         FeatureId = FeatureId,
         OpenxrExtensionStrings = ExtensionString)]
 #endif
-    public class XRFoveationFeature : OpenXRFeature
+    public class XRFoveationFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -90,6 +90,12 @@ namespace Google.XR.Extensions
         {
             UnityOpenXRNativeApi.FBSetFoveationLevel(
                 _xrSession, foveationLevel, verticalOffset, foveationDynamic);
+        }
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
         }
 
         /// <inheritdoc/>

@@ -28,6 +28,9 @@ namespace Google.XR.Extensions
 #if UNITY_EDITOR
     using UnityEditor;
     using UnityEditor.XR.OpenXR.Features;
+#if UNITY_OPEN_XR_ANDROID_XR_1_2_0 && UNITY_6000_4_OR_NEWER
+    using UnityEngine.XR.OpenXR.Features.Android;
+#endif // UNITY_OPEN_XR_ANDROID_XR_1_2_0 && UNITY_6000_4_OR_NEWER
 #endif  // UNITY_EDITOR
 
     /// <summary>
@@ -44,7 +47,7 @@ namespace Google.XR.Extensions
         FeatureId = FeatureId,
         OpenxrExtensionStrings = ExtensionString, Priority = 99)]
 #endif  // UNITY_EDITOR
-    public class XRSceneMeshingFeature : OpenXRFeature
+    public class XRSceneMeshingFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -78,6 +81,26 @@ namespace Google.XR.Extensions
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
 
+        /// <summary>
+        /// Sets if the scene meshing provider should be enabled on start of XRMeshSubsystem.
+        /// </summary>
+        /// <param name="enabled">
+        /// Decides whether the scene meshing provider should be enabled on start of XRMeshSubsystem.
+        /// </param>
+        public void SetProviderEnabledOnStart(bool enabled)
+        {
+            // For now this is a workaround until we are able to figure out an appropriate function
+            // to override and call it there. OnEnable and OnDisable are only called when the
+            // feature is loaded and unloaded.
+            XRMeshProviderApi.SetProviderEnabledOnStart(ApiXrFeature.SceneMeshing, enabled);
+        }
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
+        }
+
         /// <inheritdoc/>
         protected override bool OnInstanceCreate(ulong xrInstance)
         {
@@ -103,26 +126,63 @@ namespace Google.XR.Extensions
         {
             AndroidXRFeatureUtils.CreateMeshingSubsystem(
                 UiName, CreateSubsystem<XRMeshSubsystemDescriptor, XRMeshSubsystem>);
+            XRSceneMeshingApi.SetProviderAvailable(true);
+            XRMeshProviderApi.SetProviderEnabledOnStart(ApiXrFeature.SceneMeshing, true);
         }
 
         /// <inheritdoc/>
         protected override void OnSubsystemStart()
         {
-            XRSceneMeshingApi.SetEnabled(true);
             StartSubsystem<XRMeshSubsystem>();
         }
 
         /// <inheritdoc/>
         protected override void OnSubsystemStop()
         {
-            XRSceneMeshingApi.SetEnabled(false);
             StopSubsystem<XRMeshSubsystem>();
         }
 
         /// <inheritdoc/>
         protected override void OnSubsystemDestroy()
         {
+            XRSceneMeshingApi.SetProviderAvailable(false);
             DestroySubsystem<XRMeshSubsystem>();
         }
+
+#if UNITY_EDITOR
+        /// <inheritdoc/>
+        protected override void GetValidationChecks(
+            List<ValidationRule> results, BuildTargetGroup targetGroup)
+        {
+            if (targetGroup != BuildTargetGroup.Android)
+            {
+                return;
+            }
+
+            var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
+            if (settings == null)
+            {
+                return;
+            }
+
+#if UNITY_OPEN_XR_ANDROID_XR_1_2_0 && UNITY_6000_4_OR_NEWER
+            const string arSceneMeshingFeatureName = "Android XR: AR Scene Meshing";
+            results.Add(new ValidationRule(this)
+            {
+                message = string.Format(
+                    "This feature is duplicate with {0}. " +
+                    "Please enable only one of the features",
+                    arSceneMeshingFeatureName),
+                checkPredicate = () =>
+                {
+
+                    var arSceneMeshingFeature = settings.GetFeature<ARMeshFeature>();
+                    return arSceneMeshingFeature == null || !arSceneMeshingFeature.enabled;
+                },
+                error = true,
+            });
+#endif // UNITY_OPEN_XR_ANDROID_XR_1_2_0 && UNITY_6000_4_OR_NEWER
+        }
+#endif // UNITY_EDITOR
     }
 }

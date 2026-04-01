@@ -59,7 +59,7 @@ namespace Google.XR.Extensions
         Category = FeatureCategory.Feature,
         FeatureId = FeatureId)]
 #endif
-    public class XRPassthroughFeature : OpenXRFeature
+    public class XRPassthroughFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -80,6 +80,8 @@ namespace Google.XR.Extensions
             "XR_ANDROID_passthrough_camera_state";
 
         internal static bool? _extensionEnabled = null;
+        private static bool _extensionAvailable = false;
+        private static bool _extensionSupported = false;
 
 #if XR_COMPOSITION_LAYERS
         // Indicate if has registered composition layer handler.
@@ -105,9 +107,19 @@ namespace Google.XR.Extensions
         public static XRPassthroughCameraStates GetState()
         {
             XRPassthroughCameraStates state = XRPassthroughCameraStates.Disabled;
-            ExternalApi.OpenXRAndroid_getPassthroughCameraState(XRInstanceManagerApi.GetIntPtr(),
-                ref state);
+            if (_extensionEnabled.HasValue && _extensionEnabled.Value)
+            {
+                ExternalApi.OpenXRAndroid_getPassthroughCameraState(
+                    XRInstanceManagerApi.GetIntPtr(), ref state);
+            }
+
             return state;
+        }
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
         }
 
         /// <inheritdoc/>
@@ -119,16 +131,17 @@ namespace Google.XR.Extensions
             }
 
             string[] extensions = ExtensionStrings.Split(" ");
-            _extensionEnabled = false;
+            _extensionAvailable = false;
             foreach (string extension in extensions)
             {
                 if (!OpenXRRuntime.IsExtensionEnabled(extension))
                 {
+                    _extensionEnabled = false;
                     return false;
                 }
             }
 
-            _extensionEnabled = true;
+            _extensionAvailable = true;
 
             bool registered = XRInstanceManagerApi.Register(ApiXrFeature.Passthrough);
             registered &= XRInstanceManagerApi.Register(ApiXrFeature.PassthroughCameraState);
@@ -140,6 +153,29 @@ namespace Google.XR.Extensions
         {
             XRInstanceManagerApi.Unregister(ApiXrFeature.Passthrough);
             XRInstanceManagerApi.Unregister(ApiXrFeature.PassthroughCameraState);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnSystemChange(ulong xrSystem)
+        {
+            if (!_extensionAvailable || !XRInstanceManagerApi.CheckSystemSupport(
+                ApiXrFeature.Passthrough, ref _extensionSupported))
+            {
+                return;
+            }
+
+            if (!_extensionSupported && !XRInstanceManagerApi.CheckSystemSupport(
+                ApiXrFeature.PassthroughCameraState, ref _extensionSupported))
+            {
+                return;
+            }
+
+            _extensionEnabled = _extensionSupported;
+            if (!_extensionSupported)
+            {
+                Debug.LogWarningFormat(
+                    "System {0} does not support feature {1}.", xrSystem, UiName);
+            }
         }
 
 #if XR_COMPOSITION_LAYERS
@@ -230,7 +266,7 @@ namespace Google.XR.Extensions
                 error = true
             });
 #else
-            const string packageName = "XR Composition Layers (v2.1.0)";
+            const string packageName = "XR Composition Layers (v2.3.0)";
             results.Add(new ValidationRule(this)
             {
                 message = string.Format("{0} package is required for this feature.", packageName),
@@ -240,7 +276,7 @@ namespace Google.XR.Extensions
                 },
                 fixIt = () =>
                 {
-                    const string packageIdentifier = "com.unity.xr.compositionlayers@2.1.0";
+                    const string packageIdentifier = "com.unity.xr.compositionlayers@2.3.0";
                     if (_addRequest == null)
                     {
                         _addRequest = UnityEditor.PackageManager.Client.Add(packageIdentifier);

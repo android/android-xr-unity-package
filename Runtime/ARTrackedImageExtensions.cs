@@ -1,6 +1,7 @@
 // <copyright file="ARTrackedImageExtensions.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
+// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +20,7 @@
 
 namespace Google.XR.Extensions
 {
-    using System;
     using Google.XR.Extensions.Internal;
-    using UnityEngine;
     using UnityEngine.XR.ARFoundation;
 
     /// <summary>
@@ -96,7 +95,7 @@ namespace Google.XR.Extensions
                 return false;
             }
 
-            return XRMarkerTrackingFeature._subsystemInstance.TryGetMarkeData(
+            return XRMarkerTrackingFeature._subsystemInstance.TryGetMarkerData(
                 image.trackableId, out dictionary, out id);
         }
     }

@@ -1,6 +1,7 @@
 // <copyright file="AndroidXRFeatureSet.cs" company="Google LLC">
 //
 // Copyright 2024 Google LLC
+// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,23 +28,26 @@ namespace Google.XR.Extensions.Editor.Internal
         // desired to include all OpenXR features provided by this package.
         FeatureIds = new string[] {
             XRSessionFeature.FeatureId,
-            XREnvironmentBlendModeFeature.FeatureId,
+            XRStreamingFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
-            XRFaceTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
-            XRHandMeshFeature.FeatureId,
             XRFoveationFeature.FeatureId,
             XRUnboundedRefSpaceFeature.FeatureId,
             XRBodyTrackingFeature.FeatureId,
             XRSceneMeshingFeature.FeatureId,
             XRSystemStateFeature.FeatureId,
+            XRCubemapLightEstimationFeature.FeatureId,
+            XRFineEyeFeature.FeatureId,
         },
         // Features enabled and disabled along with selecting and deselecting the feature set
         // from Editor.
         RequiredFeatureIds = new string[] {
             XRSessionFeature.FeatureId,
+#if UNITY_EDITOR_WIN
+            XRStreamingFeature.FeatureId,
+#endif // UNITY_EDITOR_WIN
         },
         // Features enabled along with selecting the feature set from Editor,
         // desired to include all XR_ANDROID_* features provided by this package.
@@ -51,9 +55,7 @@ namespace Google.XR.Extensions.Editor.Internal
             XRObjectTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
-            XRFaceTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
-            XRHandMeshFeature.FeatureId,
         },
         UiName = _uiName,
         Description = "Feature group that provides Android XR experience and " +
@@ -61,6 +63,7 @@ namespace Google.XR.Extensions.Editor.Internal
         FeatureSetId = _featureSetId,
         SupportedBuildTargets = new BuildTargetGroup[] {
             BuildTargetGroup.Android,
+            BuildTargetGroup.Standalone,
         })]
     internal class AndroidXRFeatureSet
     {
@@ -73,10 +76,7 @@ namespace Google.XR.Extensions.Editor.Internal
         /// </summary>
         internal static readonly string[] _sessionManagementDependentIds = new string[]
         {
-            XREnvironmentBlendModeFeature.FeatureId,
-            XRFaceTrackingFeature.FeatureId,
             XRFoveationFeature.FeatureId,
-            XRHandMeshFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
@@ -85,6 +85,8 @@ namespace Google.XR.Extensions.Editor.Internal
             XRBodyTrackingFeature.FeatureId,
             XRSceneMeshingFeature.FeatureId,
             XRSystemStateFeature.FeatureId,
+            XRCubemapLightEstimationFeature.FeatureId,
+            XRFineEyeFeature.FeatureId,
         };
     }
 }

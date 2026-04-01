@@ -47,7 +47,7 @@ namespace Google.XR.Extensions
         FeatureId = FeatureId,
         Priority = 98)]
 #endif
-    public class XRUnboundedRefSpaceFeature : OpenXRFeature
+    public class XRUnboundedRefSpaceFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -65,6 +65,12 @@ namespace Google.XR.Extensions
         /// available or enabled.
         /// </summary>
         public const string ExtensionString = "XR_ANDROID_unbounded_reference_space";
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
+        }
 
         /// <inheritdoc/>
         protected override bool OnInstanceCreate(ulong xrInstance)

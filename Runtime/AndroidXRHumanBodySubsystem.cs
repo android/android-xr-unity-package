@@ -78,6 +78,21 @@ namespace Google.XR.Extensions
 
         internal static string _id => AndroidXRProvider._id;
 
+        internal XRBodyJointSet _jointSet
+        {
+            get
+            {
+                AndroidXRProvider androidXRProvider = provider as AndroidXRProvider;
+                return androidXRProvider.JointSet;
+            }
+
+            set
+            {
+                AndroidXRProvider androidXRProvider = provider as AndroidXRProvider;
+                androidXRProvider.JointSet = value;
+            }
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void RegisterDescriptor()
         {
@@ -108,10 +123,26 @@ namespace Google.XR.Extensions
             internal static readonly string _id = "AndroidXR-BodyTracking";
 
             private bool _isActive = false;
+            private XRBodyJointSet _jointSet = XRBodyJointSet.UpperBody;
             private bool _autoCalibrationRequested = false;
             private XRHumanBodyProportions _proportionRequested = null;
             private bool _pose3DRequested = false;
             private bool _pose3DEnabled = false;
+
+            public XRBodyJointSet JointSet
+            {
+                get => _jointSet;
+                set
+                {
+                    // Joint set is a construction parameter.
+                    // Only allowed to change while inactive.
+                    if (!_isActive)
+                    {
+                        _jointSet = value;
+                        Debug.LogFormat("Set JointSet={0}", _jointSet);
+                    }
+                }
+            }
 
             /// <inheritdoc/>
             public override bool pose3DRequested
@@ -231,8 +262,17 @@ namespace Google.XR.Extensions
                 ref NativeArray<XRHumanBodyJoint> skeleton)
             {
                 skeleton = new NativeArray<XRHumanBodyJoint>(
-                    XRAvatarSkeletonJointIDUtility.JointCount(), allocator);
-                XRBodyTrackingApi.GetSkeleton(trackableId, skeleton);
+                    XRBodyJointSetUtility.JointCount(_jointSet.GetJointSetType()), allocator);
+                var size = XRBodyTrackingApi.GetSkeleton(trackableId, skeleton);
+                if (size > skeleton.Length)
+                {
+                    Debug.LogWarningFormat(
+                        "Skeleton size ({0}) does not match joint set ({1}) expectation ({2}).",
+                        size, _jointSet,
+                        XRBodyJointSetUtility.JointCount(_jointSet.GetJointSetType()));
+                    skeleton = new NativeArray<XRHumanBodyJoint>((int)size, allocator);
+                    XRBodyTrackingApi.GetSkeleton(trackableId, skeleton);
+                }
             }
 
             private void ApplyRequest()
@@ -241,9 +281,11 @@ namespace Google.XR.Extensions
                 {
                     Debug.LogFormat(
                         "Apply Request: pose3DRequested={0}, AutoCalibrationRequested={1}, " +
-                        "ProportionCalibrationRequested={2}",
+                        "ProportionCalibrationRequested={2}, jointSet={3}",
                         _pose3DRequested, _autoCalibrationRequested,
-                        _proportionRequested == null ? "null" : _proportionRequested.ToString());
+                        _proportionRequested == null ? "null" : _proportionRequested.ToString(),
+                        _jointSet);
+                    XRBodyTrackingApi.SetJointSet(_jointSet);
                     XRBodyTrackingApi.SetTracking(_pose3DRequested);
                     _pose3DEnabled = _pose3DRequested;
                     if (_autoCalibrationRequested || _proportionRequested != null)

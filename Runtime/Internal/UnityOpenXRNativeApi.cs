@@ -31,13 +31,6 @@ namespace Google.XR.Extensions.Internal
     /// </summary>
     internal class UnityOpenXRNativeApi
     {
-        public static void MetaSetSubsampledLayout(bool enabled)
-        {
-            int result = ExternalApi.MetaSetSubsampledLayout(enabled);
-            Debug.LogFormat("MetaSetSubsampledLayout({0}): {1} with status {2}.",
-                enabled, result >= 0 ? "succeed" : "failed", result);
-        }
-
         public static void FBSetFoveationLevel(
             ulong xrSession, XRFoveationLevel foveationLevel,
             float verticalOffset, bool foveationDynamic)
@@ -51,9 +44,6 @@ namespace Google.XR.Extensions.Internal
 
         private struct ExternalApi
         {
-            [DllImport(ApiConstants.UnityOpenXRLib)]
-            public static extern int MetaSetSubsampledLayout(bool enabled);
-
             [DllImport(ApiConstants.UnityOpenXRLib)]
             public static extern int FBSetFoveationLevel(
                 ulong session, int level, float verticalOffset, int dynamic);

@@ -48,6 +48,7 @@ namespace Google.XR.Extensions.Samples.BodyTracking
         private int _updated = 0;
         private int _removed = 0;
 
+        private XRBodyJointSet? _jointSet;
         private AndroidXRPermissionUtil _permissionUtil;
         private StringBuilder _stringBuilder = new StringBuilder();
 
@@ -64,6 +65,20 @@ namespace Google.XR.Extensions.Samples.BodyTracking
             foreach (var body in eventArgs.added)
             {
                 Debug.Log(GetBodyDebugInfo(body));
+            }
+        }
+
+        private void Awake()
+        {
+            var bodyTracking = OpenXRSettings.Instance.GetFeature<XRBodyTrackingFeature>();
+            if (bodyTracking == null)
+            {
+                Debug.LogErrorFormat("{0} is not available at current platform.",
+                    XRBodyTrackingFeature.UiName);
+            }
+            else
+            {
+                _jointSet = bodyTracking.RequestedJointSet;
             }
         }
 
@@ -114,6 +129,8 @@ namespace Google.XR.Extensions.Samples.BodyTracking
             }
             else
             {
+                _stringBuilder.AppendFormat(
+                    "JointSet: {0}\n", _jointSet.HasValue ? _jointSet.Value : "Unknown");
                 _stringBuilder.AppendFormat(
                     "Subsystem: {0}\n", BodyManager.subsystem.GetType().Name);
                 _stringBuilder.AppendFormat(

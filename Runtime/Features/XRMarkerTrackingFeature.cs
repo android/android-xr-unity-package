@@ -55,7 +55,7 @@ namespace Google.XR.Extensions
         FeatureId = FeatureId,
         Priority = 95)]
 #endif
-    public class XRMarkerTrackingFeature : OpenXRFeature
+    public class XRMarkerTrackingFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -83,6 +83,8 @@ namespace Google.XR.Extensions
             AndroidXRPermission.SceneUnderstandingCoarse;
 
         internal static bool? _extensionEnabled = null;
+        private static bool _extensionAvailable = false;
+        private static bool _extensionSupported = false;
 
         [Tooltip("Indicate if preferring size estimation when it's supported at runtime. " +
             "Note: not all runtimes support estimation, " +
@@ -94,7 +96,7 @@ namespace Google.XR.Extensions
         /// Gets if the required OpenXR extension is enabled.
         /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
         /// whether the XR_ANDROID_trackables and XR_ANDROID_trackables_marker extensions are
-        /// available on current device.
+        /// available and supported on current device.
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
 
@@ -102,6 +104,12 @@ namespace Google.XR.Extensions
         /// Gets the subsystem instance that to be used in extension methods.
         /// </summary>
         internal static AndroidXRImageTrackingSubsystem _subsystemInstance { get; private set; }
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
+        }
 
         /// <inheritdoc/>
         protected override bool OnInstanceCreate(ulong xrInstance)
@@ -112,16 +120,17 @@ namespace Google.XR.Extensions
             }
 
             string[] extensions = ExtensionStrings.Split();
-            _extensionEnabled = false;
+            _extensionAvailable = false;
             foreach (string extension in extensions)
             {
                 if (!OpenXRRuntime.IsExtensionEnabled(extension))
                 {
+                    _extensionEnabled = false;
                     return false;
                 }
             }
 
-            _extensionEnabled = true;
+            _extensionAvailable = true;
 
             // Basic tracking funtion uses XrTrackableProvider.
             return XRInstanceManagerApi.Register(ApiXrFeature.Trackable);
@@ -133,6 +142,21 @@ namespace Google.XR.Extensions
             // Due the sharing of XrTrackableProvider among all trackables,
             // DO NOT unregister ApiXrFeature.Trackable from a signle feature.
             // Leave to XrInstanceManager to destroy XrTrackableProvider.
+        }
+
+        /// <inheritdoc/>
+        protected override void OnSystemChange(ulong xrSystem)
+        {
+            if (_extensionAvailable && XRTrackableApi.TryGetSystemSupport(
+                ApiXrTrackableType.Marker, ref _extensionSupported))
+            {
+                _extensionEnabled = _extensionSupported;
+                if (!_extensionSupported)
+                {
+                    Debug.LogWarningFormat(
+                        "System {0} does not support feature {1}.", xrSystem, UiName);
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -177,7 +201,7 @@ namespace Google.XR.Extensions
             }
             else
             {
-                _subsystemInstance.SetPreferEstimation(
+                _subsystemInstance.InitTracking(
                     ApiXrTrackableType.Marker, _preferEstimation);
                 Debug.LogFormat("Created {0}.", _subsystemInstance.GetType());
             }
@@ -196,6 +220,12 @@ namespace Google.XR.Extensions
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            // The feature should only be validated if it is enabled.
+            if (!enabled)
+            {
+                return;
+            }
+
             Scene activeScene = SceneManager.GetActiveScene();
             GameObject[] rootGameObjects = activeScene.GetRootGameObjects();
             foreach (GameObject rootGameObject in rootGameObjects)

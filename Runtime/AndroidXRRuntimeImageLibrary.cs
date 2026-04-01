@@ -1,6 +1,7 @@
 // <copyright file="AndroidXRRuntimeImageLibrary.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
+// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +20,11 @@
 
 namespace Google.XR.Extensions
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Text;
+    using Google.XR.Extensions.Internal;
     using UnityEngine;
     using UnityEngine.XR.ARSubsystems;
 
@@ -35,13 +38,17 @@ namespace Google.XR.Extensions
     public class AndroidXRRuntimeImageLibrary : RuntimeReferenceImageLibrary
     {
         private static readonly string _qrCodeReferenceName = "qrcode";
-        private readonly List<XRReferenceImage> _images = new List<XRReferenceImage>();
+        private readonly List<XRReferenceImage> _markers = new List<XRReferenceImage>();
         private readonly List<XRMarkerDatabaseEntry> _markerEntries =
             new List<XRMarkerDatabaseEntry>();
 
-        private int _qrCodeIndex = -1;
-        private int _markerCount = 0;
-        private int _markerIndex = -1;
+        private int _markerReferenceCount = 0;
+        private int _qrCodeReferenceCount = 0;
+
+        private int _markerReferenceIndex = -1;
+        private int _qrCodeReferenceIndex = -1;
+
+        private XRReferenceImage? _qrCodeReference = null;
 
         /// <summary>Constructs a <see cref="AndroidXRRuntimeImageLibrary"/> from a given
         /// <see cref="XRReferenceImageLibrary"/></summary>
@@ -49,118 +56,94 @@ namespace Google.XR.Extensions
         /// </param>
         public AndroidXRRuntimeImageLibrary(XRReferenceImageLibrary library)
         {
-            if (library != null)
+            if (!library)
             {
-                List<XRReferenceImage> markerReferences = new List<XRReferenceImage>();
-                foreach (var image in library)
+                return;
+            }
+
+            foreach (var reference in library)
+            {
+                if (IsQrCodeReference(reference))
                 {
-                    // Find QR Code reference and add first.
-                    if (IsQrCodeReference(image))
+                    // Only the first QR Code reference takes effect.
+                    if (_qrCodeReference == null)
                     {
-                        // Only the first QR Code reference takes effect.
-                        if (_qrCodeIndex < 0)
-                        {
-                            _qrCodeIndex = _images.Count;
-                            _images.Add(image);
-                        }
+                        _qrCodeReference = reference;
                     }
-                    else if (XRMarkerDatabaseEntry.TryParse(
-                        image.name, image.specifySize ? image.width : 0f,
-                        out XRMarkerDatabaseEntry entry))
+                    else
                     {
-                        markerReferences.Add(image);
-                        entry.SetReference(image.guid);
-                        _markerEntries.Add(entry);
+                        Debug.LogWarning("Only the first QR Code reference takes effect. " +
+                                         $"Ignoring XRReferenceImage <i>{reference.name}</i>.");
                     }
                 }
-
-                // Add marker references.
-                if (markerReferences.Count > 0)
+                else if (XRMarkerDatabaseEntry.TryParse(
+                    reference.name, reference.specifySize ? reference.width : 0f,
+                    out XRMarkerDatabaseEntry entry))
                 {
-                    _markerIndex = _images.Count;
-                    _markerCount = markerReferences.Count;
-                    _images.AddRange(markerReferences);
+                    _markers.Add(reference);
+                    entry.SetReference(reference.guid);
+                    _markerEntries.Add(entry);
+                }
+            }
+
+            var hasQrCode = _qrCodeReference == null;
+            _qrCodeReferenceCount = hasQrCode ? 0 : 1;
+            _markerReferenceCount = _markers.Count;
+
+            _qrCodeReferenceIndex = hasQrCode ? -1 : 0;
+            _markerReferenceIndex = _markerReferenceCount == 0 ? -1 : _qrCodeReferenceCount;
+
+            if (Debug.isDebugBuild)
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.Append(
+                    $"Created {GetType().Name} with {_qrCodeReferenceCount} QrCode and " +
+                    $"{_markerReferenceCount} Marker references.\n");
+
+                if (_qrCodeReference != null)
+                {
+                    stringBuilder.Append($"    QR Code: {_qrCodeReference.Value.name}\n");
                 }
 
-                StringBuilder stringBuilder = new StringBuilder();
-                if (_qrCodeIndex >= 0)
+                foreach (var marker in _markerEntries)
                 {
-                    if (stringBuilder.Length == 0)
-                    {
-                        stringBuilder.Append($"Created {this.GetType().Name} with:\n");
-                    }
-
-                    stringBuilder.Append(
-                        $"    QR Code Reference: {_images[_qrCodeIndex].name}\n");
-                }
-
-                if (_markerEntries.Count > 0)
-                {
-                    if (stringBuilder.Length == 0)
-                    {
-                        stringBuilder.Append($"Created {this.GetType().Name} with:\n");
-                    }
-
-                    foreach (var entry in _markerEntries)
-                    {
-                        stringBuilder.Append(
-                            $"    Marker reference: {entry}\n");
-                    }
-                }
-
-                if (stringBuilder.Length == 0)
-                {
-                    stringBuilder.Append($"Created {this.GetType().Name}.");
+                    stringBuilder.Append($"    Marker: {marker}\n");
                 }
 
                 Debug.Log(stringBuilder.ToString());
             }
-            else
-            {
-                _qrCodeIndex = -1;
-                _markerIndex = -1;
-                _markerCount = 0;
-                _images.Clear();
-                _markerEntries.Clear();
-            }
         }
 
         /// <inheritdoc/>
-        public override int count => _images.Count;
+        public override int count => _qrCodeReferenceCount + _markerReferenceCount;
 
         /// <summary>
-        /// Gets the index of QR Code reference image. Or return -1 if it doesn't exist.
+        /// The number of QR Code references in the library.
         /// </summary>
-        public int QrCodeReferenceIndex => _qrCodeIndex;
+        public int QrCodeReferenceCount => _qrCodeReferenceCount;
 
         /// <summary>
-        /// Gets QR Code reference image, or <c>null</c> if it's not found from the library.
-        /// </returns>
-        public XRReferenceImage? QRCodeReference
-        {
-            get
-            {
-                if (_qrCodeIndex < 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return _images[_qrCodeIndex];
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the index of the first marker reference image. Or return -1 if it doesn't exist.
+        /// The number of marker references in the library.
+        /// It can be used to iterate all marker reference images starting from
+        /// <see cref="MarkerReferenceIndex"/>.
         /// </summary>
-        public int MarkerReferenceIndex => _markerIndex;
+        public int MarkerReferenceCount => _markerReferenceCount;
 
         /// <summary>
-        /// Gets the count of marker reference images. It can be used to iterate all marker
-        /// reference images starting from <see cref="MarkerReferenceIndex"/>.
+        /// The index of the QR Code reference in the library, or -1 if no QR Code was added.
         /// </summary>
-        public int MarkerReferenceCount => _markerCount;
+        public int QrCodeReferenceIndex => _qrCodeReferenceIndex;
+
+        /// <summary>
+        /// The index of the first marker reference in the library, or -1 if no marker was added.
+        /// </summary>
+        public int MarkerReferenceIndex => _markerReferenceIndex;
+
+        /// <summary>
+        /// The QR Code<see cref="XRReferenceImage"/>,
+        /// or <c>null</c> if it's not found from the library.
+        /// </summary>
+        public XRReferenceImage? QRCodeReference => _qrCodeReference;
 
 #if UNITY_EDITOR
         /// <summary>
@@ -214,8 +197,7 @@ namespace Google.XR.Extensions
             for (int i = 0; i < imageLibrary.count; i++)
             {
                 if (XRMarkerDatabaseEntry.TryParse(
-                    imageLibrary[i].name, out XRMarkerDatabaseEntry entry))
-                {
+                    imageLibrary[i].name, out XRMarkerDatabaseEntry entry)) {
                     data.AddEntry(entry, false);
                 }
             }
@@ -265,7 +247,18 @@ namespace Google.XR.Extensions
         /// <inheritdoc/>
         protected override XRReferenceImage GetReferenceImageAt(int index)
         {
-            return _images[index];
+            if (_markerReferenceIndex != -1 && index >= _markerReferenceIndex)
+            {
+                return _markers[index - _markerReferenceIndex];
+            }
+
+            if (_qrCodeReference != null)
+            {
+                return _qrCodeReference.Value;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(index), index,
+                $"No valid QR Code or Marker reference found for {nameof(index)}.");
         }
     }
 }

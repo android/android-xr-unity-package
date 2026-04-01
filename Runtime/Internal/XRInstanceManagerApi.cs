@@ -25,19 +25,21 @@ namespace Google.XR.Extensions.Internal
     internal enum ApiXrFeature
     {
         Trackable = 0,
-        BlendMode = 1,
-        FaceTracking = 2,
         PassthroughCameraState = 3,
+        EyeTracking = 4,
         Passthrough = 9,
         SceneMeshing = 14,
-        HandMesh = 15,
+        Reserved2 = 15,
         UnboundedRefSpace = 16,
         Reserved3 = 18,
         Reserved4 = 19,
         BodyTracking = 20,
         SystemState = 21,
         Reserved7 = 22,
-        Reserved8 = 23,
+        CubemapLightEstimation = 23,
+        Reserved9 = 24,
+        Reserved10 = 25,
+        Reserved11 = 26,
     }
 
     internal class XRInstanceManagerApi
@@ -82,6 +84,11 @@ namespace Google.XR.Extensions.Internal
         public static void Unregister(ApiXrFeature feature)
         {
             ExternalApi.XrInstanceManager_unregisterFeature((uint)feature);
+        }
+
+        public static bool CheckSystemSupport(ApiXrFeature feature, ref bool supported)
+        {
+            return ExternalApi.XrInstanceManager_checkSystemSupport((uint)feature, ref supported);
         }
 
         public static void OnSystemChange(ulong system)
@@ -136,6 +143,10 @@ namespace Google.XR.Extensions.Internal
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrInstanceManager_unregisterFeature(uint feature);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrInstanceManager_checkSystemSupport(
+                uint feature, ref bool out_support);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrInstanceManager_onSystemChange(ulong system);

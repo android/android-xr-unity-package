@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: defedb9c26c8940f69ad8efcbf0fe059
+labels:
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - PermissionUtil: {instanceID: 0}
+  - SceneMeshPrefab: {fileID: 6084916207506699768, guid: 7a1aaa6915a0b4e04a8197873eddef9e, type: 3}
+  - XROrigin: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

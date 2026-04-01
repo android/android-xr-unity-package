@@ -77,3 +77,53 @@ MonoBehaviour:
     m_SpecifySize: 0
     m_Name: ArUco6x6_50
     m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5447641505569727937
+      m_GuidHigh: 4443092597876183454
+    m_SerializedTextureGuid:
+      m_GuidLow: 17646358811846411190
+      m_GuidHigh: 13624675147012537818
+    m_Size: {x: 0.1, y: 0.10011124}
+    m_SpecifySize: 1
+    m_Name: Earth
+    m_Texture: {fileID: 2800000, guid: 4f3083b675d8f4e4da7dc60ddc9114bd, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 5083402381851928366
+      m_GuidHigh: 12565780053206321030
+    m_SerializedTextureGuid:
+      m_GuidLow: 7251489342976115448
+      m_GuidHigh: 8761017157617038635
+    m_Size: {x: 0.1, y: 0.075}
+    m_SpecifySize: 1
+    m_Name: Engine
+    m_Texture: {fileID: 2800000, guid: 2c9f42f8772364a22bb5dddeaf629579, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 4871429059946089000
+      m_GuidHigh: 2735583499378514844
+    m_SerializedTextureGuid:
+      m_GuidLow: 1470665981974159584
+      m_GuidHigh: 1118083773218623656
+    m_Size: {x: 0.1, y: 0.13333334}
+    m_SpecifySize: 1
+    m_Name: Flower
+    m_Texture: {fileID: 2800000, guid: 2ed220e0daeb1468a810d393443b840f, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 4635523920664916184
+      m_GuidHigh: 17330320651788090775
+    m_SerializedTextureGuid:
+      m_GuidLow: 17608128415860428430
+      m_GuidHigh: 7095214851794545113
+    m_Size: {x: 0.1, y: 0.056222223}
+    m_SpecifySize: 1
+    m_Name: Hiking
+    m_Texture: {fileID: 2800000, guid: 9ad28e8ea380f45cd9294ace50447762, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 5503921132068441392
+      m_GuidHigh: 11193483017410609564
+    m_SerializedTextureGuid:
+      m_GuidLow: 1479892550425016384
+      m_GuidHigh: 14965280697088255178
+    m_Size: {x: 0.1, y: 0.06622222}
+    m_SpecifySize: 1
+    m_Name: Piano
+    m_Texture: {fileID: 2800000, guid: 0dd47840a26f1489caa4f429815bafcf, type: 3}

@@ -39,6 +39,11 @@
             "define": "UNITY_OPEN_XR_ANDROID_XR_1_1_0"
         },
         {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "1.2.0",
+            "define": "UNITY_OPEN_XR_ANDROID_XR_1_2_0"
+        },
+        {
             "name": "com.unity.xr.compositionlayers",
             "expression": "1.0.0",
             "define": "XR_COMPOSITION_LAYERS"

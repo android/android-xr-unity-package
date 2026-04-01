@@ -1,9 +1,9 @@
 {
     "name": "com.google.xr.extensions",
     "displayName": "Android XR Extensions for Unity",
-    "version": "1.2.0",
-    "unity": "6000.1",
-    "unityRelease": "17f1",
+    "version": "1.3.0",
+    "unity": "6000.3",
+    "unityRelease": "6f1",
     "description": "Android XR Extensions package. This package provides additional XR features that are not yet supported by Unity OpenXR Android XR and OpenXR Plugin packages.",
     "author":
     {
@@ -11,16 +11,11 @@
     },
     "dependencies":
     {
-        "com.unity.xr.openxr": "1.15.1",
-        "com.unity.xr.arfoundation": "6.2.0",
-        "com.unity.xr.management": "4.5.1"
+        "com.unity.xr.openxr": "1.17.0-pre.1",
+        "com.unity.xr.arfoundation": "6.3.3",
+        "com.unity.xr.management": "4.5.4"
     },
     "samples": [
-        {
-            "displayName": "Environment Blend Mode",
-            "description": "This sample uses the Environment Blend Mode feature and the System State feature.\n\nThe Environment Blend Mode feature allows for switching between Additive, Alpha and Opaque modes. Used for blending virtual objects with real-world environments when full screen passthrough is enabled.",
-            "path": "Samples~/BlendMode"
-        },
         {
             "displayName": "Foveation",
             "description": "This sample showcases the Foveation (Legacy) feature, the FoveationLevel will be changed every 5 seconds to demonstrate the 4 different levels of Foveation the profile supports.",
@@ -32,19 +27,9 @@
             "path": "Samples~/Passthrough"
         },
         {
-            "displayName": "Face Tracking",
-            "description": "This sample uses the Face Tracking feature to obtain weight values of certain facial features. These values are then applied to a skinned mesh renderer, allowing for dynamic modification of the mesh based on facial expressions.",
-            "path": "Samples~/FaceTracking"
-        },
-        {
             "displayName": "Object Tracking",
             "description": "This sample uses the Object Tracking feature which calls the OnObjectsChanged method to track the addition and removal of tracked objects within the environment. The information regarding the tracked objects are then printed as information onto the screen.",
             "path": "Samples~/ObjectTracking"
-        },
-        {
-            "displayName": "Hand Mesh",
-            "description": "The sample uses the Hand Mesh feature in order to get generated mesh information from the XRHandMeshFeature. Mesh information provided for the left and right hands are sent to a mesh filter for rendering.",
-            "path": "Samples~/HandMesh"
         },
         {
             "displayName": "Unbounded Reference Space",
@@ -70,6 +55,11 @@
             "displayName": "Scene Meshing",
             "description": "This sample uses the Scene Meshing feature to obtain mesh data which approximates the environment and renders it.",
             "path": "Samples~/SceneMeshing"
+        },
+        {
+            "displayName": "Cubemap Lighting",
+            "description": "This sample uses the Cubemap Light Estimation feature to apply lighting to a sphere based on the environment's cubemap provided by the AR Foundation's AREnvironmentManager.",
+            "path": "Samples~/CubemapLighting"
         }
     ]
 }

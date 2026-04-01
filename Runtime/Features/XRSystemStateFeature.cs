@@ -46,7 +46,7 @@ namespace Google.XR.Extensions
         Category = FeatureCategory.Feature,
         FeatureId = FeatureId)]
 #endif
-    public class XRSystemStateFeature : OpenXRFeature
+    public class XRSystemStateFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, to help users understand
@@ -86,6 +86,12 @@ namespace Google.XR.Extensions
             bool result = OpenXRAndroidApi.TryGetSystemState(ref state);
             systemState = state;
             return result;
+        }
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
         }
 
         /// <inheritdoc/>

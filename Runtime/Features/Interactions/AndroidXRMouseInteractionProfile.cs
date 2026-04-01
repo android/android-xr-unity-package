@@ -57,7 +57,7 @@ namespace Google.XR.Extensions
         Category = UnityEditor.XR.OpenXR.Features.FeatureCategory.Interaction,
         FeatureId = FeatureId)]
 #endif
-    public class AndroidXRMouseInteractionProfile : OpenXRInteractionFeature
+    public class AndroidXRMouseInteractionProfile : OpenXRInteractionFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, help users to understand
@@ -121,6 +121,12 @@ namespace Google.XR.Extensions
         private const string _deviceLocalizedName = "Android XR Mouse";
 
         private const string _layoutName = "AndroidXRMouse";
+
+        /// <inheritdoc/>
+        public XRSpatialSdkVersions GetTargetVersion()
+        {
+            return XRSpatialSdkVersions.XRSpatialApiLevel1;
+        }
 
         /// <inheritdoc/>
         protected override bool OnInstanceCreate(ulong instance)
