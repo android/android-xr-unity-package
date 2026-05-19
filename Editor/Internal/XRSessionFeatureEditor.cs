@@ -119,7 +119,7 @@ namespace Google.XR.Extensions.Editor.Internal
                         EditorGUILayout.HelpBox(string.Format(
                             "Following feature(s) are not supported by {0} which " +
                             "may not work properly at runtime: {2}.\n" +
-                            "Recommand to select {1} or handle unsupported cases accordingly.",
+                            "Recommend to select {1} or handle unsupported cases accordingly.",
                             version.GetDisplayOption(), minVersion.GetDisplayOption(),
                             string.Join(", ", featureNames)), MessageType.Warning);
 

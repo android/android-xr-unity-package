@@ -52,7 +52,7 @@ namespace Google.XR.Extensions
             BuildTargetGroup.Standalone,
         },
         Company = "Google",
-        Desc = "Manage OpenXR sessions for all extened Android XR features, " +
+        Desc = "Manage OpenXR sessions for all extended Android XR features, " +
             "and provide Android XR Session subsystem as needed.",
         Version = "1.0.0",
         OpenxrExtensionStrings = ExtensionStrings,
@@ -347,7 +347,7 @@ namespace Google.XR.Extensions
                     message = string.Format(
                         "Following feature(s) are not supported by {0} " +
                         "which may not work properly at runtime: {2}\n" +
-                        "Recommand to select {1} or handle unsupported cases accordingly.",
+                        "Recommend to select {1} or handle unsupported cases accordingly.",
                         _spatialApiTargetVersion.GetDisplayOption(),
                         minVersion.GetDisplayOption(),
                         string.Join(", ", featureNames)),

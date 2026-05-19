@@ -38,6 +38,18 @@ namespace Google.XR.Extensions.Samples.UnboundedRefSpace
 
         void Update()
         {
+            if (!XRUnboundedRefSpaceFeature.IsExtensionEnabled.HasValue)
+            {
+                DebugText.text = "OpenXR feature is initializing.";
+                return;
+            }
+            else if (!XRUnboundedRefSpaceFeature.IsExtensionEnabled.Value)
+            {
+                DebugText.text = string.Format(
+                    "{0} is not available.", XRUnboundedRefSpaceFeature.ExtensionString);
+                return;
+            }
+
             if (_inputSubsystem == null)
             {
                 var settingLoader = XRGeneralSettings.Instance?.Manager?.activeLoader;

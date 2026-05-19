@@ -85,15 +85,10 @@ namespace Google.XR.Extensions
         private static bool _extensionAvailable = false;
         private static bool _extensionSupported = false;
 
-#if !UNITY_OPEN_XR_ANDROID_XR && UNITY_EDITOR
-        static private UnityEditor.PackageManager.Requests.AddRequest _addRequest = null;
-        static private bool _packageInstalled = false;
-#endif
-
         /// <summary>
         /// Gets if the required OpenXR extension is enabled.
         /// </summary>
-        public static bool? IsExensionEnabled => _extensionEnabled;
+        public static bool? IsExtensionEnabled => _extensionEnabled;
 
         /// <inheritdoc/>
         public XRSpatialSdkVersions GetTargetVersion()
@@ -170,92 +165,18 @@ namespace Google.XR.Extensions
                 return;
             }
 #if UNITY_OPEN_XR_ANDROID_XR
-            const string arFaceFeatureName = "Android XR: AR Face";
-            results.Add(new ValidationRule(this)
-            {
-                message = string.Format("{0} is required for this feature.", arFaceFeatureName),
-                checkPredicate = () =>
-                {
-                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
-                    if (settings == null)
-                    {
-                        return false;
-                    }
-
-                    var arFaceFeature = settings.GetFeature<ARFaceFeature>();
-                    return arFaceFeature != null && arFaceFeature.enabled;
-                },
-                fixIt = () =>
-                {
-                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
-                    if (settings == null)
-                    {
-                        Debug.LogWarningFormat(
-                            "Autofix failed with missing OpenXRSettings on {0} platform.",
-                            targetGroup);
-                        return;
-                    }
-
-                    var feature = settings.GetFeature<ARFaceFeature>();
-                    if (feature == null)
-                    {
-                        Debug.LogWarningFormat(
-                            "Autofix failed with missing {0} feature on {1} platform.",
-                            arFaceFeatureName, targetGroup);
-                        return;
-                    }
-
-                    feature.enabled = true;
-                },
-                fixItMessage = string.Format("Enable {0} feature.", arFaceFeatureName),
-                error = true,
-            });
+            results.Add(AndroidXRFeatureUtils.GetFeatureDependencyRule(
+                feature: this,
+                requiredFeatureType: typeof(ARFaceFeature),
+                requiredFeatureName: ApiConstants.UnityARFaceFeature,
+                buildTarget: targetGroup));
 #else
-            const string packageName = "Unity OpenXR Android XR (v1.0.0-pre.2)";
-            results.Add(new ValidationRule(this)
-            {
-                message = string.Format("{0} package is required for this feature.", packageName),
-                checkPredicate = () =>
-                {
-                    return _packageInstalled;
-                },
-                fixIt = () =>
-                {
-                    const string packageIdentifier = "com.unity.xr.androidxr-openxr@1.0.0-pre.2";
-                    if (_addRequest == null)
-                    {
-                        _addRequest = UnityEditor.PackageManager.Client.Add(packageIdentifier);
-                        Debug.LogWarningFormat("[{0}] Sending a request to add package {1}.",
-                            UiName, packageName);
-                    }
-                    else
-                    {
-                        switch (_addRequest.Status)
-                        {
-                            case UnityEditor.PackageManager.StatusCode.InProgress:
-                                Debug.LogWarningFormat("[{0}] Waiting for adding package {1}",
-                                    UiName, packageName);
-                                break;
-                            case UnityEditor.PackageManager.StatusCode.Success:
-                                Debug.LogFormat("[{0}] Successfully added package {1} ({2}).",
-                                    UiName, packageName, packageIdentifier);
-                                _addRequest = null;
-                                _packageInstalled = true;
-                                break;
-                            case UnityEditor.PackageManager.StatusCode.Failure:
-                                Debug.LogWarningFormat(
-                                    "[{0}] Failed to add package {1} with error {2}. " +
-                                    "Please try again later or manually instal package {3}.",
-                                    UiName, packageName, packageIdentifier,
-                                    _addRequest.Error.message);
-                                _addRequest = null;
-                                break;
-                        }
-                    }
-                },
-                fixItMessage = string.Format("Install {0} package or newer.", packageName),
-                error = true,
-            });
+            results.Add(AndroidXRFeatureUtils.GetPackageDependencyRule(
+                feature: this,
+                featureName: UiName,
+                package: ApiConstants.UnityAXRPackage,
+                displayName: ApiConstants.UnityAXRPackageDisplayName,
+                version: ApiConstants.UnityAXRPackageVersion));
 #endif // UNITY_OPEN_XR_ANDROID_XR
         }
 #endif

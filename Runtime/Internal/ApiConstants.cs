@@ -38,5 +38,18 @@ namespace Google.XR.Extensions.Internal
         /// Library name of the native plugin built within Unity OpenXR Plugin package.
         /// </summary>
         public const string UnityOpenXRLib = "UnityOpenXR";
+
+        // Unity dependencies with recommended versions:
+        public const string UnityAXRPackage = "com.unity.xr.androidxr-openxr";
+        public const string UnityAXRPackageDisplayName = "Unity OpenXR Android XR";
+        public const string UnityAXRPackageVersion = "1.2.0";
+        public const string UnityARFaceFeature = "Android XR: AR Face";
+        public const string UnityARBoundingBoxFeature = "Android XR: AR Bounding Box";
+        public const string UnityARSceneMeshFeature = "Android XR: AR Scene Meshing";
+
+        public const string CompositionLayersPackage = "com.unity.xr.compositionlayers";
+        public const string CompositionLayersPackageDisplayName = "XR Composition Layers";
+        public const string CompositionLayersPackageVersion = "2.3.0";
+        public const string CompositionLayerFeature = "Composition Layers Support";
     }
 }

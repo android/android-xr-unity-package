@@ -26,17 +26,17 @@ namespace Google.XR.Extensions.Internal
 
     internal class OpenXRAndroidApi
     {
-        public static bool TryGetSystemState(ref XrSystemState systemState)
+        public static bool TryGetRecommendedSettings(ref XrRecommendedSettings recommendedSettings)
         {
-            return ExternalApi.OpenXRAndroid_getSystemState(
-                XRInstanceManagerApi.GetIntPtr(), ref systemState);
+            return ExternalApi.OpenXRAndroid_getRecommendedSettings(
+                XRInstanceManagerApi.GetIntPtr(), ref recommendedSettings);
         }
 
         private struct ExternalApi
         {
             [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool OpenXRAndroid_getSystemState(
-                IntPtr manager, ref XrSystemState systemState);
+            public static extern bool OpenXRAndroid_getRecommendedSettings(
+                IntPtr manager, ref XrRecommendedSettings recommendedSettings);
         }
     }
 }

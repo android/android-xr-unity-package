@@ -158,29 +158,14 @@ namespace Google.XR.Extensions
             {
                 return;
             }
-
-            var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(targetGroup);
-            if (settings == null)
-            {
-                return;
-            }
-
 #if UNITY_OPEN_XR_ANDROID_XR_1_2_0 && UNITY_6000_4_OR_NEWER
-            const string arSceneMeshingFeatureName = "Android XR: AR Scene Meshing";
-            results.Add(new ValidationRule(this)
-            {
-                message = string.Format(
-                    "This feature is duplicate with {0}. " +
-                    "Please enable only one of the features",
-                    arSceneMeshingFeatureName),
-                checkPredicate = () =>
-                {
-
-                    var arSceneMeshingFeature = settings.GetFeature<ARMeshFeature>();
-                    return arSceneMeshingFeature == null || !arSceneMeshingFeature.enabled;
-                },
-                error = true,
-            });
+            results.Add(AndroidXRFeatureUtils.GetSubsystemConflictRule(
+                feature: this,
+                featureName: UiName,
+                conflictFeatureType: typeof(ARMeshFeature),
+                conflictFeatureName: ApiConstants.UnityARSceneMeshFeature,
+                subsystemName: typeof(XRMeshSubsystem).Name,
+                buildTarget: targetGroup));
 #endif // UNITY_OPEN_XR_ANDROID_XR_1_2_0 && UNITY_6000_4_OR_NEWER
         }
 #endif // UNITY_EDITOR

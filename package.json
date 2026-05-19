@@ -1,7 +1,7 @@
 {
     "name": "com.google.xr.extensions",
     "displayName": "Android XR Extensions for Unity",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "unity": "6000.3",
     "unityRelease": "6f1",
     "description": "Android XR Extensions package. This package provides additional XR features that are not yet supported by Unity OpenXR Android XR and OpenXR Plugin packages.",
@@ -11,8 +11,8 @@
     },
     "dependencies":
     {
-        "com.unity.xr.openxr": "1.17.0-pre.1",
-        "com.unity.xr.arfoundation": "6.3.3",
+        "com.unity.xr.openxr": "1.17.0-pre.2",
+        "com.unity.xr.arfoundation": "6.4.0",
         "com.unity.xr.management": "4.5.4"
     },
     "samples": [
@@ -38,7 +38,7 @@
         },
         {
             "displayName": "Image Tracking",
-            "description": "This smaple demonstrates the usage of QR Code tracking and marker tracking through AR Foundation's ARTrackedImageManager.",
+            "description": "This sample demonstrates the usage of QR Code tracking, marker tracking and image tracking through AR Foundation's ARTrackedImageManager.",
             "path": "Samples~/ImageTracking"
         },
         {
@@ -60,6 +60,11 @@
             "displayName": "Cubemap Lighting",
             "description": "This sample uses the Cubemap Light Estimation feature to apply lighting to a sphere based on the environment's cubemap provided by the AR Foundation's AREnvironmentManager.",
             "path": "Samples~/CubemapLighting"
+        },
+        {
+            "displayName": "Trackpad Gestures",
+            "description": "This sample uses the Trackpad Gestures feature to detect and provide feedback for trackpad gestures inputs.",
+            "path": "Samples~/TrackpadGestures"
         }
     ]
 }

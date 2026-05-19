@@ -132,7 +132,7 @@ namespace Google.XR.Extensions
 
             _extensionAvailable = true;
 
-            // Basic tracking funtion uses XrTrackableProvider.
+            // Basic tracking function uses XrTrackableProvider.
             return XRInstanceManagerApi.Register(ApiXrFeature.Trackable);
         }
 
@@ -140,7 +140,7 @@ namespace Google.XR.Extensions
         protected override void OnInstanceDestroy(ulong xrInstance)
         {
             // Due the sharing of XrTrackableProvider among all trackables,
-            // DO NOT unregister ApiXrFeature.Trackable from a signle feature.
+            // DO NOT unregister ApiXrFeature.Trackable from a single feature.
             // Leave to XrInstanceManager to destroy XrTrackableProvider.
         }
 

@@ -33,7 +33,7 @@ namespace Google.XR.Extensions.Editor.Internal
         [MenuItem("GameObject/XR/Composition Layers/Passthrough Layer", false, 20)]
         static void CreatePassthroughLayer()
         {
-            // Default to a shpere.
+            // Default to a sphere.
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             SceneView lastSceneView = SceneView.lastActiveSceneView;
             Vector3 position = lastSceneView == null ? Vector3.zero : lastSceneView.pivot;
