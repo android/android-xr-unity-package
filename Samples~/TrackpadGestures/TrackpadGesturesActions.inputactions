@@ -1,0 +1,175 @@
+{
+    "version": 1,
+    "name": "TrackpadGesturesActions",
+    "maps": [
+        {
+            "name": "Trackpad Gestures",
+            "id": "085fe370-8072-4b28-8932-d027e3978fb2",
+            "actions": [
+                {
+                    "name": "ScrollActivate",
+                    "type": "Button",
+                    "id": "be45544f-712f-427a-b57c-da6ca183343a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Scroll",
+                    "type": "Value",
+                    "id": "6e08c10f-301e-4fac-9215-a5e057727708",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "PinchInActivate",
+                    "type": "Button",
+                    "id": "f232e70f-6714-4ac2-92ca-8f3a64d60359",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PinchInValue",
+                    "type": "Value",
+                    "id": "e567b549-7304-4e58-a007-4573aa2950e5",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "PinchOutActivate",
+                    "type": "Button",
+                    "id": "0b89921c-8072-4f6e-8151-b9b2fff8bf19",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PinchOutValue",
+                    "type": "Value",
+                    "id": "cdfaef3b-f3ad-4d89-9e96-9ab3df70d896",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RotateActivate",
+                    "type": "Button",
+                    "id": "a35c55f2-bfd7-4154-89fc-23e7f1250ff0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RotateValue",
+                    "type": "Value",
+                    "id": "c1aff663-b120-4106-9eb9-9ab616c895ff",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6d00f419-bf2d-454f-965e-2266c65fadfe",
+                    "path": "<AndroidXRTrackpadGestures>/scrollActivate",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollActivate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "96caee40-cc29-4ff5-9f64-3484410632fb",
+                    "path": "<AndroidXRTrackpadGestures>/pinchInActivate",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PinchInActivate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f8732102-87a0-4433-b298-f6770362a3de",
+                    "path": "<AndroidXRTrackpadGestures>/pinchOutActivate",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PinchOutActivate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b4cfc386-365a-4b6d-a42b-146e8b1a2736",
+                    "path": "<AndroidXRTrackpadGestures>/rotateActivate",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateActivate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bf3c4d66-a6c5-437a-b212-940fd8822f7c",
+                    "path": "<AndroidXRTrackpadGestures>/gestureScroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bede239b-29db-4d56-b65e-55d3652059c0",
+                    "path": "<AndroidXRTrackpadGestures>/pinchInValue",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PinchInValue",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7df4c887-a58f-49d8-ac2b-1450a58fb10c",
+                    "path": "<AndroidXRTrackpadGestures>/pinchOutValue",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PinchOutValue",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "14a11876-9fd2-4e45-861d-729092623985",
+                    "path": "<AndroidXRTrackpadGestures>/rotateValue",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateValue",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

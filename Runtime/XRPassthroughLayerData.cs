@@ -53,7 +53,7 @@ namespace Google.XR.Extensions
         private bool _updateTransformPerFrame = false;
 
         /// <summary>
-        /// Gets or sets a value indicating whether to use winding order clockwide of the give mesh
+        /// Gets or sets a value indicating whether to use winding order clockwise of the give mesh
         /// from <see cref="MeshFilter.mesh"/>.
         /// </summary>
         public bool Clockwise

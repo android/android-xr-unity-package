@@ -34,13 +34,13 @@ namespace Google.XR.Extensions.Samples.Passthrough
 
         private void Update()
         {
-            if (XRPassthroughFeature.IsExensionEnabled == null)
+            if (XRPassthroughFeature.IsExtensionEnabled == null)
             {
                 DebugText.text = "XrInstance hasn't been initialized.";
                 return;
             }
 
-            if (!XRPassthroughFeature.IsExensionEnabled.Value)
+            if (!XRPassthroughFeature.IsExtensionEnabled.Value)
             {
                 DebugText.text = "XR_ANDROID_passthrough_camera_state is not enabled.";
                 return;

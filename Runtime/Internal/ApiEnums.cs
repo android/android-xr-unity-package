@@ -21,6 +21,8 @@
 namespace Google.XR.Extensions.Internal
 {
     using System;
+    using System.Diagnostics;
+    using UnityEngine.InputSystem;
     using UnityEngine.XR.ARSubsystems;
 #if UNITY_OPEN_XR_ANDROID_XR
     using UnityEngine.XR.OpenXR.Features.Android;
@@ -35,6 +37,7 @@ namespace Google.XR.Extensions.Internal
         Object = 1000466000,
         Marker = 1000707000,
         QrCode = 1000708000,
+        Image = 1000709000,
     }
 
     internal enum ApiRequirement
@@ -66,6 +69,47 @@ namespace Google.XR.Extensions.Internal
     {
         UpperBody = 0,
         FullBody = 1,
+    }
+
+    /// <summary>
+    /// Extend the values of <c>XrStructureType</c> with platform-specific types.
+    /// </summary>
+    internal enum XrStructureTypeAndroid : uint
+    {
+        /// <summary>
+        /// Struct is of type `XrEventDataImageTrackingLostAndroid`.
+        /// Equivalent to the OpenXR value `XR_TYPE_EVENT_DATA_IMAGE_TRACKING_LOST_ANDROID`.
+        /// Provided by `XR_ANDROID_trackables_image`.
+        /// </summary>
+        EventDataImageTrackingLostAndroid = 1000709006,
+    }
+
+    /// <summary>
+    /// Indicates the desired mode for tracking.
+    /// Matches OpenXR's XrTrackableImageTrackingModeANDROID.
+    /// </summary>
+    internal enum XRImageTrackingMode : int
+    {
+        /// <summary>
+        /// For low latency tracking of moving images.
+        /// Provides the highest accuracy but consumes more power.
+        /// </summary>
+        DynamicTracking = 1,
+
+        /// <summary>
+        /// Optimized for tracking of static or semi-static images with lower power consumption.
+        /// Updates with higher latency for moving images.
+        /// </summary>
+        StaticTracking = 2
+    }
+
+    /// <summary>
+    /// Represents the supported image formats (<c>XrTrackableImageFormatANDROID</c>) for
+    /// image tracking.
+    /// </summary>
+    internal enum XrTrackableImageFormat : int
+    {
+        R8G8B8A8 = 1 // - RGBA32
     }
 
     internal static class ApiEnums

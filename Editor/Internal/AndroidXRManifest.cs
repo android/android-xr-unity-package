@@ -46,7 +46,7 @@ namespace Google.XR.Extensions.Editor.Internal
         public static readonly string XrApiOpenXR = "android.software.xr.api.openxr";
         public static readonly string XrApiOpenXRVersion = "0x00010001";
 
-        public static readonly string XrApiSpatial = "android.software.xr.api.SPATIAL";
+        public static readonly string XrApiSpatial = "android.software.xr.api.spatial";
 
         public static readonly string UseExperimentalOpenXRFeature =
             "com.android.extensions.xr.uses_experimental_openxr_feature";

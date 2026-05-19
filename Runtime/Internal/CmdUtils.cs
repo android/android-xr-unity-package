@@ -139,7 +139,7 @@ namespace Google.XR.Extensions.Internal
         {
             if (string.IsNullOrEmpty(AndroidExternalToolsSettings.sdkRootPath))
             {
-                // Using system evnrionement variables PATH.
+                // Using system environment variables PATH.
                 return "adb";
             }
             else

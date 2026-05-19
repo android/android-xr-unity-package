@@ -73,7 +73,7 @@ namespace Google.XR.Extensions.Editor.Internal
             var paths = GetXrStreamingRegisteredPaths();
             if (paths == null || paths.Length == 0)
             {
-                Debug.LogError("Canot find XR Streaming Runtime.");
+                Debug.LogError("Cannot find XR Streaming Runtime.");
             }
             else if (paths.Length > 1)
             {

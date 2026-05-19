@@ -23,6 +23,7 @@ namespace Google.XR.Extensions
     using System.Collections.Generic;
     using Google.XR.Extensions.Internal;
     using UnityEngine;
+    using UnityEngine.XR.OpenXR;
     using UnityEngine.XR.OpenXR.Features;
     using UnityEngine.XR.OpenXR.NativeTypes;
 
@@ -66,6 +67,15 @@ namespace Google.XR.Extensions
         /// </summary>
         public const string ExtensionString = "XR_ANDROID_unbounded_reference_space";
 
+        internal static bool? _extensionEnabled = null;
+
+        /// <summary>
+        /// Gets if the required OpenXR extension is enabled.
+        /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
+        /// whether the <c>XR_ANDROID_unbounded_reference_space</c> extension is enabled.
+        /// </summary>
+        public static bool? IsExtensionEnabled => _extensionEnabled;
+
         /// <inheritdoc/>
         public XRSpatialSdkVersions GetTargetVersion()
         {
@@ -80,7 +90,16 @@ namespace Google.XR.Extensions
                 return false;
             }
 
-            return XRInstanceManagerApi.Register(ApiXrFeature.UnboundedRefSpace);
+            _extensionEnabled = OpenXRRuntime.IsExtensionEnabled(ExtensionString);
+
+            if (_extensionEnabled.Value)
+            {
+                return XRInstanceManagerApi.Register(ApiXrFeature.UnboundedRefSpace);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>

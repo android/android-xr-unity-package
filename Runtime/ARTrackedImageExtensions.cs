@@ -98,5 +98,15 @@ namespace Google.XR.Extensions
             return XRMarkerTrackingFeature._subsystemInstance.TryGetMarkerData(
                 image.trackableId, out dictionary, out id);
         }
+
+        /// <summary>
+        /// Check if the given image is a standard image target (as opposed to a QR Code or marker).
+        /// </summary>
+        /// <param name="image">The <see cref="ARTrackedImage"/> instance.</param>
+        /// <returns><c>true</c>, if it's a valid standard image target.</returns>
+        public static bool IsImage(this ARTrackedImage image)
+        {
+            return XRTrackableApi.IsImage(image.trackableId);
+        }
     }
 }

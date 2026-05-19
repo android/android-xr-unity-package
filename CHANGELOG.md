@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-04-29
+
+### Editor version and package compatibility
+  * Package dependencies updated in this version:
+    * OpenXR Plugin (`com.unity.xr.openxr`) 1.17.0-pre.2
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.4.0
+  * Verified compatible packages:
+    * Unity OpenXR Android XR (`com.unity.xr.androidxr-openxr`) 1.3.0-pre.1
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.4.0
+
+### Known issues
+  * None.
+
+### Added
+  * Image Tracking:
+    * New OpenXR Feature **Android XR (Extensions): Image Tracking**, which provides marker tracking via `ARTrackedImageManager`. Including APIs:
+      * `AndroidXRImageTrackingSubsystem.OnImageTrackingConfigured`: the event indicating when asynchronous image tracking configuration completes.
+      * `AndroidXRImageTrackingSubsystem.OnImageTrackingLost`: the event raised if image tracking encounters an internal failure.
+    * Added image reference in **ImageTracking** sample.
+  * Added `XRUnboundedRefSpaceFeature.IsExtensionEnabled` to indicate if the required extension is available at runtime.
+  * Expanded **Android XR Streaming** support with DirectX graphics APIs. You can now select Vulkan, Direct3D12, and / or Direct3D11 for Play Mode.
+  * Trackpad Gestures:
+    * New additive OpenXR Interaction **Android XR Trackpad Gestures Interaction**, which provides ability to listen for trackpad gesture inputs.
+
+### Changed
+  * Promoted `XRSystemStateFeature` from experimental to public as `XRRecommendedSettings`.
+  * Changed `XrInputModality` to be flags, allowing multiple modalities to be combined.
+  * XR Spatial API support:
+    * Typo fix `android.software.xr.api.SPATIAL` to `android.software.xr.api.spatial`.
+
+### Deprecated
+  * None.
+
+### Removed
+  * Removed feature **Android XR Mouse Interaction Profile**. Please use [Android Mouse Interaction Profile](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.17/manual/features/androidmouseinteraction.html) from **OpenXR Plugin 1.17.0-pre.2** instead.
+
+### Fixed
+  * Fixed typo around `IsExtensionEnabled` in `XRPassthroughFeature`, `XRFineEyeFeature`, and `XRUnboundedRefSpaceFeature`.
+  * Fixed various other typos in comments and code.
+
 ## [1.3.0] - 2026-02-19
 
 ### Editor version and package compatibility

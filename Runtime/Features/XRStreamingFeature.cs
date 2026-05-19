@@ -20,6 +20,7 @@
 namespace Google.XR.Extensions
 {
     using System.Collections.Generic;
+    using System.Linq;
     using UnityEngine;
     using UnityEngine.Rendering;
     using UnityEngine.XR.OpenXR;
@@ -61,6 +62,13 @@ namespace Google.XR.Extensions
         public const string FeatureId = "com.google.xr.extensions.streaming";
 
 #if UNITY_EDITOR
+        private static GraphicsDeviceType[] _supportedGraphicsTypes =
+        {
+            GraphicsDeviceType.Vulkan,
+            GraphicsDeviceType.Direct3D12,
+            GraphicsDeviceType.Direct3D11,
+        };
+
         [Tooltip("The target client of Android XR Streaming service.")]
         [SerializeField]
         private XRStreamingClient _client = XRStreamingClient.Device;
@@ -124,12 +132,15 @@ namespace Google.XR.Extensions
 #if UNITY_EDITOR_WIN
             // Player Settings > Standalone > Other Settings:
             // Uncheck Auto Graphics API for Windows.
-            // Select only Vulkan API.
+            // Select only supported APIs.
             results.Add(new ValidationRule(this)
             {
-                message = "Only <b>Vulkan</b> Graphics API is supported in Editor PlayMode.",
+                message =
+                    "Only Graphics APIs <b>Vulkan</b>, <b>Direct3D12</b> and <b>Direct3D11</b> " +
+                    "are supported in Editor PlayMode.",
                 checkPredicate = () =>
                 {
+                    // Default settings are not guaranteed.
                     if (PlayerSettings.GetUseDefaultGraphicsAPIs(BuildTarget.StandaloneWindows64))
                     {
                         return false;
@@ -137,23 +148,27 @@ namespace Google.XR.Extensions
 
                     GraphicsDeviceType[] apis =
                         PlayerSettings.GetGraphicsAPIs(BuildTarget.StandaloneWindows64);
-                    if (apis.Length > 1 || apis.Length == 0)
-                    {
-                        return false;
-                    }
-                    else if (apis[0] != GraphicsDeviceType.Vulkan)
+                    if (apis.Length == 0)
                     {
                         return false;
                     }
 
+                    foreach (var settings in apis)
+                    {
+                        if (!_supportedGraphicsTypes.Contains(settings))
+                        {
+                            return false;
+                        }
+                    }
+
                     return true;
                 },
-                fixItMessage = "Uncheck Auto Graphics API and select only Vulkan.",
+                fixItMessage = "Uncheck Auto Graphics API and select supported types.",
                 fixIt = () =>
                 {
                     PlayerSettings.SetUseDefaultGraphicsAPIs(
                         BuildTarget.StandaloneWindows64, false);
-                    GraphicsDeviceType[] apis = { GraphicsDeviceType.Vulkan };
+                    GraphicsDeviceType[] apis = _supportedGraphicsTypes;
                     PlayerSettings.SetGraphicsAPIs(BuildTarget.StandaloneWindows64, apis);
                 },
                 error = true,

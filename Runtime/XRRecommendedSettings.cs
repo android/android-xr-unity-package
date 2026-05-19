@@ -1,4 +1,4 @@
-// <copyright file="XRSystemState.cs" company="Google LLC">
+// <copyright file="XRRecommendedSettings.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
 //
@@ -23,9 +23,10 @@ namespace Google.XR.Extensions
     using UnityEngine.XR.OpenXR.NativeTypes;
 
     /// <summary>
-    /// The input modality state of the system.
+    /// The possible input modality states within the default environment.
     /// </summary>
-    public enum XrInputModality
+    [System.Flags]
+    public enum XrInputModalities
     {
         /// <summary>
         /// Unknown input modality.
@@ -33,60 +34,50 @@ namespace Google.XR.Extensions
         Unknown = 0,
 
         /// <summary>
-        /// Hand input modality.
+        /// Head input modality.
         /// </summary>
-        Hand = 1,
+        Head = 1 << 0,
 
         /// <summary>
         /// Controller input modality.
         /// </summary>
-        Controller = 2,
+        Controller = 1 << 1,
+
+        /// <summary>
+        /// Hands input modality.
+        /// </summary>
+        Hands = 1 << 2,
 
         /// <summary>
         /// Mouse input modality.
         /// </summary>
-        Mouse = 3,
+        Mouse = 1 << 3,
 
         /// <summary>
-        /// Eye input modality.
+        /// Eyes and/or Hands input modality.
         /// </summary>
-        Eye = 4,
-
-        /// <summary>
-        /// HMD fallback input modality.
-        /// </summary>
-        HmdFallback = 5,
-
-        /// <summary>
-        /// Dwell with head input modality.
-        /// </summary>
-        DwellWithHead = 6,
-
-        /// <summary>
-        /// Dwell with eye input modality.
-        /// </summary>
-        DwellWithEye = 7,
+        GazeAndGesture = 1 << 4,
     }
 
     /// <summary>
-    /// Contains system state information.
+    /// Contains the recommended settings for the app.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct XrSystemState
+    public struct XrRecommendedSettings
     {
         /// <summary>
-        /// The current blend mode state of the environment.
+        /// The prelaunch blend mode state of the default environment.
         /// </summary>
         public XrEnvironmentBlendMode BlendModeState;
 
         /// <summary>
-        /// The current passthrough opacity of the environment.
+        /// The prelaunch passthrough opacity of the default environment.
         /// </summary>
         public float PassthroughOpacity;
 
         /// <summary>
-        /// The current input modality state of the system.
+        /// The prelaunch input modality state within the default environment.
         /// </summary>
-        public XrInputModality InputModalityState;
+        public XrInputModalities InputModalityState;
     }
 }

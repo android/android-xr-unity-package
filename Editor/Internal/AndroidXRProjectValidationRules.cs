@@ -41,7 +41,7 @@ namespace Google.XR.Extensions.Editor.Internal
                 {
                     Category = _category,
                     Message =
-                        "Android XR reuiqres resizable windows to render pop-ups correctly " +
+                        "Android XR requires resizable windows to render pop-ups correctly " +
                         "in immersive view, such as system permission requests.",
                     IsRuleEnabled = AndroidXRBuildUtils.IsAnyAndroidXRFeatureEnabledForAndroid,
                     CheckPredicate = () => PlayerSettings.Android.resizeableActivity,
@@ -108,7 +108,7 @@ namespace Google.XR.Extensions.Editor.Internal
                 {
                     Category = xrsCategory,
                     Message = string.Format(
-                        "XR Streaming Runtime is required for runing Android XR in " +
+                        "XR Streaming Runtime is required for running Android XR in " +
                         "Editor <b>PlayMode</b>."),
                     IsRuleEnabled = () =>
                     {
