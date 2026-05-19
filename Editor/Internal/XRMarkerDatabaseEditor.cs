@@ -113,7 +113,7 @@ namespace Google.XR.Extensions.Editor.Internal
             var dictionaryProperty = entryProperty.FindPropertyRelative("_dictionary");
             var allMarkersProperty = entryProperty.FindPropertyRelative("_allMarkers");
             var markerIdProperty = entryProperty.FindPropertyRelative("_markerId");
-            var edgeProperty = entryProperty.FindPropertyRelative("_physcialEdge");
+            var edgeProperty = entryProperty.FindPropertyRelative("_physicalEdge");
 
             // Receive remove action.
             using (new EditorGUILayout.HorizontalScope())

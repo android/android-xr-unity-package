@@ -45,7 +45,7 @@ namespace Google.XR.Extensions
         private uint _markerId;
 
         [SerializeField]
-        private float _physcialEdge;
+        private float _physicalEdge;
 
         // Used only for runtime configuration.
         private Guid _referenceGuid;
@@ -86,7 +86,7 @@ namespace Google.XR.Extensions
             _dictionary = dictionary;
             _allMarkers = allMarkers;
             _markerId = markerId;
-            _physcialEdge = physicalEdge;
+            _physicalEdge = physicalEdge;
             _referenceGuid = Guid.Empty;
         }
 
@@ -96,7 +96,7 @@ namespace Google.XR.Extensions
         public XRMarkerDictionary Dictionary => _dictionary;
 
         /// <summary>
-        /// Gets a bool indicating whether this entry reprents all markers from
+        /// Gets a bool indicating whether this entry represents all markers from
         /// <see cref="Dictionary"/>.
         /// </summary>
         public bool AllMarkers => _allMarkers;
@@ -108,10 +108,10 @@ namespace Google.XR.Extensions
         public uint MarkerId => _markerId;
 
         /// <summary>
-        /// Gets the physical edege in meter.
+        /// Gets the physical edge in meter.
         /// Note: it only takes effect when <see cref="AllMarkers"/> is not set.
         /// </summary>
-        public float PhysicalEdge => _physcialEdge;
+        public float PhysicalEdge => _physicalEdge;
 
         /// <summary>
         /// Convert to the name of a <see cref="XRReferenceImage"/> which represents a marker
@@ -188,7 +188,7 @@ namespace Google.XR.Extensions
 
         /// <inheritdoc/>
         public override string ToString() =>
-            _allMarkers ? $"{Name}: ALL" : $"{Name}, physical edge (meters): {_physcialEdge}";
+            _allMarkers ? $"{Name}: ALL" : $"{Name}, physical edge (meters): {_physicalEdge}";
 
         /// <inheritdoc/>
         public override int GetHashCode()
@@ -196,7 +196,7 @@ namespace Google.XR.Extensions
             var hashCode = (int)_dictionary;
             hashCode = (hashCode * 397) ^ _allMarkers.GetHashCode();
             hashCode = (hashCode * 397) ^ _markerId.GetHashCode();
-            hashCode = (hashCode * 397) ^ _physcialEdge.GetHashCode();
+            hashCode = (hashCode * 397) ^ _physicalEdge.GetHashCode();
             return hashCode;
         }
 
@@ -213,7 +213,7 @@ namespace Google.XR.Extensions
         public bool Equals(XRMarkerDatabaseEntry other)
         {
             return _dictionary == other.Dictionary && _allMarkers == other.AllMarkers &&
-                _markerId == other.MarkerId && _physcialEdge == other.PhysicalEdge;
+                _markerId == other.MarkerId && _physicalEdge == other.PhysicalEdge;
         }
 
         /// <inheritdoc/>
@@ -244,7 +244,7 @@ namespace Google.XR.Extensions
 
         internal void ApplyEstimation()
         {
-            _physcialEdge = 0f;
+            _physicalEdge = 0f;
         }
     }
 }

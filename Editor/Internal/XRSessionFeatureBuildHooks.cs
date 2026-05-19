@@ -216,11 +216,15 @@ namespace Google.XR.Extensions.Editor.Internal
                 AndroidXRBuildUtils.GetActiveFeature<XRQrCodeTrackingFeature>();
             XRMarkerTrackingFeature markerFeature =
                 AndroidXRBuildUtils.GetActiveFeature<XRMarkerTrackingFeature>();
+            XRImageTrackingFeature imageFeature =
+                AndroidXRBuildUtils.GetActiveFeature<XRImageTrackingFeature>();
 
             return
                 (objectTrackingFeature != null && objectTrackingFeature.enabled) ||
+                (imageFeature != null && imageFeature.enabled) ||
                 (qrCodeFeature != null && qrCodeFeature.enabled) ||
-                (markerFeature != null && markerFeature.enabled);
+                (markerFeature != null && markerFeature.enabled) ||
+                false;
         }
 
         private bool CheckSceneUnderstandingFinePermission()
@@ -292,9 +296,9 @@ namespace Google.XR.Extensions.Editor.Internal
             XRBodyTrackingFeature bodyTracking =
                 AndroidXRBuildUtils.GetActiveFeature<XRBodyTrackingFeature>();
             experimentalPermission |= bodyTracking != null && bodyTracking.enabled;
-            XRSystemStateFeature systemState =
-                AndroidXRBuildUtils.GetActiveFeature<XRSystemStateFeature>();
-            experimentalPermission |= systemState != null && systemState.enabled;
+            AndroidXRTrackpadGesturesInteraction trackpadGestures =
+                AndroidXRBuildUtils.GetActiveFeature<AndroidXRTrackpadGesturesInteraction>();
+            experimentalPermission |= trackpadGestures != null && trackpadGestures.enabled;
             return experimentalPermission;
         }
     }

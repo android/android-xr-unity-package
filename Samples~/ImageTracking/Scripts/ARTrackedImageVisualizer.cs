@@ -48,7 +48,7 @@ namespace Google.XR.Extensions.Samples.ImageTracking
         [Range(0.005f, 0.05f)]
         public float CubeEdge = 0.01f;
 
-        private ImageSource _source = ImageSource.Unknow;
+        private ImageSource _source = ImageSource.Unknown;
         private bool _isDataValid = false;
         private string _qrCodeData = string.Empty;
         private XRMarkerDictionary _dictionary = XRMarkerDictionary.ArUco4x4_50;
@@ -58,9 +58,10 @@ namespace Google.XR.Extensions.Samples.ImageTracking
 
         private enum ImageSource
         {
-            Unknow,
+            Unknown,
             QrCode,
             Marker,
+            Image,
         }
 
         private void Awake()
@@ -92,7 +93,7 @@ namespace Google.XR.Extensions.Samples.ImageTracking
 
             if (visible)
             {
-                if (_source == ImageSource.Unknow)
+                if (_source == ImageSource.Unknown)
                 {
                     if (_trackedImage.IsQrCode())
                     {
@@ -101,6 +102,10 @@ namespace Google.XR.Extensions.Samples.ImageTracking
                     else if (_trackedImage.IsMarker())
                     {
                         _source = ImageSource.Marker;
+                    }
+                    else if (_trackedImage.IsImage())
+                    {
+                        _source = ImageSource.Image;
                     }
                 }
 

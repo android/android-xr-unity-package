@@ -1,4 +1,4 @@
-// <copyright file="XRSystemStateFeature.cs" company="Google LLC">
+// <copyright file="XRRecommendedSettingsFeature.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
 //
@@ -33,58 +33,58 @@ namespace Google.XR.Extensions
 #endif // UNITY_EDITOR
 
     /// <summary>
-    /// This <see cref="XRSystemStateFeature"/> provides a function to query the system state
-    /// information at runtime.
+    /// This <see cref="XRRecommendedSettingsFeature"/> provides a function to query the recommended
+    /// settings information at runtime.
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
         BuildTargetGroups = new[] { BuildTargetGroup.Android },
         Company = "Google",
         OpenxrExtensionStrings = ExtensionString,
-        Desc = "Get system state at runtime.",
+        Desc = "Get recommended settings at runtime.",
         Version = "1.0.0",
         Category = FeatureCategory.Feature,
         FeatureId = FeatureId)]
 #endif
-    public class XRSystemStateFeature : OpenXRFeature, IXRSpatialSdk
+    public class XRRecommendedSettingsFeature : OpenXRFeature, IXRSpatialSdk
     {
         /// <summary>
         /// The UI name shows on the XR Plug-in Management panel, to help users understand
         /// validation errors and expected fixes.
         /// </summary>
-        public const string UiName = "Android XR: System State (Experimental*)";
+        public const string UiName = "Android XR: Recommended Settings";
 
         /// <summary>
         /// The feature ID string.
         /// </summary>
-        public const string FeatureId = "com.google.xr.extensions.system_state";
+        public const string FeatureId = "com.google.xr.extensions.recommended_settings";
 
         /// <summary>
         /// The OpenXR Extension string. Used to check if this extension is available or enabled.
         /// </summary>
-        public const string ExtensionString = "XR_ANDROIDX_system_state";
+        public const string ExtensionString = "XR_ANDROID_recommended_settings";
 
         internal static bool? _extensionEnabled = null;
 
         /// <summary>
         /// Gets if the required OpenXR extension is enabled.
         /// When OpenXR runtime is waiting, it returns <c>null</c>. Otherwise, it indicates
-        /// whether the XR_ANDROIDX_system_state extension is available on the current device.
+        /// whether the XR_ANDROID_recommended_settings extension is available on the current device.
         /// </summary>
         public static bool? IsExtensionEnabled => _extensionEnabled;
 
         /// <summary>
-        /// Gets the current system state
+        /// Gets the current recommended settings.
         /// </summary>
         /// </param>
-        /// <param name="systemState">
-        /// System state info obtained from the system.
+        /// <param name="recommendedSettings">
+        /// Recommended settings info obtained from the system.
         /// </param>
-        public static bool TryGetSystemState(out XrSystemState systemState)
+        public static bool TryGetRecommendedSettings(out XrRecommendedSettings recommendedSettings)
         {
-            XrSystemState state = default;
-            bool result = OpenXRAndroidApi.TryGetSystemState(ref state);
-            systemState = state;
+            XrRecommendedSettings settings = default;
+            bool result = OpenXRAndroidApi.TryGetRecommendedSettings(ref settings);
+            recommendedSettings = settings;
             return result;
         }
 
@@ -108,28 +108,13 @@ namespace Google.XR.Extensions
                 return false;
             }
 
-            return XRInstanceManagerApi.Register(ApiXrFeature.SystemState);
+            return XRInstanceManagerApi.Register(ApiXrFeature.RecommendedSettings);
         }
 
         /// <inheritdoc/>
         protected override void OnInstanceDestroy(ulong xrInstance)
         {
-            XRInstanceManagerApi.Unregister(ApiXrFeature.SystemState);
+            XRInstanceManagerApi.Unregister(ApiXrFeature.RecommendedSettings);
         }
-
-#if UNITY_EDITOR
-        /// <inheritdoc/>
-        protected override void GetValidationChecks(
-            List<ValidationRule> results, BuildTargetGroup targetGroup)
-        {
-            if (targetGroup != BuildTargetGroup.Android)
-            {
-                return;
-            }
-
-            results.Add(AndroidXRFeatureUtils.GetExperimentalFeatureValidationCheck(
-                 this, UiName, targetGroup));
-        }
-#endif // UNITY_EDITOR
     }
 }

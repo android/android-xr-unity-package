@@ -21,6 +21,7 @@ namespace Google.XR.Extensions.Internal
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using UnityEngine;
     using UnityEngine.XR;
     using UnityEngine.XR.Management;
@@ -30,11 +31,155 @@ namespace Google.XR.Extensions.Internal
 
 #if UNITY_EDITOR
     using UnityEditor;
+    using UnityEditor.PackageManager;
+    using UnityEditor.PackageManager.Requests;
 #endif
 
     internal static class AndroidXRFeatureUtils
     {
 #if UNITY_EDITOR
+        private static Dictionary<string, AddRequest> _packageRequests = new();
+
+        public static ValidationRule GetPackageDependencyRule(
+            OpenXRFeature feature, string featureName,
+            string package, string displayName, string version)
+        {
+            return new ValidationRule(feature)
+            {
+                message = string.Format("{0} package is required.", displayName),
+                checkPredicate = () =>
+                {
+                    return IsPackageInstalled(package);
+                },
+                fixIt = () =>
+                {
+                    RequestPackageInstallation(featureName, package, displayName, version);
+                },
+                fixItMessage = string.Format("Install {0} package.", displayName),
+                error = true,
+            };
+        }
+
+        public static ValidationRule GetFeatureDependencyRule(
+            OpenXRFeature feature, Type requiredFeatureType, string requiredFeatureName,
+            BuildTargetGroup buildTarget)
+        {
+            return new ValidationRule(feature)
+            {
+                message = string.Format("{0} feature is required.", requiredFeatureName),
+                checkPredicate = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(buildTarget);
+                    if (settings == null)
+                    {
+                        return false;
+                    }
+
+                    var requiredFeature = settings.GetFeature(requiredFeatureType);
+                    return requiredFeature != null && requiredFeature.enabled;
+                },
+                fixIt = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(buildTarget);
+                    if (settings == null)
+                    {
+                        Debug.LogWarningFormat(
+                            "Autofix failed with missing OpenXRSettings on {0} platform.",
+                            buildTarget);
+                        return;
+                    }
+
+                    var requiredFeature = settings.GetFeature(requiredFeatureType);
+                    if (requiredFeature == null)
+                    {
+                        Debug.LogWarningFormat(
+                            "Autofix failed with missing {0} feature on {1} platform.",
+                            requiredFeatureName, buildTarget);
+                        return;
+                    }
+
+                    requiredFeature.enabled = true;
+                },
+                fixItMessage = string.Format("Enable {0} feature.", requiredFeatureName),
+                error = true,
+            };
+        }
+
+        public static ValidationRule GetFeatureConflictRule(
+            OpenXRFeature feature, Type conflictFeatureType, string conflictFeatureName,
+            BuildTargetGroup buildTarget)
+        {
+            return new ValidationRule(feature)
+            {
+                message =
+                    string.Format("{0} is not compatible with this feature.", conflictFeatureName),
+                checkPredicate = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(buildTarget);
+                    if (settings == null)
+                    {
+                        return true;
+                    }
+
+                    var conflictFeature = settings.GetFeature(conflictFeatureType);
+                    return conflictFeature == null || !conflictFeature.enabled;
+                },
+                fixIt = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(buildTarget);
+                    if (settings == null)
+                    {
+                        Debug.LogWarningFormat(
+                            "Autofix failed with missing OpenXRSettings on {0} platform.",
+                            buildTarget);
+                        return;
+                    }
+
+                    var conflictFeature = settings.GetFeature(conflictFeatureType);
+                    if (conflictFeature == null)
+                    {
+                        Debug.LogWarningFormat(
+                            "Autofix failed with missing {0} feature on {1} platform.",
+                            conflictFeatureName, buildTarget);
+                        return;
+                    }
+
+                    conflictFeature.enabled = false;
+                },
+                fixItMessage = string.Format("Disable {0} feature.", conflictFeatureName),
+                error = true,
+            };
+        }
+
+        public static ValidationRule GetSubsystemConflictRule(
+            OpenXRFeature feature, string featureName,
+            Type conflictFeatureType, string conflictFeatureName,
+            string subsystemName, BuildTargetGroup buildTarget)
+        {
+            return new ValidationRule(feature)
+            {
+                message = string.Format(
+                    "Duplicate with {0}, both are {1} provider.\n" +
+                    "Disable either <b>{2}</b> or <b>{0}</b> under " +
+                    "<b>XR Plug-in Management > OpenXR > {3}</b>.",
+                    conflictFeatureName, subsystemName, featureName, buildTarget),
+                checkPredicate = () =>
+                {
+                    var settings = OpenXRSettings.GetSettingsForBuildTargetGroup(buildTarget);
+                    if (settings == null)
+                    {
+                        return true;
+                    }
+
+                    var target = settings.GetFeature(feature.GetType());
+                    var conflict = settings.GetFeature(conflictFeatureType);
+                    return target == null || !target.enabled ||
+                        conflict == null || !conflict.enabled;
+                },
+                error = true,
+            };
+        }
+
         public static ValidationRule GetExperimentalFeatureValidationCheck(
             OpenXRFeature feature, string featureUiName, BuildTargetGroup targetGroup)
         {
@@ -80,7 +225,31 @@ namespace Google.XR.Extensions.Internal
                 error = false
             };
         }
-#endif
+#endif // UNITY_EDITOR
+
+        public static bool CheckExtensions(string extensions)
+        {
+            // split by white-space characters, e.g. space, \t, \n, \r.
+            string[] all = extensions.Split();
+            foreach (string extension in all)
+            {
+                if (string.IsNullOrEmpty(extension))
+                {
+                    // String.Split() creates an array of size one where the
+                    // first element is an empty string if the input string is empty.
+                    continue;
+                }
+
+                if (!OpenXRRuntime.IsExtensionEnabled(extension))
+                {
+                    Debug.LogWarning($"{extension} is not available.");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static void CreateMeshingSubsystem(
             string featureUiName, Action<List<XRMeshSubsystemDescriptor>, string> CreateSubsystem)
         {
@@ -135,5 +304,59 @@ namespace Google.XR.Extensions.Internal
                 return;
             }
         }
+
+#if UNITY_EDITOR
+        private static bool IsPackageInstalled(string package)
+        {
+            var current = Client.List();
+            if (!current.IsCompleted || current.Status == StatusCode.Failure)
+            {
+                // Due to the async initialization of Client List,
+                // prefer assembly definition to confirm package installation.
+                return false;
+            }
+
+            // Rely on Unity Editor for package upgrades.
+            return current.Result.Any(p => p.name.Equals(package));
+        }
+
+        private static void RequestPackageInstallation(
+            string feature, string package, string displayName, string version)
+        {
+            string packageId = $"{package}@{version}";
+            var request = _packageRequests.GetValueOrDefault(packageId, null);
+            if (request == null)
+            {
+                request = Client.Add(packageId);
+                _packageRequests.Add(packageId, request);
+                Debug.LogWarningFormat(
+                    "[{0}] Sending request to add package {1}.",
+                    feature, displayName);
+                return;
+            }
+
+            switch (request.Status)
+            {
+                case StatusCode.InProgress:
+                    Debug.LogWarningFormat(
+                        "[{0}] Waiting for adding package {1}",
+                        feature, displayName);
+                    break;
+                case StatusCode.Success:
+                    Debug.LogFormat(
+                        "[{0}] Successfully added package {1} ({2}).",
+                        feature, displayName, packageId);
+                    _packageRequests.Remove(packageId);
+                    break;
+                case StatusCode.Failure:
+                    Debug.LogWarningFormat(
+                        "[{0}] Failed to add package {1} with error {2}. " +
+                        "Please try again later or manually install package {3}.",
+                        feature, displayName, request.Error.message, packageId);
+                    _packageRequests.Remove(packageId);
+                    break;
+            }
+        }
+#endif // UNITY_EDITOR
     }
 }

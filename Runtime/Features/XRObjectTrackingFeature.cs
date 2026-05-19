@@ -75,7 +75,7 @@ namespace Google.XR.Extensions
         /// <summary>
         /// The OpenXR Extension string. Used to check if this extensions is
         /// available or enabled.
-        /// To enable runtime confiugration, always enabling persistence extension
+        /// To enable runtime configuration, always enabling persistence extension
         /// when it's available.
         /// </summary>
         public const string ExtensionStrings =

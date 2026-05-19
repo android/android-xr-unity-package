@@ -13,6 +13,7 @@ To enable the sample:
 *   Select **Android XR (Extensions): Session Management**.
 *   Select **Android XR (Extensions): Image Tracking (QR Code)**.
 *   Select **Android XR (Extensions): Image Tracking (Marker)**.
+*   Select **Android XR (Extensions): Image Tracking**.
 *   Under **XR Plug-in Management > Project Validation**, fix all **OpenXR**
     related issues. This will help to configure your **Player Settings**.
 
@@ -29,11 +30,11 @@ passthrough by:
     for more details.
 
 You can then build the Image Tracking sample with the default library which has
-a QR Code reference and multiple marker references.
+a QR Code reference, multiple marker references, and an image reference.
 
 How to configure a custom image library:
 
-*   Naviagte to **Assets > Create > XR > Reference Image Library** to create a
+*   Navigate to **Assets > Create > XR > Reference Image Library** to create a
     new library.
 
     ![Reference Image Library](Instructions/ReferenceImageLibraryMenuItem.png)
@@ -86,6 +87,43 @@ How to configure a custom image library:
         (Extensions) Image Tracking (Marker)**, then select **Prefer
         Estimation** to indicate the auto-estimation when it's supported by the
         OpenXR runtime.
+
+*   Add **Image** reference:
+
+    *   Click **Add Image** and fill in the fields:
+
+    *   Select a **Texture 2D** to use as the image reference.
+        *   Ensure the **Read/Write** flag is enabled in the advanced Texture
+            Import Settings.
+        *   Ensure the texture's **Format** is set to **RGBA8** (i.e., RGBA 32-
+            bit). Setting the **Format** to **Automatic** may result in an
+            incompatible format.
+
+        ![Image Texture](Instructions/ImageTexture.png)
+
+    *   Specify a **Name**, which can be used to identify which reference image
+        has been detected at runtime.
+        *   The **Names** must not be "QRCode" or follow the marker format
+            "{XRMarkerDictionary}-{id}" to avoid misclassification.
+        *   Duplicated **Names** for **Image** references are allowed.
+
+    *   Enable **Keep Texture at Runtime**, otherwise image tracking will not
+        work for the added image reference. This is necessary, as the runtime
+        must access the source texture via "XRReferenceImage.texture" in order
+        to pass it to OpenXR.
+
+    *   Physical Size:
+        *   Select **Specify Size** and specify **Physical Size (meters)**,
+            which should represent the actual dimensions of the image target in
+            the real world.
+        *   If you prefer size estimation, open the **Setting** menu of
+            **Android XR (Extensions) Image Tracking (Image)**, then select
+            **Prefer Estimation** to indicate automatic size estimation when
+            supported by the OpenXR runtime. It's recommended to still specify
+            a **Physical Size (meters)** as default, as some providers do not
+            support size estimation.
+
+    ![Image Reference](Instructions/ImageReference.png)
 
 *   Assign the custom library to **AR Tracked Image Manager** in the scene.
 

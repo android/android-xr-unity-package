@@ -34,12 +34,9 @@ namespace Google.XR.Extensions.Internal
         Reserved3 = 18,
         Reserved4 = 19,
         BodyTracking = 20,
-        SystemState = 21,
-        Reserved7 = 22,
+        RecommendedSettings = 21,
         CubemapLightEstimation = 23,
-        Reserved9 = 24,
         Reserved10 = 25,
-        Reserved11 = 26,
     }
 
     internal class XRInstanceManagerApi

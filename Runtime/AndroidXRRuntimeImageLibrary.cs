@@ -25,12 +25,14 @@ namespace Google.XR.Extensions
     using System.Diagnostics.CodeAnalysis;
     using System.Text;
     using Google.XR.Extensions.Internal;
+    using Unity.Collections;
+    using Unity.Jobs;
     using UnityEngine;
     using UnityEngine.XR.ARSubsystems;
 
     /// <summary>
     /// Constructs a <see cref="RuntimeReferenceImageLibrary"/> which stores reference images
-    /// for Marker Tracking and QR Code trackng at Android XR devices.
+    /// for Image, Marker and QR Code tracking on Android XR devices.
     /// </summary>
     [SuppressMessage(
         "UnityRules.UnityStyleRules", "US1109:PublicPropertiesMustBeUpperCamelCase",
@@ -38,13 +40,16 @@ namespace Google.XR.Extensions
     public class AndroidXRRuntimeImageLibrary : RuntimeReferenceImageLibrary
     {
         private static readonly string _qrCodeReferenceName = "qrcode";
+        private readonly List<XRReferenceImage> _images = new List<XRReferenceImage>();
         private readonly List<XRReferenceImage> _markers = new List<XRReferenceImage>();
         private readonly List<XRMarkerDatabaseEntry> _markerEntries =
             new List<XRMarkerDatabaseEntry>();
 
+        private int _imageReferenceCount = 0;
         private int _markerReferenceCount = 0;
         private int _qrCodeReferenceCount = 0;
 
+        private int _imageReferenceIndex = -1;
         private int _markerReferenceIndex = -1;
         private int _qrCodeReferenceIndex = -1;
 
@@ -84,21 +89,34 @@ namespace Google.XR.Extensions
                     entry.SetReference(reference.guid);
                     _markerEntries.Add(entry);
                 }
+                else
+                {
+                    if (!ValidateImage(reference))
+                    {
+                        continue; // invalid image references are ignored
+                    }
+
+                    _images.Add(reference);
+                }
             }
 
-            var hasQrCode = _qrCodeReference == null;
-            _qrCodeReferenceCount = hasQrCode ? 0 : 1;
+            var hasQrCode = _qrCodeReference != null;
+            _qrCodeReferenceCount = hasQrCode ? 1 : 0;
             _markerReferenceCount = _markers.Count;
+            _imageReferenceCount = _images.Count;
 
-            _qrCodeReferenceIndex = hasQrCode ? -1 : 0;
+            _qrCodeReferenceIndex = hasQrCode ? 0 : -1;
             _markerReferenceIndex = _markerReferenceCount == 0 ? -1 : _qrCodeReferenceCount;
+            _imageReferenceIndex = _imageReferenceCount == 0 ?
+                -1 : (_qrCodeReferenceCount + _markerReferenceCount);
 
             if (Debug.isDebugBuild)
             {
                 var stringBuilder = new StringBuilder();
                 stringBuilder.Append(
-                    $"Created {GetType().Name} with {_qrCodeReferenceCount} QrCode and " +
-                    $"{_markerReferenceCount} Marker references.\n");
+                    $"Created {GetType().Name} with {_qrCodeReferenceCount} QrCode, " +
+                    $"{_markerReferenceCount} Marker, and " +
+                    $"{_imageReferenceCount} Image references.\n");
 
                 if (_qrCodeReference != null)
                 {
@@ -110,12 +128,18 @@ namespace Google.XR.Extensions
                     stringBuilder.Append($"    Marker: {marker}\n");
                 }
 
+                foreach (var image in _images)
+                {
+                    stringBuilder.Append($"    Image: {image.name}\n");
+                }
+
                 Debug.Log(stringBuilder.ToString());
             }
         }
 
         /// <inheritdoc/>
-        public override int count => _qrCodeReferenceCount + _markerReferenceCount;
+        public override int count =>
+            _qrCodeReferenceCount + _markerReferenceCount + _imageReferenceCount;
 
         /// <summary>
         /// The number of QR Code references in the library.
@@ -130,6 +154,11 @@ namespace Google.XR.Extensions
         public int MarkerReferenceCount => _markerReferenceCount;
 
         /// <summary>
+        /// The number of image references in the library.
+        /// </summary>
+        public int ImageReferenceCount => _imageReferenceCount;
+
+        /// <summary>
         /// The index of the QR Code reference in the library, or -1 if no QR Code was added.
         /// </summary>
         public int QrCodeReferenceIndex => _qrCodeReferenceIndex;
@@ -138,6 +167,11 @@ namespace Google.XR.Extensions
         /// The index of the first marker reference in the library, or -1 if no marker was added.
         /// </summary>
         public int MarkerReferenceIndex => _markerReferenceIndex;
+
+        /// <summary>
+        /// The index of the first image reference in the library, or -1 if no image was added.
+        /// </summary>
+        public int ImageReferenceIndex => _imageReferenceIndex;
 
         /// <summary>
         /// The QR Code<see cref="XRReferenceImage"/>,
@@ -186,7 +220,7 @@ namespace Google.XR.Extensions
         /// <summary>
         /// Validate marker configuration with a given <see cref="XRReferenceImageLibrary"/>.
         /// It may be updated through <see cref="XRMarkerDatabase"/> or manually added marker
-        /// references where the <see cref="XRReferenceImage.name"/> matchs format
+        /// references where the <see cref="XRReferenceImage.name"/> matches format
         /// "{<see cref="XRMarkerDictionary"/>}-{markId}".
         /// </summary>
         /// <param name="imageLibrary"></param>
@@ -214,6 +248,52 @@ namespace Google.XR.Extensions
             {
                 Debug.LogError(error);
             }
+        }
+
+        /// <summary>
+        /// Validates all image references within a given <see cref="XRReferenceImageLibrary"/>.
+        /// </summary>
+        /// <param name="referenceLibrary">
+        /// The <see cref="XRReferenceImageLibrary"/> to validate.
+        /// </param>
+        /// <param name="validImageCount">
+        /// Number of valid image references in the given referenceLibrary
+        /// (excluding QR codes and markers).
+        /// </param>
+        /// <param name="invalidImageCount">
+        /// Number of invalid image references in the given referenceLibrary,
+        /// which will be ignored for image tracking.
+        /// </param>
+        /// <returns>
+        /// Returns true if all image references are valid or if there are no image references;
+        /// otherwise, returns false.
+        /// </returns>
+        public static bool ValidateImages(
+            IReferenceImageLibrary referenceLibrary, out int validImageCount,
+            out int invalidImageCount)
+        {
+            validImageCount = 0;
+            invalidImageCount = 0;
+
+            for (var i = 0; i < referenceLibrary.count; i++)
+            {
+                var reference = referenceLibrary[i];
+                if (IsQrCodeReference(reference) || IsMarkerReference(reference))
+                {
+                    continue;
+                }
+
+                if (ValidateImage(reference))
+                {
+                    validImageCount += 1;
+                }
+                else
+                {
+                    invalidImageCount += 1;
+                }
+            }
+
+            return invalidImageCount == 0;
         }
 #endif // UNITY_EDITOR
 
@@ -244,9 +324,81 @@ namespace Google.XR.Extensions
 
         internal List<XRMarkerDatabaseEntry> GetMarkerEntries() => _markerEntries;
 
+        /// <summary>
+        /// Copies pixel data to native memory by creating <see cref="XRImageDatabaseEntry"/>
+        /// instances.
+        /// The caller is responsible for disposing each created instance to prevent memory leaks.
+        /// </summary>
+        /// <param name="preferSizeEstimation">
+        /// Whether physical size estimation is preferred.
+        /// </param>
+        /// <param name="systemSupportsSizeEstimation">
+        /// Whether the system is capable of physical size estimation.
+        /// </param>
+        /// <param name="entries">
+        /// An array of successfully created <c>XRImageDatabaseEntry</c> entries, which can be
+        /// directly passed to unmanaged code. Returns an empty array if no entries are created.
+        /// </param>
+        /// <returns>Whether any entries were successfully created.</returns>
+        internal bool TryCopyImageReferencesToNativeMemory(
+            bool preferSizeEstimation, bool systemSupportsSizeEstimation,
+            out XRImageDatabaseEntry[] entries)
+        {
+            if (_imageReferenceCount <= 0)
+            {
+                entries = Array.Empty<XRImageDatabaseEntry>();
+                return false;
+            }
+
+            entries = new XRImageDatabaseEntry[_imageReferenceCount];
+            var entryCount = 0;
+            var jobHandles = new NativeArray<JobHandle>(_imageReferenceCount, Allocator.Temp);
+
+            foreach (var image in _images)
+            {
+                try
+                {
+                    // Allocates unmanaged memory and copies pixel data
+                    entries[entryCount] =
+                        new XRImageDatabaseEntry(image, XRImageTrackingMode.DynamicTracking,
+                            preferSizeEstimation, systemSupportsSizeEstimation, out var jobHandle);
+                    jobHandles[entryCount] = jobHandle;
+                    entryCount++;
+                }
+                catch (Exception e)
+                {
+                    // ignore this reference image
+                    // swallow exception but log error
+                    Debug.LogError(e);
+                }
+            }
+
+            JobHandle.CompleteAll(jobHandles);
+            jobHandles.Dispose();
+
+            // Adjust the array size to match the number of successfully created entries
+            if (entryCount == 0)
+            {
+                entries = Array.Empty<XRImageDatabaseEntry>();
+                return false;
+            }
+
+            if (entryCount < _imageReferenceCount)
+            {
+                Array.Resize(ref entries, entryCount);
+            }
+
+            return true;
+        }
+
         /// <inheritdoc/>
         protected override XRReferenceImage GetReferenceImageAt(int index)
         {
+            if (_imageReferenceIndex != -1 && index >= _imageReferenceIndex)
+            {
+                return _images[index - _imageReferenceIndex];
+            }
+
             if (_markerReferenceIndex != -1 && index >= _markerReferenceIndex)
             {
                 return _markers[index - _markerReferenceIndex];
@@ -258,7 +410,46 @@ namespace Google.XR.Extensions
             }
 
             throw new ArgumentOutOfRangeException(nameof(index), index,
-                $"No valid QR Code or Marker reference found for {nameof(index)}.");
+                $"No valid QR Code, Marker or Image reference found for {nameof(index)}.");
+        }
+
+        private static bool ValidateImage(XRReferenceImage image)
+        {
+            if (!image.texture)
+            {
+                Debug.LogWarning(
+                    $"XRReferenceImage <i>{image.name}</i> is missing a valid texture and " +
+                    "will be ignored. Ensure 'Keep Texture at Runtime' is enabled.");
+                return false;
+            }
+
+            if (!image.texture.isReadable)
+            {
+                Debug.LogWarning(
+                    $"XRReferenceImage <i>{image.name}</i> has a non-readable texture and " +
+                    "will be ignored. Ensure 'Read/Write Enabled' is enabled in the " +
+                    "advanced texture settings.");
+                return false;
+            }
+
+            if (image.texture.format != TextureFormat.RGBA32)
+            {
+                Debug.LogWarning(
+                    $"XRReferenceImage <i>{image.name}</i> has an unsupported texture format " +
+                    $"({image.texture.format}) and will be ignored. " +
+                    "Image targets must be set to RGBA32 bit format.");
+                return false;
+            }
+
+            if (!image.specifySize || image.size.x == 0 || image.size.y == 0)
+            {
+                Debug.Log(
+                    $"XRReferenceImage '{image.name}' is missing a specified physical size. " +
+                    "If the running system does not support physical size estimation, " +
+                    "this reference image will be ignored.");
+            }
+
+            return true;
         }
     }
 }

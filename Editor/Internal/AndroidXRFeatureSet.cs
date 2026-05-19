@@ -30,6 +30,7 @@ namespace Google.XR.Extensions.Editor.Internal
             XRSessionFeature.FeatureId,
             XRStreamingFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
+            XRImageTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
@@ -37,7 +38,7 @@ namespace Google.XR.Extensions.Editor.Internal
             XRUnboundedRefSpaceFeature.FeatureId,
             XRBodyTrackingFeature.FeatureId,
             XRSceneMeshingFeature.FeatureId,
-            XRSystemStateFeature.FeatureId,
+            XRRecommendedSettingsFeature.FeatureId,
             XRCubemapLightEstimationFeature.FeatureId,
             XRFineEyeFeature.FeatureId,
         },
@@ -53,6 +54,7 @@ namespace Google.XR.Extensions.Editor.Internal
         // desired to include all XR_ANDROID_* features provided by this package.
         DefaultFeatureIds = new string[] {
             XRObjectTrackingFeature.FeatureId,
+            XRImageTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
@@ -78,13 +80,14 @@ namespace Google.XR.Extensions.Editor.Internal
         {
             XRFoveationFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
+            XRImageTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
             XRUnboundedRefSpaceFeature.FeatureId,
             XRBodyTrackingFeature.FeatureId,
             XRSceneMeshingFeature.FeatureId,
-            XRSystemStateFeature.FeatureId,
+            XRRecommendedSettingsFeature.FeatureId,
             XRCubemapLightEstimationFeature.FeatureId,
             XRFineEyeFeature.FeatureId,
         };
