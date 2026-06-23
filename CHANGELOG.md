@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2026-06-23
+
+### Editor version and package compatibility
+  * Package dependencies updated in this version:
+    * OpenXR Plugin (`com.unity.xr.openxr`) 1.17.0-pre.2
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.4.0
+  * Verified compatible packages:
+    * Unity OpenXR Android XR (`com.unity.xr.androidxr-openxr`) 1.3.0-pre.1
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.4.0
+
+### Known issues
+  * None.
+
+### Added
+  * None.
+
+### Changed
+  * None.
+
+### Deprecated
+  * None.
+
+### Removed
+  * None.
+
+### Fixed
+  * XR Spatial API support:
+    * Typo fix `android.software.xr.api.SPATIAL` to `android.software.xr.api.spatial`.
+
 ## [1.3.1] - 2026-04-29
 
 ### Editor version and package compatibility
