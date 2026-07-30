@@ -1,7 +1,6 @@
 // <copyright file="XRSessionFeatureBuildHooks.cs" company="Google LLC">
 //
 // Copyright 2024 Google LLC
-// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -145,6 +144,13 @@ namespace Google.XR.Extensions.Editor.Internal
                     AndroidXRPermission.BodyTracking.ToPermissionString());
             }
 
+            if (CheckRecordAudioPermission())
+            {
+                requiredManifest.AddPermission(AndroidXRPermission.RecordAudio);
+                Debug.LogFormat("Inject permission manifest: {0}",
+                    AndroidXRPermission.RecordAudio.ToPermissionString());
+            }
+
             if (CheckExperimentalPermission())
             {
                 requiredManifest.AddMetaData(
@@ -179,12 +185,9 @@ namespace Google.XR.Extensions.Editor.Internal
         protected override void OnProcessBootConfigExt(
             BuildReport report, BootConfigBuilder builder)
         {
-            XRFoveationFeature foveationFeature =
-                AndroidXRBuildUtils.GetActiveFeature<XRFoveationFeature>();
             FoveatedRenderingFeature foveatedRendering =
                 AndroidXRBuildUtils.GetActiveFeature<FoveatedRenderingFeature>();
             bool needsFragmentDensityMapEnabled =
-                (foveationFeature != null && foveationFeature.enabled) ||
                 (foveatedRendering != null && foveatedRendering.enabled);
             Debug.LogFormat(
                 "SetBootConfigBoolean: xr-vulkan-extension-fragment-density-map-enabled="
@@ -216,12 +219,9 @@ namespace Google.XR.Extensions.Editor.Internal
                 AndroidXRBuildUtils.GetActiveFeature<XRQrCodeTrackingFeature>();
             XRMarkerTrackingFeature markerFeature =
                 AndroidXRBuildUtils.GetActiveFeature<XRMarkerTrackingFeature>();
-            XRImageTrackingFeature imageFeature =
-                AndroidXRBuildUtils.GetActiveFeature<XRImageTrackingFeature>();
 
             return
                 (objectTrackingFeature != null && objectTrackingFeature.enabled) ||
-                (imageFeature != null && imageFeature.enabled) ||
                 (qrCodeFeature != null && qrCodeFeature.enabled) ||
                 (markerFeature != null && markerFeature.enabled) ||
                 false;
@@ -288,6 +288,13 @@ namespace Google.XR.Extensions.Editor.Internal
             XRBodyTrackingFeature bodyTracking =
                 AndroidXRBuildUtils.GetActiveFeature<XRBodyTrackingFeature>();
             return bodyTracking != null && bodyTracking.enabled;
+        }
+
+        private bool CheckRecordAudioPermission()
+        {
+            XRMultimodalFaceFeature multimodalFaceTracking =
+                AndroidXRBuildUtils.GetActiveFeature<XRMultimodalFaceFeature>();
+            return multimodalFaceTracking != null && multimodalFaceTracking.enabled;
         }
 
         private bool CheckExperimentalPermission()

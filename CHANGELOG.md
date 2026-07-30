@@ -8,12 +8,47 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-07-07
+
+### Added
+  * Google Cloud:
+    * New **Android XR: Google Cloud** feature, providing authentication strategies: API Key, Keyless, and Authentication Token.
+      * You can use feature settings to automatically configure authentication at session start up. Or use `TrySetAuthenticationAsync(XRAuthenticationStrategy, string)` for manual setup.
+      * For strategy support status at runtime, check [Android XR devsite](https://developer.android.com/develop/xr/unity) for the latest update.
+  * Geospatial:
+    * New **Android XR: Geospatial** feature, enabling `XRGeospatialManager` to access geospatial capabilities. Including APIs:
+      * `XRGeospatialManager.OnStateChanged`: the event invoked whenever the state changes.
+      * `XRGeospatialManager.TryCheckVPSAvailabilityAsync(double, double)`: attempts to check the availability of VPS near a given location asynchronously.
+      * `XRGeospatialManager.TryLocate(Pose, out XRGeospatialPoseResult)`: attempts to locate the geospatial pose for the given reference frame.
+      * `XRGeospatialManager.TryLocate(XRGeospatialPose, out XRPoseResult)`: attempts to locate the pose in Unity world space from a geospatial pose.
+    * Added new sample **Geospatial** to demonstrate the usage around Geospatial features.
+  * Multimodal Face Tracking:
+    * New **Android XR (Extensions): Multimodal Face** feature, which extends Unity's ARFace feature and exposes multimodal face tracking capabilities:
+      * `Requested Face Tracking Mode` settings for this feature is used to configure the requested face tracking modality.
+      * `ARFaceManager.TryGetFaceTrackerMode(out XRFaceTrackerMode)`: extension method to retrieve the current tracking modality.
+      * See more details in [Unity OpenXR Android XR | Face Tracking](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.3/manual/features/faces.html)
+  * Battery State Display:
+    * New **Battery State Display** feature, to query the battery status and level of input devices:
+      * `XRBatteryStateDisplayFeature.TryGetBatteryStateDisplay(string, out BatteryStatus, out float)`: retrieves the battery status and level for a given input path.
+    * Added new sample **Controller Battery State** to demonstrate how to query the battery state of the controllers.
+
+### Changed
+  * Samples updated to use URP material.
+  * Removed **Android XR (Extensions): Image Tracking** feature usage from **ImageTracking** sample.
+
+### Deprecated
+  * None.
+
+### Removed
+  * Removed **Foveation (Legacy)** feature and Foveation Sample. Please use Unity OpenXR [Foveated Rendering](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.17/manual/features/foveatedrendering.html) from **OpenXR Plugin 1.17.0** instead with [XRDisplaySubsystem.foveatedRenderingLevel](https://docs.unity3d.com/6000.4/Documentation/ScriptReference/XR.XRDisplaySubsystem-foveatedRenderingLevel.html).
+  * Removed **Android XR (Extensions): Image Tracking** feature. For replacement, follow [Unity OpenXR: Spatial Entities](https://docs.unity3d.com/Packages/com.unity.xr.spatialentities-openxr@0.1/manual/index.html) for the latest spatial entity equivalence.
+
+### Fixed
+  * None.
+
 ## [1.3.2] - 2026-06-23
 
 ### Editor version and package compatibility
-  * Package dependencies updated in this version:
-    * OpenXR Plugin (`com.unity.xr.openxr`) 1.17.0-pre.2
-    * AR Foundation (`com.unity.xr.arfoundation`) 6.4.0
   * Verified compatible packages:
     * Unity OpenXR Android XR (`com.unity.xr.androidxr-openxr`) 1.3.0-pre.1
     * AR Foundation (`com.unity.xr.arfoundation`) 6.4.0
@@ -91,11 +126,11 @@ and this package adheres to
     * Universal Render Pipeline (`com.unity.render-pipelines.universal`) 17.3.0
 
 ### Known issues
-  * Regression issue found in **OpenXR Plugin 1.16.1** where projects hit validation issues with a error icon on the OpenXR Feature but no message showing under **XR Plug-in Management > Project Validation** panel.
+  * Regression issue found in **OpenXR Plugin 1.16.1** where projects hit validation issues with an error icon on the OpenXR Feature but no message showing under **XR Plug-in Management > Project Validation** panel.
     * Workaround: check individual samples' `README.md` on how to set up the sample or [Android XR devsite](https://developer.android.com/develop/xr/unity) for more instructions.
     * To include a formal fix, please upgrade to **OpenXR Plugin 1.17.0-pre.1** or newer versions.
   * Regression issue found in Unity Editors where **Package Manager** shows invalid signature errors under public packages.
-    * Workaround: In case it blocks package importing, navigate to the problemaitc package, click **Manage** dropdown and select **customize** to include a customized copy of the package source into your project. You can then dismiss the Editor error and use it as before.
+    * Workaround: In case it blocks package importing, navigate to the problematic package, click **Manage** dropdown and select **customize** to include a customized copy of the package source into your project. You can then dismiss the Editor error and use it as before.
     * To include a formal fix, please upgrade Editor to `6000.3.5f2` or newer. See more details in [Community Discussions](https://discussions.unity.com/t/package-manager-invalid-signatures-issue/1705385/103).
     * Also check out [Export and sign your UPM package](https://docs.unity3d.com/6000.3/Documentation/Manual/cus-export.html) about the package signature.
 
@@ -117,7 +152,7 @@ and this package adheres to
 
 ### Changed
   * `IsExtensionEnabled` in each OpenXR Feature now reflects both extension availability and system supportness to better report runtime capabilities. Applications should check `IsExtensionEnabled.HasValue` and `IsExtensionEnabled.Value` before accessing other feature APIs, and handle unsupported features accordingly.
-  * Updated samples **ObjectTracking**, **ImageTracking**, **XRControllerSample**, **SceneMeshing** with **AR Camera Mananger** which prepare for passthrough usage from [AR Camera](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/camera.html#passthrough).
+  * Updated samples **ObjectTracking**, **ImageTracking**, **XRControllerSample**, **SceneMeshing** with **AR Camera Manager** which prepare for passthrough usage from [AR Camera](https://docs.unity3d.com/Packages/com.unity.xr.androidxr-openxr@1.2/manual/features/camera.html#passthrough).
   * Added new settings **Joint Set** under `XRBodyTrackingFeature`. It defaults to `XRBodyJointSet.UpperBody` to match previous behavior.
     * Introduces two `XRBodyJointSet` types. `XRAvatarSkeletonJointID` is replaced by corresponding enum types `XRUpperBodyJointID` and `XRFullBodyJointID`.
     * `XRAvatarSkeletonJointIDUtility` is replaced by `XRBodyJointSetUtility` to support multiple joint sets.
@@ -189,8 +224,8 @@ and this package adheres to
 
 ### Changed
   * **Subsampling (Vulkan)** is now enabled by default in **Android XR (Extensions): Session Management**. To use it at runtime:
-    * Foveation feature is required for **Subsampling (Vulkan)**. Otherwise, the application may result in rendering faulty.
-    * For projects with Universal Render Pipeline (URP), select **Foveated Rendering** featurem. Check [Foveated rendering in OpenXR](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.12/manual/features/foveatedrendering.html) for more details.
+    * Foveation feature is required for **Subsampling (Vulkan)**. Otherwise, the application may result in faulty rendering.
+    * For projects with Universal Render Pipeline (URP), select **Foveated Rendering** feature. Check [Foveated rendering in OpenXR](https://docs.unity3d.com/Packages/com.unity.xr.openxr@1.12/manual/features/foveatedrendering.html) for more details.
     * For projects with Built-in Render Pipeline (BiRP), select **Foveation (Legacy)** feature for legacy support.
   * **Scene Meshing** is promoted from experimental feature to release feature.
 
@@ -218,7 +253,7 @@ and this package adheres to
 
 ### Known issues
   * **Vulkan Subsampling** now causes rendering issues in multiple samples, including **ImageTracking**, **HandMesh**, **SceneMeshing**, and **XRController**.
-    * It's confirmed as a regression issue from **OpenXR Plugin** package, expect to be fixed by future releases.
+    * It's confirmed as a regression issue from **OpenXR Plugin** package, expected to be fixed by future releases.
     * **Workaround**: To disable it, under the setting menu of **Android XR (Extensions) Session Management**, unselect **Subsampling (Vulkan)**.
 
 ### Added
@@ -232,7 +267,7 @@ and this package adheres to
       * Extension method `ARTrackedImage.TryGetQrCodeData(out string)` to get the QR code data from a QR Code instance.
     * New implementation of `XRImageTrackingSubsystem`. To use it with AR Foundation's `ARTrackedImageManager`, create an `XRReferenceImageLibrary` with a QR Code reference named **QrCode** and/or updates marker references from `XRMarkerDatabase`.
     * New sample **ImageTracking** which demonstrates the usage of QR Code tracking and marker tracking.
-  * Added experimental features support which use OpenXR extensions `XR_ANDROIDX_*`. **Noted**:
+  * Added experimental features support which use OpenXR extensions `XR_ANDROIDX_*`. **Note**:
     * Applications can then access `ANDROIDX` extensions at runtime but **cannot be published in Google Play Store**.
     * Experimental features can take several iterations towards formal releases which **may include breaking changes, deprecation, and removal**.
   * Body Tracking **(Experimental*)**:

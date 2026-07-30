@@ -84,7 +84,7 @@ namespace Google.XR.Extensions
         private bool _isAdbInstalled = false;
 
         /// <summary>
-        /// The client of XR Stremaing.
+        /// The client of XR Streaming.
         /// </summary>
         public enum XRStreamingClient
         {

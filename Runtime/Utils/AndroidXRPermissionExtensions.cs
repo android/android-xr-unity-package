@@ -62,6 +62,11 @@ namespace Google.XR.Extensions
         /// Permission to enable body tracking.
         /// </summary>
         BodyTracking = 9,
+
+        /// <summary>
+        /// Permission to enable multimodal face tracking.
+        /// </summary>
+        RecordAudio = 10,
     }
 
     /// <summary>
@@ -93,6 +98,8 @@ namespace Google.XR.Extensions
                     return "android.permission.FACE_TRACKING";
                 case AndroidXRPermission.BodyTracking:
                     return "com.android.extensions.xr.BODY_TRACKING";
+                case AndroidXRPermission.RecordAudio:
+                    return "android.permission.RECORD_AUDIO";
                 default:
                     Debug.LogError($"Invalid AndroidXRPermission: {permission}");
                     return string.Empty;

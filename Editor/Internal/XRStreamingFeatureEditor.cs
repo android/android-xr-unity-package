@@ -68,7 +68,7 @@ namespace Google.XR.Extensions.Editor.Internal
                 _client.enumDisplayNames);
 
             XRStreamingClient selectedClient = (XRStreamingClient)_client.enumValueIndex;
-            EditorGUILayout.Foldout(true, string.Format("{0} Setings", selectedClient));
+            EditorGUILayout.Foldout(true, string.Format("{0} Settings", selectedClient));
             int labelIndent = EditorGUI.indentLevel * 20;
             if (selectedClient == XRStreamingClient.Device)
             {

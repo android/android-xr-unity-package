@@ -42,8 +42,7 @@ namespace Google.XR.Extensions.Editor.Internal
         private const string _subsamplingFieldName = "_vulkanSubsampling";
         private const string _subsamplingTooltip =
             "Enable Subsampling (Vulkan) to reduce memory bandwidth on foveated framebuffers. " +
-            "This requires the <b>Foveated Rendering</b> feature to be enabled or " +
-            "<b>Foveation (Legacy)</b> for legacy support. " +
+            "This requires the <b>Foveated Rendering</b> feature to be enabled. " +
             "Otherwise, the application will result in rendering faulty.";
 
         private const string _useSpatialApiFieldName = "_useSpatialApi";

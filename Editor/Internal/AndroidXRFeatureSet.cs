@@ -1,7 +1,6 @@
 // <copyright file="AndroidXRFeatureSet.cs" company="Google LLC">
 //
 // Copyright 2024 Google LLC
-// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,17 +29,19 @@ namespace Google.XR.Extensions.Editor.Internal
             XRSessionFeature.FeatureId,
             XRStreamingFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
-            XRImageTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
-            XRFoveationFeature.FeatureId,
             XRUnboundedRefSpaceFeature.FeatureId,
             XRBodyTrackingFeature.FeatureId,
             XRSceneMeshingFeature.FeatureId,
             XRRecommendedSettingsFeature.FeatureId,
+            XRBatteryStateDisplayFeature.FeatureId,
             XRCubemapLightEstimationFeature.FeatureId,
             XRFineEyeFeature.FeatureId,
+            XRMultimodalFaceFeature.FeatureId,
+            XRGoogleCloudFeature.FeatureId,
+            XRGeospatialFeature.FeatureId,
         },
         // Features enabled and disabled along with selecting and deselecting the feature set
         // from Editor.
@@ -54,7 +55,6 @@ namespace Google.XR.Extensions.Editor.Internal
         // desired to include all XR_ANDROID_* features provided by this package.
         DefaultFeatureIds = new string[] {
             XRObjectTrackingFeature.FeatureId,
-            XRImageTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
@@ -78,9 +78,7 @@ namespace Google.XR.Extensions.Editor.Internal
         /// </summary>
         internal static readonly string[] _sessionManagementDependentIds = new string[]
         {
-            XRFoveationFeature.FeatureId,
             XRObjectTrackingFeature.FeatureId,
-            XRImageTrackingFeature.FeatureId,
             XRMarkerTrackingFeature.FeatureId,
             XRQrCodeTrackingFeature.FeatureId,
             XRPassthroughFeature.FeatureId,
@@ -88,8 +86,12 @@ namespace Google.XR.Extensions.Editor.Internal
             XRBodyTrackingFeature.FeatureId,
             XRSceneMeshingFeature.FeatureId,
             XRRecommendedSettingsFeature.FeatureId,
+            XRBatteryStateDisplayFeature.FeatureId,
             XRCubemapLightEstimationFeature.FeatureId,
             XRFineEyeFeature.FeatureId,
+            XRMultimodalFaceFeature.FeatureId,
+            XRGoogleCloudFeature.FeatureId,
+            XRGeospatialFeature.FeatureId,
         };
     }
 }

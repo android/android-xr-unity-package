@@ -140,23 +140,15 @@ namespace Google.XR.Extensions.Samples.ObjectTracking
         {
             if (PlaneManager == null)
             {
+                _stringBuilder.Append($"{nameof(ARPlaneManager)} is null.");
                 return;
             }
 
-            if (PlaneManager.subsystem == null)
-            {
-                _stringBuilder.Append("XRPlaneSubsystem is null.\n");
-            }
-            else if (!PlaneManager.subsystem.running)
-            {
-                _stringBuilder.AppendFormat("{0} is not running.\n",
-                    PlaneManager.subsystem.GetType().Name);
-            }
-            else
+            if (SampleDebugUtils.CheckSubsystemReady(
+                typeof(XRPlaneSubsystem), PlaneManager.subsystem, _stringBuilder))
             {
                 _stringBuilder.AppendFormat(
-                    "{0}\n Added: {1}, Updated: {2}, Removed: {3}\n",
-                    PlaneManager.subsystem.GetType().Name,
+                    " Added: {0}, Updated: {1}, Removed: {2}\n",
                     _planeAdded, _planeUpdated, _planeRemoved);
                 if (_planes.Count > 0 && _planes.Count < 5)
                 {
@@ -171,23 +163,15 @@ namespace Google.XR.Extensions.Samples.ObjectTracking
         {
             if (ObjectManager == null)
             {
+                _stringBuilder.Append($"{nameof(ARTrackedObjectManager)} is null.");
                 return;
             }
 
-            if (ObjectManager.subsystem == null)
-            {
-                _stringBuilder.Append("XRObjectTrackingSubsystem is null.\n");
-            }
-            else if (!ObjectManager.subsystem.running)
-            {
-                _stringBuilder.AppendFormat("{0} is not running.\n",
-                    ObjectManager.subsystem.GetType().Name);
-            }
-            else
+            if (SampleDebugUtils.CheckSubsystemReady(
+                typeof(XRObjectTrackingSubsystem), ObjectManager.subsystem, _stringBuilder))
             {
                 _stringBuilder.AppendFormat(
-                    "{0}\n Added: {1}, Updated: {2}, Removed: {3}\n",
-                    ObjectManager.subsystem.GetType().Name,
+                    " Added: {0}, Updated: {1}, Removed: {2}\n",
                     _objectAdded, _objectUpdated, _objectRemoved);
                 if (_objects.Count > 0)
                 {

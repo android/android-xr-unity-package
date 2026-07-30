@@ -48,8 +48,9 @@ namespace Google.XR.Extensions.Samples.BodyTracking
         private int _updated = 0;
         private int _removed = 0;
 
-        private XRBodyJointSet? _jointSet;
-        private AndroidXRPermissionUtil _permissionUtil;
+        private XRBodyTrackingFeature _bodyTracking = null;
+        private XRBodyJointSet? _jointSet = null;
+        private AndroidXRPermissionUtil _permissionUtil = null;
         private StringBuilder _stringBuilder = new StringBuilder();
 
         /// <summary>
@@ -70,15 +71,15 @@ namespace Google.XR.Extensions.Samples.BodyTracking
 
         private void Awake()
         {
-            var bodyTracking = OpenXRSettings.Instance.GetFeature<XRBodyTrackingFeature>();
-            if (bodyTracking == null)
+            _bodyTracking = OpenXRSettings.Instance.GetFeature<XRBodyTrackingFeature>();
+            if (_bodyTracking == null)
             {
                 Debug.LogErrorFormat("{0} is not available at current platform.",
                     XRBodyTrackingFeature.UiName);
             }
             else
             {
-                _jointSet = bodyTracking.RequestedJointSet;
+                _jointSet = _bodyTracking.RequestedJointSet;
             }
         }
 
@@ -113,19 +114,20 @@ namespace Google.XR.Extensions.Samples.BodyTracking
 
         private void UpdateBodies()
         {
-            if (XRBodyTrackingFeature.IsExtensionEnabled == null)
+            if (!SampleDebugUtils.CheckFeatureAvailability(
+                _bodyTracking, XRBodyTrackingFeature.IsExtensionEnabled, _stringBuilder))
             {
-                _stringBuilder.Append($"{XRBodyTrackingFeature.UiName} is initializing.");
                 return;
-            }
-            else if (!XRBodyTrackingFeature.IsExtensionEnabled.Value)
-            {
-                _stringBuilder.Append(
-                    $"{XRBodyTrackingFeature.ExtensionString} is not enabled.\n");
             }
             else if (BodyManager == null)
             {
                 _stringBuilder.Append("Cannot find ARHumanBodyManager.\n");
+                return;
+            }
+            else if (!SampleDebugUtils.CheckSubsystemReady(
+                typeof(XRHumanBodySubsystem), BodyManager.subsystem, _stringBuilder))
+            {
+                return;
             }
             else
             {

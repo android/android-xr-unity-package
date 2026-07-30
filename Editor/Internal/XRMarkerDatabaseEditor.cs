@@ -188,7 +188,7 @@ namespace Google.XR.Extensions.Editor.Internal
             serializedObject.ApplyModifiedProperties();
 
             TryUpdateReferenceLibrary();
-            _actionMessage = $"Created and update {fullpath}.";
+            _actionMessage = $"Created and updated {fullpath}.";
             return true;
         }
 

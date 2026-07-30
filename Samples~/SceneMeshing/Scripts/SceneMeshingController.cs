@@ -20,6 +20,7 @@
 namespace Google.XR.Extensions.Samples.SceneMeshing
 {
     using System.Collections.Generic;
+    using System.Text;
     using Unity.XR.CoreUtils;
     using UnityEngine;
     using UnityEngine.XR;
@@ -48,13 +49,16 @@ namespace Google.XR.Extensions.Samples.SceneMeshing
         private Dictionary<MeshId, MeshFilter> _sceneMeshes;
         private uint _generatingCount = 0;
         private XRMeshSubsystem _meshSubsystem;
+        private StringBuilder _stringBuilder = new StringBuilder();
 
         private void Start()
         {
+            _stringBuilder.Clear();
             OpenXRFeature feature = OpenXRSettings.Instance.GetFeature<XRSceneMeshingFeature>();
-            if (feature == null || feature.enabled == false)
+            if (!SampleDebugUtils.CheckFeatureAvailability(
+                feature, XRSceneMeshingFeature.IsExtensionEnabled, _stringBuilder))
             {
-                Debug.LogError("XRSceneMeshing feature is not enabled.");
+                Debug.LogError(_stringBuilder.ToString());
                 enabled = false;
                 return;
             }

@@ -1,7 +1,6 @@
 // <copyright file="ARTrackedImageVisualizer.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
-// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,7 +60,6 @@ namespace Google.XR.Extensions.Samples.ImageTracking
             Unknown,
             QrCode,
             Marker,
-            Image,
         }
 
         private void Awake()
@@ -102,10 +100,6 @@ namespace Google.XR.Extensions.Samples.ImageTracking
                     else if (_trackedImage.IsMarker())
                     {
                         _source = ImageSource.Marker;
-                    }
-                    else if (_trackedImage.IsImage())
-                    {
-                        _source = ImageSource.Image;
                     }
                 }
 

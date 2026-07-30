@@ -19,6 +19,7 @@
 
 namespace Google.XR.Extensions.Samples.Passthrough
 {
+    using System.Text;
     using UnityEngine;
     using UnityEngine.XR.OpenXR;
 
@@ -32,21 +33,27 @@ namespace Google.XR.Extensions.Samples.Passthrough
         /// </summary>
         public TextMesh DebugText;
 
+        private XRPassthroughFeature _passthroughFeature = null;
+        private StringBuilder _stringBuilder = new StringBuilder();
+
+        private void Awake()
+        {
+            _passthroughFeature = OpenXRSettings.Instance.GetFeature<XRPassthroughFeature>();
+        }
+
         private void Update()
         {
-            if (XRPassthroughFeature.IsExtensionEnabled == null)
+            _stringBuilder.Clear();
+            if (SampleDebugUtils.CheckFeatureAvailability(
+                _passthroughFeature, XRPassthroughFeature.IsExtensionEnabled, _stringBuilder))
             {
-                DebugText.text = "XrInstance hasn't been initialized.";
-                return;
+                _stringBuilder.Append($"State: {XRPassthroughFeature.GetState()}");
             }
 
-            if (!XRPassthroughFeature.IsExtensionEnabled.Value)
+            if (DebugText != null)
             {
-                DebugText.text = "XR_ANDROID_passthrough_camera_state is not enabled.";
-                return;
+                DebugText.text = _stringBuilder.ToString();
             }
-
-            DebugText.text = "State: " + XRPassthroughFeature.GetState();
         }
 
         private void OnValidate()

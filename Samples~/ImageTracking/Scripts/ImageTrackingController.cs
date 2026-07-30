@@ -1,7 +1,6 @@
 // <copyright file="ImageTrackingController.cs" company="Google LLC">
 //
 // Copyright 2025 Google LLC
-// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,9 +49,10 @@ namespace Google.XR.Extensions.Samples.ImageTracking
         private int _imageUpdated = 0;
         private int _imageRemoved = 0;
 
+        private XRQrCodeTrackingFeature _qrCodeFeature = null;
+        private XRMarkerTrackingFeature _markerFeature = null;
         private AndroidXRPermissionUtil _permissionUtil;
         private StringBuilder _stringBuilder = new StringBuilder();
-        private string _imageTrackingMsg = "configuration pending";
 
         /// <summary>
         /// Called from AR Tracked Image Manager component callback.
@@ -75,6 +75,8 @@ namespace Google.XR.Extensions.Samples.ImageTracking
 
         private void Awake()
         {
+            _qrCodeFeature = OpenXRSettings.Instance.GetFeature<XRQrCodeTrackingFeature>();
+            _markerFeature = OpenXRSettings.Instance.GetFeature<XRMarkerTrackingFeature>();
             // Ensure manager is disabled for start
             // and waiting for runtime permissions.
             if (ImageManager != null)
@@ -92,12 +94,6 @@ namespace Google.XR.Extensions.Samples.ImageTracking
                 return;
             }
 
-            if (ImageManager.subsystem is AndroidXRImageTrackingSubsystem subsystem)
-            {
-                subsystem.OnImageTrackingConfigured += OnImageTrackingConfigured;
-                subsystem.OnImageTrackingLost += OnImageTrackingLost;
-            }
-
             StartCoroutine(WaitForPermissions());
         }
 
@@ -105,25 +101,20 @@ namespace Google.XR.Extensions.Samples.ImageTracking
         {
             _images.Clear();
             StopAllCoroutines();
-
-            if (ImageManager != null
-                && ImageManager.subsystem is AndroidXRImageTrackingSubsystem subsystem)
-            {
-                subsystem.OnImageTrackingConfigured -= OnImageTrackingConfigured;
-                subsystem.OnImageTrackingLost -= OnImageTrackingLost;
-            }
         }
 
         private IEnumerator WaitForPermissions()
         {
             yield return new WaitUntil(() => _permissionUtil.AllPermissionGranted());
 
-            if (ImageManager != null)
+            if (ImageManager == null)
             {
-                // Enable manager after granted permissions to ensure underlying
-                // tracker can be created successfully.
-                ImageManager.enabled = true;
+                yield break;
             }
+
+            // Enable manager after granted permissions to ensure underlying
+            // tracker can be created successfully.
+            ImageManager.enabled = true;
         }
 
         // Update is called once per frame
@@ -144,44 +135,25 @@ namespace Google.XR.Extensions.Samples.ImageTracking
 
         private void UpdateImages()
         {
-            var isQrCodeExtensionEnabled =
-                XRQrCodeTrackingFeature.IsExtensionEnabled.GetValueOrDefault();
-            if (!isQrCodeExtensionEnabled)
-            {
-                _stringBuilder.Append("XR_ANDROID_trackables_qr_code is not enabled.\n");
-            }
-
-            var isMarkerExtensionEnabled =
-                XRMarkerTrackingFeature.IsExtensionEnabled.GetValueOrDefault();
-            if (!isMarkerExtensionEnabled)
-            {
-                _stringBuilder.Append("XR_ANDROID_trackables_marker is not enabled.\n");
-            }
-
-            var isImageExtensionEnabled =
-                XRImageTrackingFeature.IsExtensionEnabled.GetValueOrDefault();
-            if (!isImageExtensionEnabled)
-            {
-                _stringBuilder.Append(
-                    "XR_ANDROID_trackables_image or XR_EXT_future is not enabled.\n");
-            }
-
-            if (!isQrCodeExtensionEnabled && !isMarkerExtensionEnabled && !isImageExtensionEnabled)
+            var isQrCodeAvailable = SampleDebugUtils.CheckFeatureAvailability(
+                _qrCodeFeature, XRQrCodeTrackingFeature.IsExtensionEnabled, _stringBuilder);
+            var isMarkerAvailable = SampleDebugUtils.CheckFeatureAvailability(
+                _markerFeature, XRMarkerTrackingFeature.IsExtensionEnabled, _stringBuilder);
+            if (!isQrCodeAvailable && !isMarkerAvailable)
             {
                 // no image tracking feature is enabled.
                 return;
             }
 
-            if (ImageManager == null || ImageManager.subsystem == null)
+            if (ImageManager == null)
             {
                 _stringBuilder.Append("Cannot find ARTrackedImageManager.\n");
                 return;
             }
-
-            _stringBuilder.Append($"{ImageManager.subsystem.GetType()}\n");
-            if (isImageExtensionEnabled)
+            else if (!SampleDebugUtils.CheckSubsystemReady(
+                typeof(XRImageTrackingSubsystem), ImageManager.subsystem, _stringBuilder))
             {
-                _stringBuilder.Append($"Image Tracking: {_imageTrackingMsg} \n");
+                return;
             }
 
             _stringBuilder.AppendFormat(
@@ -208,10 +180,6 @@ namespace Google.XR.Extensions.Samples.ImageTracking
                 trackable.TryGetMarkerData(out XRMarkerDictionary dictionary, out int id);
                 data = $"dictionary={dictionary}, id={id}";
             }
-            else
-            {
-                data = $"image-name={trackable.referenceImage.name}";
-            }
 
             return string.Format(
                 $"Image: {trackable.trackableId.subId1}-{trackable.trackableId.subId2}\n" +
@@ -221,48 +189,6 @@ namespace Google.XR.Extensions.Samples.ImageTracking
                 $"  Pose: {trackable.transform.position}-{trackable.transform.rotation}\n" +
                 $"  Size: {trackable.size}\n" +
                 $"  Data: {data}");
-        }
-
-        private void OnImageTrackingConfigured(bool success)
-        {
-            if (success)
-            {
-                Debug.Log("Image tracking configuration completed successfully.");
-                _imageTrackingMsg = "configuration successful";
-            }
-            else
-            {
-                // A pending configuration may be canceled when the ARTrackedImageManager
-                // is disabled or when a new configuration process is started.
-                Debug.Log("Image tracking configuration failed or was canceled.");
-                _imageTrackingMsg = "configuration failed";
-            }
-        }
-
-        private void OnImageTrackingLost()
-        {
-            // This event is raised if image tracking encounters an internal failure,
-            // causing it to stop and invalidating the current configuration.
-            // Restoring image tracking requires a reconfiguration,
-            // e.g., by restarting the subsystem.
-            if (!ImageManager.enabled)
-            {
-                // This event may be raised while the ARTrackedImageManager is disabled.
-                // Image tracking will be reconfigured when the ARTrackedImageManager is re-enabled.
-                _imageTrackingMsg = "tracking disabled";
-                return;
-            }
-
-            Debug.Log("Image tracking lost. Restarting the subsystem to " +
-                      "reconfigure image tracking and resume tracking.");
-            _imageTrackingMsg = "tracking lost - restarting";
-
-            // Disable ARTrackedImageManager, which will stop the subsystem.
-            ImageManager.enabled = false;
-
-            // Enable ARTrackedImageManager, which will restart the subsystem
-            // and reconfigure image tracking.
-            ImageManager.enabled = true;
         }
 
         private void OnValidate()
@@ -295,19 +221,6 @@ namespace Google.XR.Extensions.Samples.ImageTracking
                 Debug.LogWarningFormat(
                     "{0} is disabled. ImageTracking sample will not detect markers.",
                     XRMarkerTrackingFeature.UiName);
-            }
-
-            var imageFeature = settings.GetFeature<XRImageTrackingFeature>();
-            if (imageFeature == null)
-            {
-                Debug.LogErrorFormat(
-                    "Cannot find {0} targeting Android platform.", XRImageTrackingFeature.UiName);
-            }
-            else if (!imageFeature.enabled)
-            {
-                Debug.LogWarningFormat(
-                    "{0} is disabled. ImageTracking sample will not detect images.",
-                    XRImageTrackingFeature.UiName);
             }
 #endif // UNITY_EDITOR
         }

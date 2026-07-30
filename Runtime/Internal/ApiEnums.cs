@@ -1,7 +1,6 @@
 // <copyright file="ApiEnums.cs" company="Google LLC">
 //
 // Copyright 2024 Google LLC
-// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,13 +36,26 @@ namespace Google.XR.Extensions.Internal
         Object = 1000466000,
         Marker = 1000707000,
         QrCode = 1000708000,
-        Image = 1000709000,
     }
 
     internal enum ApiRequirement
     {
         Required = 0,
         Optional = 1,
+    }
+
+    internal enum ApiCloudAuthType : int
+    {
+        Keyless = 1,
+        ApiKey = 2,
+        AuthToken = 3,
+    }
+
+    internal enum ApiGeospatialTrackerState : int
+    {
+        Stopped = 0,
+        Running = 1,
+        InitializationFailed = 2,
     }
 
     /// <summary>
@@ -71,47 +83,6 @@ namespace Google.XR.Extensions.Internal
         FullBody = 1,
     }
 
-    /// <summary>
-    /// Extend the values of <c>XrStructureType</c> with platform-specific types.
-    /// </summary>
-    internal enum XrStructureTypeAndroid : uint
-    {
-        /// <summary>
-        /// Struct is of type `XrEventDataImageTrackingLostAndroid`.
-        /// Equivalent to the OpenXR value `XR_TYPE_EVENT_DATA_IMAGE_TRACKING_LOST_ANDROID`.
-        /// Provided by `XR_ANDROID_trackables_image`.
-        /// </summary>
-        EventDataImageTrackingLostAndroid = 1000709006,
-    }
-
-    /// <summary>
-    /// Indicates the desired mode for tracking.
-    /// Matches OpenXR's XrTrackableImageTrackingModeANDROID.
-    /// </summary>
-    internal enum XRImageTrackingMode : int
-    {
-        /// <summary>
-        /// For low latency tracking of moving images.
-        /// Provides the highest accuracy but consumes more power.
-        /// </summary>
-        DynamicTracking = 1,
-
-        /// <summary>
-        /// Optimized for tracking of static or semi-static images with lower power consumption.
-        /// Updates with higher latency for moving images.
-        /// </summary>
-        StaticTracking = 2
-    }
-
-    /// <summary>
-    /// Represents the supported image formats (<c>XrTrackableImageFormatANDROID</c>) for
-    /// image tracking.
-    /// </summary>
-    internal enum XrTrackableImageFormat : int
-    {
-        R8G8B8A8 = 1 // - RGBA32
-    }
-
     internal static class ApiEnums
     {
         public static bool ToRequired(this ApiRequirement requirement)
@@ -137,6 +108,37 @@ namespace Google.XR.Extensions.Internal
                 case TrackableType.Depth:
                     return ApiXrTrackableType.Depth;
                 default: return ApiXrTrackableType.NotValid;
+            }
+        }
+
+        public static ApiCloudAuthType ToApiCloudAuthType(this XRAuthenticationStrategy strategy)
+        {
+            switch (strategy)
+            {
+                case XRAuthenticationStrategy.Keyless:
+                    return ApiCloudAuthType.Keyless;
+                case XRAuthenticationStrategy.ApiKey:
+                    return ApiCloudAuthType.ApiKey;
+                case XRAuthenticationStrategy.AuthToken:
+                    return ApiCloudAuthType.AuthToken;
+                case XRAuthenticationStrategy.None:
+                default:
+                    return ApiCloudAuthType.Keyless;
+            }
+        }
+
+        public static XRGeospatialState ToXRGeospatialState(this ApiGeospatialTrackerState state)
+        {
+            switch (state)
+            {
+                case ApiGeospatialTrackerState.Stopped:
+                    return XRGeospatialState.Stopped;
+                case ApiGeospatialTrackerState.Running:
+                    return XRGeospatialState.Running;
+                case ApiGeospatialTrackerState.InitializationFailed:
+                    return XRGeospatialState.InitializationFailed;
+                default:
+                    return XRGeospatialState.Stopped;
             }
         }
 

@@ -20,6 +20,7 @@
 namespace Google.XR.Extensions.Samples.CubemapLighting
 {
     using System.Collections;
+    using System.Text;
     using Unity.XR.CoreUtils;
     using UnityEngine;
     using UnityEngine.XR.ARFoundation;
@@ -39,6 +40,8 @@ namespace Google.XR.Extensions.Samples.CubemapLighting
         private XROrigin _xrOrigin;
         private bool _initialized = false;
 
+        private XRCubemapLightEstimationFeature _cubemapFeature = null;
+
         private Transform _origin => _xrOrigin.Origin ? _xrOrigin.Origin.transform : transform;
 
         private void Awake()
@@ -46,15 +49,16 @@ namespace Google.XR.Extensions.Samples.CubemapLighting
             _permissionUtil = GetComponent<AndroidXRPermissionUtil>();
             _probeManager = GetComponent<AREnvironmentProbeManager>();
             _xrOrigin = GetComponent<XROrigin>();
+            _cubemapFeature = OpenXRSettings.Instance.GetFeature<XRCubemapLightEstimationFeature>();
         }
 
         private void Start()
         {
-            OpenXRFeature feature =
-                OpenXRSettings.Instance.GetFeature<XRCubemapLightEstimationFeature>();
-            if (feature == null || feature.enabled == false)
+            StringBuilder stringBuilder = new StringBuilder();
+            if (!SampleDebugUtils.CheckFeatureAvailability(
+                _cubemapFeature, XRCubemapLightEstimationFeature.IsExtensionEnabled, stringBuilder))
             {
-                Debug.LogError("XRCubemapLightEstimationFeature feature is not enabled.");
+                Debug.LogError(stringBuilder.ToString());
                 enabled = false;
                 return;
             }

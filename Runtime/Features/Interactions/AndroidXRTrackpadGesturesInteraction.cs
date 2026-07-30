@@ -202,6 +202,7 @@ namespace Google.XR.Extensions
             var mouseFeature = settings.GetFeature<AndroidMouseInteractionProfile>();
             bool mouseEnabled = mouseFeature != null && mouseFeature.enabled;
 
+
             List<(string profilePath, string userPath)> profileUserPaths =
                 new List<(string profilePath, string userPath)>();
 
@@ -210,6 +211,7 @@ namespace Google.XR.Extensions
                 profileUserPaths.Add((
                     profilePath: AndroidMouseInteractionProfile.profile, userPath: "/user/mouse"));
             }
+
 
             var actions = new List<ActionConfig>()
             {
@@ -319,6 +321,7 @@ namespace Google.XR.Extensions
 
                 bool isMouseProfile = desiredProfile == AndroidMouseInteractionProfile.profile;
                 validProfile |= isMouseProfile;
+
 
                 if (!validProfile)
                 {

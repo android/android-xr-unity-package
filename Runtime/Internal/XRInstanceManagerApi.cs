@@ -22,6 +22,8 @@ namespace Google.XR.Extensions.Internal
     using System;
     using System.Runtime.InteropServices;
 
+    using XrTime = System.Int64;
+
     internal enum ApiXrFeature
     {
         Trackable = 0,
@@ -35,8 +37,11 @@ namespace Google.XR.Extensions.Internal
         Reserved4 = 19,
         BodyTracking = 20,
         RecommendedSettings = 21,
+        BatteryStateDisplay = 22,
         CubemapLightEstimation = 23,
-        Reserved10 = 25,
+        MultimodalFaceTracking = 25,
+        GoogleCloud = 28,
+        Geospatial = 29,
     }
 
     internal class XRInstanceManagerApi
@@ -81,6 +86,13 @@ namespace Google.XR.Extensions.Internal
         public static void Unregister(ApiXrFeature feature)
         {
             ExternalApi.XrInstanceManager_unregisterFeature((uint)feature);
+        }
+
+        public static XrTime GetPredictedDisplayTime()
+        {
+            XrTime time = 0;
+            ExternalApi.XrInstanceManager_getPredictedDisplayTime(ref time);
+            return time;
         }
 
         public static bool CheckSystemSupport(ApiXrFeature feature, ref bool supported)
@@ -140,6 +152,10 @@ namespace Google.XR.Extensions.Internal
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrInstanceManager_unregisterFeature(uint feature);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern void XrInstanceManager_getPredictedDisplayTime(
+                ref XrTime out_time);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool XrInstanceManager_checkSystemSupport(

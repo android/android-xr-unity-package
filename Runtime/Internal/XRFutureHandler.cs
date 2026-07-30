@@ -20,6 +20,7 @@
 namespace Google.XR.Extensions.Internal
 {
     using System;
+    using System.Runtime.CompilerServices;
     using System.Threading;
     using UnityEngine;
     using UnityEngine.XR.ARSubsystems;
@@ -109,16 +110,22 @@ namespace Google.XR.Extensions.Internal
         {
             try
             {
-                var pollInfo = new XrFuturePollInfoEXT(_xrfuture);
                 var polling = true;
                 while (polling)
                 {
+                    if (_xrfuture == 0)
+                    {
+                        // Future handle has been cleared/released from another thread.
+                        return;
+                    }
+
+                    var pollInfo = new XrFuturePollInfoEXT(_xrfuture);
                     var result = OpenXRNativeApi.xrPollFutureEXT(pollInfo, out var pollResult);
                     if (result.IsError())
                     {
                         Debug.LogError($"xrPollFutureEXT failed with {result}.");
+                        CancelFuture();
                         _result = new Result<T>(result.ToXRResultStatus(), new T());
-                        _xrfuture = 0;
                         return;
                     }
 
@@ -135,37 +142,49 @@ namespace Google.XR.Extensions.Internal
                     }
                 }
 
-                _result = CompleteFuture(_xrfuture);
-                _xrfuture = 0;
+                // Clear member first to prevent Dispose from trying to cancel it
+                var xrFuture = LockedExchange(ref _xrfuture, 0);
+                if (xrFuture != 0)
+                {
+                    _result = CompleteFuture(xrFuture);
+                }
             }
             catch (OperationCanceledException)
             {
+                CancelFuture();
                 _isCancelled = true;
-                _xrfuture = 0;
             }
             catch (Exception e)
             {
+                CancelFuture();
                 _result = new Result<T>(new XRResultStatus(StatusCode.UnknownError), new T());
-                _xrfuture = 0;
                 Debug.LogException(e);
             }
         }
 
         private void CancelFuture()
         {
-            if (_xrfuture == 0)
+            var xrFuture = LockedExchange(ref _xrfuture, 0);
+            if (xrFuture == 0)
             {
                 return;
             }
 
-            var cancelInfo = new XrFutureCancelInfoEXT(_xrfuture);
+            Debug.Log("Cancelling future.");
+            var cancelInfo = new XrFutureCancelInfoEXT(xrFuture);
             var result = OpenXRNativeApi.xrCancelFutureEXT(cancelInfo);
             if (result.IsError())
             {
                 Debug.LogError($"xrCancelFutureEXT failed with {result}.");
             }
+        }
 
-            _xrfuture = 0;
+        // Wraps Interlocked.Exchange() due to lack of ulong support on .NET standard 2.1.
+        private XrFutureEXT LockedExchange(ref XrFutureEXT target, long newValue)
+        {
+            ref long handleAsLong = ref Unsafe.As<XrFutureEXT, long>(ref target);
+            long prevValue = Interlocked.Exchange(ref handleAsLong, newValue);
+            return (XrFutureEXT)prevValue;
         }
 
         private void CancelToken()

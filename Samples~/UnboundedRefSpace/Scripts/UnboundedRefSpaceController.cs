@@ -19,9 +19,11 @@
 
 namespace Google.XR.Extensions.Samples.UnboundedRefSpace
 {
+    using System.Text;
     using UnityEngine;
     using UnityEngine.XR;
     using UnityEngine.XR.Management;
+    using UnityEngine.XR.OpenXR;
 
     /// <summary>
     /// Sets the XRInputSubsystem tracking origin mode to Unbounded if it is supported and displays
@@ -34,19 +36,23 @@ namespace Google.XR.Extensions.Samples.UnboundedRefSpace
         /// </summary>
         public TextMesh DebugText;
 
+        private XRUnboundedRefSpaceFeature _unboundedSpaceFeature = null;
+        private StringBuilder _stringBuilder = new StringBuilder();
         private XRInputSubsystem _inputSubsystem;
+
+        private void Awake()
+        {
+            _unboundedSpaceFeature =
+                OpenXRSettings.Instance.GetFeature<XRUnboundedRefSpaceFeature>();
+        }
 
         void Update()
         {
-            if (!XRUnboundedRefSpaceFeature.IsExtensionEnabled.HasValue)
+            _stringBuilder.Clear();
+            if (!SampleDebugUtils.CheckFeatureAvailability(_unboundedSpaceFeature,
+                XRUnboundedRefSpaceFeature.IsExtensionEnabled, _stringBuilder))
             {
-                DebugText.text = "OpenXR feature is initializing.";
-                return;
-            }
-            else if (!XRUnboundedRefSpaceFeature.IsExtensionEnabled.Value)
-            {
-                DebugText.text = string.Format(
-                    "{0} is not available.", XRUnboundedRefSpaceFeature.ExtensionString);
+                DebugText.text = _stringBuilder.ToString();
                 return;
             }
 
@@ -80,7 +86,7 @@ namespace Google.XR.Extensions.Samples.UnboundedRefSpace
                 }
                 else
                 {
-                    DebugText.text = "Unbounded Reference Space is not supported";
+                    DebugText.text = "Cannot find XRInputSubsystem.";
                 }
             }
         }

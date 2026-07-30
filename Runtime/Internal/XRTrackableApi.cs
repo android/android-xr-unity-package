@@ -1,7 +1,6 @@
 // <copyright file="XRTrackableApi.cs" company="Google LLC">
 //
 // Copyright 2024 Google LLC
-// Copyright Qualcomm Technologies, Inc. and/or its affiliates. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +25,6 @@ namespace Google.XR.Extensions.Internal
     using System.Text;
     using UnityEngine;
     using UnityEngine.XR.ARSubsystems;
-
-    using XrFutureEXT = System.UInt64;
-    using XrTrackableImageDatabase = System.UInt64;
 
     internal class XRTrackableApi
     {
@@ -155,46 +151,6 @@ namespace Google.XR.Extensions.Internal
                 XRInstanceManagerApi.GetIntPtr(), trackable, ref dictionary, ref id);
         }
 
-        #region Image Tracking
-        public static bool TryGetImageTrackingProperties(ref bool isSizeEstimationSupported,
-            ref uint maxTrackedImageCount, ref uint maxLoadedImageCount)
-        {
-            return ExternalApi.XrTrackable_getImageTrackingProperties(
-                XRInstanceManagerApi.GetIntPtr(), ref isSizeEstimationSupported,
-                ref maxTrackedImageCount, ref maxLoadedImageCount);
-        }
-
-        public static bool ConfigureImageTrackingAsync(XRImageDatabaseEntry[] referenceImages,
-                                                       ref XrFutureEXT future)
-        {
-            return ExternalApi.XrTrackable_configureImageTrackingAsync(
-                XRInstanceManagerApi.GetIntPtr(),
-                Convert.ToUInt32(referenceImages.Length),
-                referenceImages, ref future);
-        }
-
-        public static bool IsImage(TrackableId trackable)
-        {
-            ApiXrTrackableType type = ApiXrTrackableType.NotValid;
-            ExternalApi.XrTrackable_getTrackableType(
-                XRInstanceManagerApi.GetIntPtr(), trackable, ref type);
-            return type == ApiXrTrackableType.Image;
-        }
-
-        public static bool CompleteImageTrackingConfigurationFuture(
-            XrFutureEXT xrFuture, ref XrTrackableImageDatabase imageDatabase)
-        {
-            return ExternalApi.XrTrackable_configureImageTrackingComplete(
-                XRInstanceManagerApi.GetIntPtr(), xrFuture, ref imageDatabase);
-        }
-
-        public static void DeconfigureImageTracking(XrTrackableImageDatabase imageDatabase)
-        {
-            ExternalApi.XrTrackable_deconfigureImageTracking(
-                XRInstanceManagerApi.GetIntPtr(), imageDatabase);
-        }
-        #endregion
-
         public static IntPtr AcquireImageChanges(ref IntPtr added, ref uint addedCount,
             ref IntPtr updated, ref uint updatedCount, ref IntPtr removed, ref uint removedCount,
             ref uint elementSize)
@@ -285,24 +241,6 @@ namespace Google.XR.Extensions.Internal
             public static extern bool XrTrackable_getMarkerData(
                 IntPtr manger, TrackableId trackable, ref XRMarkerDictionary dictionary,
                 ref int id);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrTrackable_getImageTrackingProperties(IntPtr manager,
-                ref bool out_supports_size_estimation, ref uint out_max_tracked_img_count,
-                ref uint out_max_loaded_img_count);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrTrackable_configureImageTrackingAsync(
-                IntPtr manager, uint entry_count, XRImageDatabaseEntry[] entries,
-                ref XrFutureEXT out_future);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern bool XrTrackable_configureImageTrackingComplete(IntPtr manager,
-                XrFutureEXT future, ref XrTrackableImageDatabase out_image_database);
-
-            [DllImport(ApiConstants.OpenXRAndroidApi)]
-            public static extern void XrTrackable_deconfigureImageTracking(
-                IntPtr manager, XrTrackableImageDatabase image_database);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool XrTrackable_acquireImageChanges(
