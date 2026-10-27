@@ -1,7 +1,7 @@
 {
     "name": "com.google.xr.extensions",
     "displayName": "Android XR Extensions for Unity",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "unity": "6000.3",
     "unityRelease": "6f1",
     "description": "Android XR Extensions package. This package provides additional XR features that are not yet supported by Unity OpenXR Android XR and OpenXR Plugin packages.",
@@ -11,9 +11,9 @@
     },
     "dependencies":
     {
-        "com.unity.xr.openxr": "1.17.0-pre.2",
+        "com.unity.xr.openxr": "1.18.0",
         "com.unity.xr.arfoundation": "6.4.0",
-        "com.unity.xr.management": "4.5.4"
+        "com.unity.xr.management": "4.7.0"
     },
     "samples": [
         {
@@ -70,6 +70,16 @@
             "displayName": "Controller Battery State",
             "description": "This sample demonstrates getting the battery state of the controllers.",
             "path": "Samples~/ControllerBatteryState"
+        },
+        {
+            "displayName": "Spatial Entities",
+            "description": "This sample demonstrates spatial entity features.",
+            "path": "Samples~/SpatialEntities"
+        },
+        {
+            "displayName": "Spatial Container",
+            "description": "This sample demonstrates the Spatial Container feature.",
+            "path": "Samples~/SpatialContainer"
         }
     ]
 }

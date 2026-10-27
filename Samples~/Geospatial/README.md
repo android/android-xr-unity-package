@@ -16,9 +16,13 @@ To enable this sample:
 *   Navigate to **Edit** > **Project Settings** > **XR Plug-in Management** >
     **OpenXR**.
 *   Switch to the **Android** platform tab.
-*   Select **Android XR (Extensions): Session Management**.
-*   Select **Android XR: Google Cloud**.
-*   Select **Android XR: Geospatial**.
+*   Under **Android XR (Extensions)** feature group:
+    *   Select **Android XR (Extensions): Session Management**.
+    *   Select **Android XR: Google Cloud**.
+    *   Select **Android XR: Geospatial**.
+*   Under **Android XR Spatial Entities** feature group:
+    *   Select **Spatial Entities (Extensions): Shareable Anchors**, open the
+        settings editor for the feature and select **Enable Geospatial Host**.
 *   Under **XR Plug-in Management > Project Validation**, fix all **OpenXR**
     related issues. This will help to configure your **Player Settings**.
 
@@ -64,3 +68,10 @@ Configure Google Cloud Authentication:
     *   In script `GeospatialController.TrySetAuthWithRetry()`,
         *   Modify the `strategy` and `credential` based on your Google Cloud
             project.
+
+Attach geospatial anchors:
+
+*   When geospatial anchor is supported at the runtime, you can perform right
+    hand pinch to attach geospatial anchors. It circles through
+    `XRGeospatialSurfaceType` and places different surface anchors with
+    different colors.

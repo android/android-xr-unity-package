@@ -1321,6 +1321,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bda0adb677bc4feea7981f954fe08a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Google.XR.Extensions::Google.XR.Extensions.XRGeospatialManager
+  _usePlaneTracking: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

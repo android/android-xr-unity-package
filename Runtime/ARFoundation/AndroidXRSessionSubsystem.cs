@@ -38,23 +38,16 @@ namespace Google.XR.Extensions
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void RegisterDescriptor()
         {
-#pragma warning disable CS0162 // Unreachable code detected: used at runtime.
-            if (!ApiConstants.AndroidPlatform)
-            {
-                return;
-            }
-
             XRSessionSubsystemDescriptor.Cinfo cinfo = new XRSessionSubsystemDescriptor.Cinfo
             {
                 id = AndroidXRProvider._id,
-                providerType = typeof(AndroidXRSessionSubsystem.AndroidXRProvider),
+                providerType = typeof(AndroidXRProvider),
                 subsystemTypeOverride = typeof(AndroidXRSessionSubsystem),
                 supportsInstall = false,
                 supportsMatchFrameRate = false,
             };
 
             XRSessionSubsystemDescriptor.Register(cinfo);
-#pragma warning restore CS0162
         }
 
         [SuppressMessage(

@@ -28,56 +28,6 @@ MonoBehaviour:
     m_Name: QrCode
     m_Texture: {fileID: 0}
   - m_SerializedGuid:
-      m_GuidLow: 5116836486361303960
-      m_GuidHigh: 6175336601169053869
-    m_SerializedTextureGuid:
-      m_GuidLow: 0
-      m_GuidHigh: 0
-    m_Size: {x: 0.1, y: 0.1}
-    m_SpecifySize: 1
-    m_Name: ArUco4x4_50-0
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 5040009416011179693
-      m_GuidHigh: 11476625813329852811
-    m_SerializedTextureGuid:
-      m_GuidLow: 0
-      m_GuidHigh: 0
-    m_Size: {x: 0.1, y: 0.1}
-    m_SpecifySize: 1
-    m_Name: ArUco4x4_1000-1
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4723428155617164727
-      m_GuidHigh: 3074205677916431287
-    m_SerializedTextureGuid:
-      m_GuidLow: 0
-      m_GuidHigh: 0
-    m_Size: {x: 0.1, y: 0.1}
-    m_SpecifySize: 1
-    m_Name: ArUco5x5_50-0
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 4858562083446846345
-      m_GuidHigh: 4134507124874651561
-    m_SerializedTextureGuid:
-      m_GuidLow: 0
-      m_GuidHigh: 0
-    m_Size: {x: 0.1, y: 0.1}
-    m_SpecifySize: 1
-    m_Name: ArUco5x5_250-1
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
-      m_GuidLow: 5449049488741286256
-      m_GuidHigh: 9249583251965448617
-    m_SerializedTextureGuid:
-      m_GuidLow: 0
-      m_GuidHigh: 0
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: ArUco6x6_50
-    m_Texture: {fileID: 0}
-  - m_SerializedGuid:
       m_GuidLow: 5447641505569727937
       m_GuidHigh: 4443092597876183454
     m_SerializedTextureGuid:
@@ -127,3 +77,63 @@ MonoBehaviour:
     m_SpecifySize: 1
     m_Name: Piano
     m_Texture: {fileID: 2800000, guid: 0dd47840a26f1489caa4f429815bafcf, type: 3}
+  - m_SerializedGuid:
+      m_GuidLow: 5450601290913909561
+      m_GuidHigh: 1434778220612688295
+    m_SerializedTextureGuid:
+      m_GuidLow: 0
+      m_GuidHigh: 0
+    m_Size: {x: 0.1, y: 0.1}
+    m_SpecifySize: 1
+    m_Name: ArUco4x4_50-0
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5462568700684275636
+      m_GuidHigh: 6347828999610365317
+    m_SerializedTextureGuid:
+      m_GuidLow: 0
+      m_GuidHigh: 0
+    m_Size: {x: 0.1, y: 0.1}
+    m_SpecifySize: 1
+    m_Name: ArUco4x4_1000-1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5369990492441112245
+      m_GuidHigh: 13846864269341911188
+    m_SerializedTextureGuid:
+      m_GuidLow: 0
+      m_GuidHigh: 0
+    m_Size: {x: 0.1, y: 0.1}
+    m_SpecifySize: 1
+    m_Name: ArUco5x5_50-0
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5449514175599129290
+      m_GuidHigh: 8217382697000353956
+    m_SerializedTextureGuid:
+      m_GuidLow: 0
+      m_GuidHigh: 0
+    m_Size: {x: 0.1, y: 0.1}
+    m_SpecifySize: 1
+    m_Name: ArUco5x5_250-1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5531560880142309189
+      m_GuidHigh: 3648952874894922119
+    m_SerializedTextureGuid:
+      m_GuidLow: 0
+      m_GuidHigh: 0
+    m_Size: {x: 0, y: 0}
+    m_SpecifySize: 0
+    m_Name: ArUco6x6_50
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 4831945071099320245
+      m_GuidHigh: 6487664100524409781
+    m_SerializedTextureGuid:
+      m_GuidLow: 0
+      m_GuidHigh: 0
+    m_Size: {x: 0, y: 0}
+    m_SpecifySize: 0
+    m_Name: AprilTag_16H5
+    m_Texture: {fileID: 0}

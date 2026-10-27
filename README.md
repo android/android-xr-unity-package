@@ -17,8 +17,11 @@ The Android XR Extensions for Unity provide APIs for the following:
 13. Trackpad Gestures Interaction.
 14. Google Cloud.
 15. Geospatial.
-16. Battery State Display
-17. Multimodal Face Tracking
+16. Battery State Display.
+17. Multimodal Face Tracking.
+18. Spatial Bounding Box.
+19. Shareable Anchor.
+20. Spatial Container.
 
 ## How to use
 

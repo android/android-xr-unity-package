@@ -33,4 +33,8 @@ MonoBehaviour:
     _allMarkers: 1
     _markerId: 0
     _physicalEdge: 0.1
+  - _dictionary: 16
+    _allMarkers: 1
+    _markerId: 0
+    _physicalEdge: 0.1
   _imageLibrary: {fileID: 11400000, guid: 0e24308ad0c40458191cca337de8193f, type: 2}

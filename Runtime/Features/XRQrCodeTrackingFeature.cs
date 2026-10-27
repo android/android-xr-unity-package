@@ -45,7 +45,9 @@ namespace Google.XR.Extensions
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
-        BuildTargetGroups = new[] { BuildTargetGroup.Android },
+        BuildTargetGroups = new[] {
+            BuildTargetGroup.Android,
+        },
         Company = "Google",
         OpenxrExtensionStrings = ExtensionStrings,
         Desc = "Enable Android XR QR Code Tracking at runtime. " +

@@ -96,23 +96,16 @@ namespace Google.XR.Extensions
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void RegisterDescriptor()
         {
-#pragma warning disable CS0162 // Unreachable code detected: used at runtime.
-            if (!ApiConstants.AndroidPlatform)
-            {
-                return;
-            }
-
             XRHumanBodySubsystemDescriptor.Cinfo cinfo =
                 new XRHumanBodySubsystemDescriptor.Cinfo()
                 {
                     id = AndroidXRProvider._id,
-                    providerType = typeof(AndroidXRHumanBodySubsystem.AndroidXRProvider),
+                    providerType = typeof(AndroidXRProvider),
                     subsystemTypeOverride = typeof(AndroidXRHumanBodySubsystem),
                     supportsHumanBody3D = true,
                 };
 
             XRHumanBodySubsystemDescriptor.Register(cinfo);
-#pragma warning restore CS0162
         }
 
         [SuppressMessage(

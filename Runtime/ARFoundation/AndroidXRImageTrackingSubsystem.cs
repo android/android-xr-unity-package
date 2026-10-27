@@ -93,17 +93,11 @@ namespace Google.XR.Extensions
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void RegisterDescriptor()
         {
-#pragma warning disable CS0162 // Unreachable code detected: used at runtime.
-            if (!ApiConstants.AndroidPlatform)
-            {
-                return;
-            }
-
             XRImageTrackingSubsystemDescriptor.Cinfo cinfo =
                 new XRImageTrackingSubsystemDescriptor.Cinfo()
                 {
                     id = AndroidXRProvider._id,
-                    providerType = typeof(AndroidXRImageTrackingSubsystem.AndroidXRProvider),
+                    providerType = typeof(AndroidXRProvider),
                     subsystemTypeOverride = typeof(AndroidXRImageTrackingSubsystem),
                     supportsMovingImages = true,
                     requiresPhysicalImageDimensions = false,
@@ -112,7 +106,6 @@ namespace Google.XR.Extensions
                 };
 
             XRImageTrackingSubsystemDescriptor.Register(cinfo);
-#pragma warning restore CS0162
         }
 
         [SuppressMessage(

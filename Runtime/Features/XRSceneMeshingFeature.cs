@@ -39,7 +39,9 @@ namespace Google.XR.Extensions
 #if UNITY_EDITOR
     [OpenXRFeature(
         UiName = UiName,
-        BuildTargetGroups = new[] { BuildTargetGroup.Android },
+        BuildTargetGroups = new[] {
+            BuildTargetGroup.Android,
+        },
         Company = "Google",
         Desc = "Configure Scene Meshing",
         Version = "1.0.0",

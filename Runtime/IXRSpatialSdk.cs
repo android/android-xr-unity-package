@@ -49,6 +49,10 @@ namespace Google.XR.Extensions
         /// <summary> XR Spatial API level 3, Android XR OTA 1. </summary>
         [InspectorName("XR Spatial Api Level 3")]
         XRSpatialApiLevel3 = 3,
+
+        /// <summary> XR Spatial API level 4. </summary>
+        [InspectorName("XR Spatial Api Level 4")]
+        XRSpatialApiLevel4 = 4,
     }
 
     /// <summary>

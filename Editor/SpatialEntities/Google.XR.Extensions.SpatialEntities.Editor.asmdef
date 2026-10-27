@@ -1,0 +1,32 @@
+{
+    "name": "Google.XR.Extensions.SpatialEntities.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Google.XR.Extensions.SpatialEntities",
+        "Google.XR.Extensions",
+        "Google.XR.Extensions.Editor",
+        "Unity.XR.Management",
+        "Unity.XR.Management.Editor",
+        "Unity.XR.OpenXR",
+        "Unity.XR.OpenXR.Editor",
+        "Unity.XR.ARSubsystems",
+        "Unity.XR.SpatialEntities"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.xr.spatialentities-openxr",
+            "expression": "0.0.1",
+            "define": "UNITY_SPATIAL_ENTITIES"
+        }
+    ],
+    "noEngineReferences": false
+}

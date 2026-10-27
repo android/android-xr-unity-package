@@ -35,8 +35,8 @@ namespace Google.XR.Extensions.Editor.Internal
         public static readonly string XrActivityStartModeFullSpaceUnmanaged =
             "XR_ACTIVITY_START_MODE_FULL_SPACE_UNMANAGED";
 
-        public static readonly string XrActivityStartModeHomeSpace =
-            "XR_ACTIVITY_START_MODE_HOME_SPACE";
+        public static readonly string XrActivityStartModeFullSpaceManaged =
+            "XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED";
 
         public static readonly string OpenXRNativeLibrary = "libopenxr.google.so";
 

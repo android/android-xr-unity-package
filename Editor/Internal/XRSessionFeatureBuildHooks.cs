@@ -56,6 +56,7 @@ namespace Google.XR.Extensions.Editor.Internal
         {
             bool unityOpenXRAndroidXR = AndroidXRBuildUtils.IsUnityAndroidXRActive();
             List<ManifestElement> requiredManifest = new List<ManifestElement>();
+            List<ManifestElement> overrideManifest = new List<ManifestElement>();
             XRSessionFeature activeFeature =
                 AndroidXRBuildUtils.GetActiveFeature<XRSessionFeature>();
             bool immersive =
@@ -74,9 +75,31 @@ namespace Google.XR.Extensions.Editor.Internal
                 Debug.Log(stringBuilder);
             }
 
+            XRSpatialContainerFeature spatialContainerFeature =
+                AndroidXRBuildUtils.GetActiveFeature<XRSpatialContainerFeature>();
+            bool spatialContainerEnabled =
+                spatialContainerFeature != null && spatialContainerFeature.enabled;
+            if (spatialContainerEnabled)
+            {
+#if !UNITY_OPEN_XR_ANDROID_XR
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append("Inject manifest elements for Spatial Container:");
+                requiredManifest.AddActivityStartMode(
+                    AndroidXRManifest.XrActivityStartModeFullSpaceManaged);
+                stringBuilder.Append(
+                    "\n" + AndroidXRBuildUtils.PrintManifestElement(requiredManifest.Last()));
+                Debug.Log(stringBuilder);
+#else // !UNITY_OPEN_XR_ANDROID_XR
+                Debug.Log("Skiping manifest elements injection for Spatial Container due to " +
+                          "presence of Unity OpenXR AndroidXR package");
+#endif // UNITY_OPEN_XR_ANDROID_XR
+            }
+
             if (activeFeature != null && activeFeature.UseXRSpatialApi)
             {
-                requiredManifest.AddSpatialApiFeature(
+                // Spatial API Level might be overriden by other Android XR packages, rely on
+                // ManifestRequirement.OverrideElements to choose the highest provided version.
+                overrideManifest.AddSpatialApiFeature(
                     activeFeature.XRSpatailApiRequired, activeFeature.TargetApiVersion);
                 Debug.LogFormat("Inject manifest `{0}` with required={1}, value={2}",
                     AndroidXRManifest.XrApiSpatial, activeFeature.XRSpatailApiRequired,
@@ -176,6 +199,8 @@ namespace Google.XR.Extensions.Editor.Internal
                 },
                 NewElements =
                     requiredManifest.Count > 0 ? requiredManifest : emptyElement,
+                OverrideElements =
+                    overrideManifest.Count > 0 ? overrideManifest : emptyElement,
                 RemoveElements =
                     requiredManifest.Count > 0 ? emptyElement : requiredManifest,
             };
@@ -219,11 +244,14 @@ namespace Google.XR.Extensions.Editor.Internal
                 AndroidXRBuildUtils.GetActiveFeature<XRQrCodeTrackingFeature>();
             XRMarkerTrackingFeature markerFeature =
                 AndroidXRBuildUtils.GetActiveFeature<XRMarkerTrackingFeature>();
+            XRSpatialContainerFeature spatialContainerFeature =
+                AndroidXRBuildUtils.GetActiveFeature<XRSpatialContainerFeature>();
 
             return
                 (objectTrackingFeature != null && objectTrackingFeature.enabled) ||
                 (qrCodeFeature != null && qrCodeFeature.enabled) ||
                 (markerFeature != null && markerFeature.enabled) ||
+                (spatialContainerFeature != null && spatialContainerFeature.enabled) ||
                 false;
         }
 

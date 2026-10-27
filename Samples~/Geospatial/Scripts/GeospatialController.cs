@@ -96,6 +96,7 @@ namespace Google.XR.Extensions.Samples.Geospatial
         private XRGeospatialManager _geospatialManager = null;
         private string _vpsStatus = string.Empty;
         private CancellationTokenSource _cts = null;
+        private XRGeospatialPose? _currentGeospatialPose = null;
 
         private enum CloudAuthStatus
         {
@@ -108,11 +109,41 @@ namespace Google.XR.Extensions.Samples.Geospatial
             Canceled = 3,
         }
 
+        /// <summary>
+        /// Returns the current valid Geospatial Pose if available.
+        /// </summary>
+        /// <param name="pose">The current Geospatial Pose.</param>
+        /// <returns>True if the pose is valid, false otherwise.</returns
+        public bool TryGetCurrentLocation(out XRGeospatialPose pose)
+        {
+            pose = default;
+            if (_currentGeospatialPose.HasValue)
+            {
+                pose = _currentGeospatialPose.Value;
+                return true;
+            }
+
+            return false;
+        }
+
         private void Awake()
         {
             _permissionUtil = GetComponent<AndroidXRPermissionUtil>();
             _geospatialManager = GetComponent<XRGeospatialManager>();
             _geospatialManager.enabled = false;
+
+            if (GetComponent<ARShareableAnchorManager>() == null)
+            {
+                gameObject.AddComponent<ARShareableAnchorManager>();
+            }
+
+            GetComponent<ARShareableAnchorManager>().shareableAnchorPrefab =
+                Resources.Load<GameObject>("GeospatialTestAnchor");
+
+            if (GetComponent<GeospatialAnchorPlacer>() == null)
+            {
+                gameObject.AddComponent<GeospatialAnchorPlacer>();
+            }
 
             _geospatialFeature = OpenXRSettings.Instance.GetFeature<XRGeospatialFeature>();
             _googleCloudFeature = OpenXRSettings.Instance.GetFeature<XRGoogleCloudFeature>();
@@ -347,6 +378,7 @@ namespace Google.XR.Extensions.Samples.Geospatial
             var location = Input.location.lastData;
             try
             {
+                _currentGeospatialPose = null;
                 var result = await _geospatialManager.TryCheckVPSAvailabilityAsync(
                     location.latitude, location.longitude);
                 token.ThrowIfCancellationRequested();
@@ -363,6 +395,7 @@ namespace Google.XR.Extensions.Samples.Geospatial
                 }
                 else
                 {
+                    _currentGeospatialPose = new XRGeospatialPose(location);
                     _vpsStatus = string.Format("({0:F4}, {1:F4}) - {2}",
                         location.latitude, location.longitude, result.value);
                 }

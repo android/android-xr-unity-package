@@ -43,7 +43,9 @@ namespace Google.XR.Extensions
     /// </summary>
 #if UNITY_EDITOR
     [OpenXRFeature(UiName = UiName,
-        BuildTargetGroups = new[] { BuildTargetGroup.Android },
+        BuildTargetGroups = new[] {
+            BuildTargetGroup.Android,
+        },
         Company = "Google",
         OpenxrExtensionStrings = ExtensionString,
         Desc = "Enable Android XR Body Tracking at runtime. " +

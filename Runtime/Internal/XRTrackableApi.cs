@@ -21,8 +21,11 @@ namespace Google.XR.Extensions.Internal
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
+    using Unity.Collections;
+    using Unity.Collections.LowLevel.Unsafe;
     using UnityEngine;
     using UnityEngine.XR.ARSubsystems;
 
@@ -78,10 +81,11 @@ namespace Google.XR.Extensions.Internal
         public static void UpdateObjectReferenceGuids(Dictionary<XRObjectLabel, Guid> references)
         {
             ExternalApi.XrTrackable_resetObjectGuids(XRInstanceManagerApi.GetIntPtr());
-            foreach (var (label, guid) in references)
+            foreach (var label in references.Keys)
             {
+                var guid = references[label];
                 ExternalApi.XrTrackable_setObjectGuid(
-                    XRInstanceManagerApi.GetIntPtr(), label, guid.ToByteArray());
+                    XRInstanceManagerApi.GetIntPtr(), label, ref guid);
             }
         }
 
@@ -94,7 +98,7 @@ namespace Google.XR.Extensions.Internal
         public static void ConfigureQrCode(Guid reference, float edge, bool staticOnly)
         {
             ExternalApi.XrTrackable_setQrCodeGuid(
-                XRInstanceManagerApi.GetIntPtr(), reference.ToByteArray());
+                XRInstanceManagerApi.GetIntPtr(), ref reference);
             ExternalApi.XrTrackable_configureQrCode(
                 XRInstanceManagerApi.GetIntPtr(), edge, staticOnly);
         }
@@ -132,8 +136,37 @@ namespace Google.XR.Extensions.Internal
 
         public static void ConfigureMarker(bool staticOnly, List<XRMarkerDatabaseEntry> entries)
         {
-            ExternalApi.XrTrackable_configureMarker(XRInstanceManagerApi.GetIntPtr(),
-                staticOnly, (uint)entries.Count, entries.ToArray());
+            // Resetting configuration.
+            if (entries == null || !entries.Any())
+            {
+                ExternalApi.XrTrackable_configureMarker(
+                    XRInstanceManagerApi.GetIntPtr(), staticOnly, 0, IntPtr.Zero);
+                return;
+            }
+
+            var nativeArray = new NativeArray<XRMarkerDatabaseEntry>(
+                entries.ToArray(), Allocator.Temp);
+            try
+            {
+                unsafe
+                {
+                    void* rawPoint = nativeArray.GetUnsafePtr();
+                    IntPtr entriesPtr = new IntPtr(rawPoint);
+                    ExternalApi.XrTrackable_configureMarker(XRInstanceManagerApi.GetIntPtr(),
+                        staticOnly, (uint)entries.Count, entriesPtr);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                if (nativeArray.IsCreated)
+                {
+                    nativeArray.Dispose();
+                }
+            }
         }
 
         public static bool IsMarker(TrackableId trackable)
@@ -190,7 +223,7 @@ namespace Google.XR.Extensions.Internal
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrTrackable_setObjectGuid(
-                IntPtr manager, XRObjectLabel label, byte[] reference_guid);
+                IntPtr manager, XRObjectLabel label, ref Guid reference_guid);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool XrTrackable_getObjectExtents(
@@ -217,7 +250,7 @@ namespace Google.XR.Extensions.Internal
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrTrackable_setQrCodeGuid(
-                IntPtr manager, byte[] reference_guid);
+                IntPtr manager, ref Guid reference_guid);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrTrackable_configureQrCode(
@@ -234,8 +267,7 @@ namespace Google.XR.Extensions.Internal
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern void XrTrackable_configureMarker(
-                IntPtr manager, bool static_only, uint entry_count,
-                XRMarkerDatabaseEntry[] entries);
+                IntPtr manager, bool static_only, uint entry_count, IntPtr entries);
 
             [DllImport(ApiConstants.OpenXRAndroidApi)]
             public static extern bool XrTrackable_getMarkerData(

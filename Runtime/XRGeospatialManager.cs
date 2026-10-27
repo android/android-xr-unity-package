@@ -54,19 +54,19 @@ namespace Google.XR.Extensions
         private static XRGeospatialState _state;
 
         /// <summary>
-        /// Represents the OpenXR native handle if it has been initialized.
-        /// </summary>
-        private static XrGeospatialTracker _nativeHandle = 0;
-
-        /// <summary>
         /// Represents the initialization result of the geospatial tracker.
         /// </summary>
         private static OpenXRResultStatus _initializationResult = new OpenXRResultStatus(
             OpenXRResultStatus.StatusCode.ProviderUninitialized);
 
         private static bool _isSessionReady = false;
-        private static bool _isManagerActive = false;
+
+        [Tooltip("Indicating whether to request to use plane tracking for anchors if available.")]
+        [SerializeField]
+        private bool _usePlaneTracking = false;
+
         private XRGeospatialFeature _geospatialFeature = null;
+        private XrGeospatialTracker _trackerHandle = 0;
         private bool _isEventSubscribed = false;
         private List<XRVPSAvailabilityFuture> _pendingFutures = new List<XRVPSAvailabilityFuture>();
 
@@ -101,6 +101,26 @@ namespace Google.XR.Extensions
         public static OpenXRResultStatus InitializationResult => _initializationResult;
 
         /// <summary>
+        /// Gets or sets a value indicating whether to request to use plane tracking for anchors
+        /// if available. Must be called before enabling XRGeospatialManager.
+        /// </summary>
+        public bool RequestedPlaneTracking
+        {
+            get => _usePlaneTracking;
+            set => _usePlaneTracking = value;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether plane tracking is currently in use for surface anchors.
+        /// </summary>
+        public bool PlaneTrackingInUse { get; internal set; } = false;
+
+        /// <summary>
+        /// Gets the maximum number of surface anchors supported by the system.
+        /// </summary>
+        public uint MaxNumberOfSurfaceAnchors { get; internal set; } = 0;
+
+        /// <summary>
         /// Gets a value indicating whether the Geospatial tracker is running.
         /// </summary>
         /// <remarks>
@@ -119,6 +139,17 @@ namespace Google.XR.Extensions
         /// </list>
         /// </remarks>
         public bool Running => _state == XRGeospatialState.Running;
+
+        /// <summary>
+        /// Gets the active instance of the <see cref="XRGeospatialManager"/>.
+        /// </summary>
+        internal static XRGeospatialManager _instance { get; private set; }
+
+        /// <summary>
+        /// Gets the OpenXR native handle if it has been initialized.
+        /// </summary>
+        internal static XrGeospatialTracker _nativeHandle =>
+            _instance == null ? 0 : _instance._trackerHandle;
 
         /// <summary>
         /// Try to check the availability of VPS near a given location asynchronously.
@@ -226,27 +257,86 @@ namespace Google.XR.Extensions
             return XRGeospatialApi.Locate(_nativeHandle, geospatialPose, out result);
         }
 
+        /// <summary>
+        /// Attempts to create a shareable anchor "attached" to the given
+        /// geospatial pose.
+        /// </summary>
+        /// <param name="geospatialPose">The geospatial pose of the target location.</param>
+        /// <returns>
+        /// The result of the operation, containing the newly added
+        /// shareable anchor if the operation succeeded.
+        /// </returns>
+        public Result<ARShareableAnchor> TryAttachGeospatialAnchor(XRGeospatialPose geospatialPose)
+        {
+            if (ARShareableAnchorManager._instance != null)
+            {
+                return ARShareableAnchorManager._instance.TryAttachGeospatialAnchor(geospatialPose);
+            }
+
+            return new Result<ARShareableAnchor>(
+                new XRResultStatus(XRResultStatus.StatusCode.ProviderUninitialized), null);
+        }
+
+        /// <summary>
+        /// Attempts to create a shareable anchor "attached" to the given
+        /// geospatial pose relative to the location's surface.
+        /// </summary>
+        /// <param name="type">The surface type of the geospatial anchor.</param>
+        /// <param name="geospatialPose">
+        /// The geospatial pose of the target location where <see cref="XRGeospatialPose.Altitude"/>
+        /// represents the altitude in meters relative to the surface.
+        /// </param>
+        /// <param name="cancellationToken">An optional CancellationToken.</param>
+        /// <returns>
+        /// The result of the operation, containing the newly added
+        /// shareable anchor if the operation succeeded.
+        /// </returns>
+        /// <exception cref="OperationCanceledException">Thrown if the operation
+        /// has been canceled either by the caller or the Unity main thread.</exception>
+        public Awaitable<Result<ARShareableAnchor>> TryAttachSurfaceAnchorAsync(
+            XRGeospatialSurfaceType type,
+            XRGeospatialPose geospatialPose,
+            System.Threading.CancellationToken cancellationToken = default)
+        {
+            if (ARShareableAnchorManager._instance != null)
+            {
+                return ARShareableAnchorManager._instance.TryAttachSurfaceAnchorAsync(
+                    type, geospatialPose, cancellationToken);
+            }
+
+            return AndroidXRSubsystemUtils.CreateAwaitableWithResult<ARShareableAnchor>(
+                XRResultStatus.StatusCode.ProviderUninitialized, null);
+        }
+
         internal static void SetSession(ulong xrSession)
         {
             _isSessionReady = xrSession != 0;
-            if (_isSessionReady && _isManagerActive)
-            {
-                StartTracking();
-            }
-            else if (!_isSessionReady)
-            {
-                StopTracking();
-            }
-        }
-
-        private static void StartTracking()
-        {
-            if (_nativeHandle != 0)
+            if (_instance == null)
             {
                 return;
             }
 
-            var result = XRGeospatialApi.Create(out _nativeHandle);
+            if (_isSessionReady && _instance.enabled)
+            {
+                _instance.StartTracking();
+            }
+            else if (!_isSessionReady)
+            {
+                _instance.StopTracking();
+            }
+        }
+
+        private void StartTracking()
+        {
+            if (_trackerHandle != 0)
+            {
+                return;
+            }
+
+            bool setPlaneTracking =
+                XRGeospatialApi.SetRequestedPlaneTracking(RequestedPlaneTracking);
+
+            var result = XRGeospatialApi.Create(out _trackerHandle);
             var status = new OpenXRResultStatus(result);
             if (status.IsUnsupported())
             {
@@ -260,21 +350,28 @@ namespace Google.XR.Extensions
             }
             else
             {
+                PlaneTrackingInUse = setPlaneTracking ? RequestedPlaneTracking : false;
+                if (XRGeospatialApi.GetMaxSurfaceAnchorCount(out uint count))
+                {
+                    MaxNumberOfSurfaceAnchors = count;
+                }
+
                 // Waiting for XrEventDataGeospatialTrackerStateChanged.
                 State = XRGeospatialState.Initializing;
             }
         }
 
-        private static void StopTracking()
+        private void StopTracking()
         {
-            if (_nativeHandle == 0)
+            if (_trackerHandle == 0)
             {
                 return;
             }
 
-            XRGeospatialApi.Destroy(_nativeHandle);
-            _nativeHandle = 0;
+            XRGeospatialApi.Destroy(_trackerHandle);
+            _trackerHandle = 0;
             State = XRGeospatialState.Stopped;
+            PlaneTrackingInUse = false;
         }
 
         private void OnEnable()
@@ -299,7 +396,7 @@ namespace Google.XR.Extensions
                 return;
             }
 
-            _isManagerActive = true;
+            _instance = this;
             ToggleTrackerStateEvent(true);
             if (_isSessionReady)
             {
@@ -309,7 +406,11 @@ namespace Google.XR.Extensions
 
         private void OnDisable()
         {
-            _isManagerActive = false;
+            if (_instance == this)
+            {
+                _instance = null;
+            }
+
             foreach (var future in _pendingFutures)
             {
                 future.Dispose();
@@ -354,7 +455,7 @@ namespace Google.XR.Extensions
         {
             var eventData = *(XrEventDataGeospatialTrackerStateChanged*)baseHeader;
             if (eventData.Type != XrEventDataGeospatialTrackerStateChanged.EventType ||
-                eventData.Tracker != _nativeHandle)
+                eventData.Tracker != _trackerHandle)
             {
                 return;
             }

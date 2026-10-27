@@ -39,7 +39,9 @@ namespace Google.XR.Extensions.Internal
         RecommendedSettings = 21,
         BatteryStateDisplay = 22,
         CubemapLightEstimation = 23,
+        SpatialContainer = 24,
         MultimodalFaceTracking = 25,
+        SpatialEntity = 27,
         GoogleCloud = 28,
         Geospatial = 29,
     }

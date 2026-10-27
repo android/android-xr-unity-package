@@ -1,0 +1,41 @@
+{
+    "name": "Google.XR.Extensions.SpatialEntities",
+    "rootNamespace": "",
+    "references": [
+        "Google.XR.Extensions",
+        "Unity.XR.OpenXR",
+        "Unity.XR.ARSubsystems",
+        "Unity.XR.ARFoundation",
+        "Unity.XR.Management",
+        "Unity.XR.CoreUtils",
+        "Unity.InputSystem",
+        "Unity.XR.SpatialEntities",
+        "Unity.XR.AndroidOpenXR"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor",
+        "macOSStandalone",
+        "WindowsStandalone32",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.xr.spatialentities-openxr",
+            "expression": "0.0.1",
+            "define": "UNITY_SPATIAL_ENTITIES"
+        },
+        {
+            "name": "com.unity.xr.androidxr-openxr",
+            "expression": "1.2.0",
+            "define": "UNITY_OPENXR_ANDROIDXR"
+        }
+    ],
+    "noEngineReferences": false
+}

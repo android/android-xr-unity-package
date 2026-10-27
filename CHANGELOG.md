@@ -8,6 +8,70 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this package adheres to
 [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-09-30
+
+### Editor version and package compatibility
+  * Package dependencies updated in this version:
+    * OpenXR Plugin (`com.unity.xr.openxr`) 1.18.0
+    * XR Plugin Management (`com.unity.xr.management`) 4.7.0
+  * Verified compatible packages:
+    * Unity OpenXR Android XR (`com.unity.xr.androidxr-openxr`) 1.4.1
+    * OpenXR Plugin (`com.unity.xr.openxr`) 1.18.0
+    * AR Foundation (`com.unity.xr.arfoundation`) 6.6.2
+    * Unity OpenXR: Spatial Entities (`com.unity.xr.spatialentities-openxr`) 6.6.2
+
+### Known issues
+  <!-- disableFinding(LINE_OVER_80) -->
+  * Regression issue found in **OpenXR Plugin 1.18.0** where deserializing null features in `OpenXR Package Settings.asset` causes `NullReferenceException`, thrown by `UnityEditor.XR.OpenXR.Features.FeatureHelpersInternal.RefreshAllFeatureInfo`.
+    * Reproducible in **OpenXR Plugin 1.19.0-pre.1** as well.
+    * Expected to be formally fixed in a newer version of **OpenXR Plugin** package.
+    * Workaround: manually edit `OpenXR Package Settings.asset` or delete the file and re-generate the asset.
+
+### Added
+  <!-- disableFinding(LINE_OVER_80) -->
+  * New feature set **Android XR Spatial Entities**:
+    * Groups additional spatial entity features which are using spatial entity framework.
+    * It can be enabled alone or work together with [Unity OpenXR: Spatial Entities](https://docs.unity3d.com/Packages/com.unity.xr.spatialentities-openxr@6.6/manual/index.html) package.
+    * New **SpatialEntities** sample to demonstrate the basic usage of spatial entity framework.
+  * New **Spatial Entities (Extensions): Bounding Box** feature:
+    * Provides [Bounding box detection](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@6.6/manual/features/bounding-box-detection.html) support using spaital entity framework.
+  * New **Spatial Entities (Extensions): Shareable Anchors** feature:
+    * Extends [anchor capabilities](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@6.6/manual/features/anchors.html) via a custom `XRShareableAnchorSubsystem` interface, which can work alone or together with other [`XRAnchorSubsystem`](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@6.6/api/UnityEngine.XR.ARSubsystems.XRAnchorSubsystem.html) providers.
+    * `SpatialShareableAnchorFeature.EnableGeospatialHost`: editor setting to enable geospatial anchor usage at runtime. You can then check `SpatialShareableAnchorFeature.IsGeospatialHostSupported` to confirm if it's supported by the given runtime.
+      * NOTE: **Android XR: Geospatial** feature is required for this setting.
+    * `ARShareableAnchorManager.TryAttachGeospatialAnchor(XRGeospatialPose)`: attach a geospatial anchor at the given `XRGeospatialPose`.
+    * `ARShareableAnchorManager.TryAttachSurfaceAnchorAsync(XRGeospatialSurfaceType, XRGeospatialPose, CancellationToken)`: attach a surface anchor (a specialized type of geospatial anchors) at the given `XRGeospatialPose` where `XRGeospatialPose.Altitude` represents the altitude in meters relative to the surface.
+  * New APIs for **Android XR: Geospatial** feature:
+    * `XRGeospatialManager.RequestedPlaneTracking`: editor setting to request to use plane tracking for surface anchors if available.
+    * `XRGeospatialManager.PlaneTrackingInUse`: indicates whether plane tracking is currently in use for surface anchors.
+    * `XRGeospatialManager.MaxNumberOfSurfaceAnchors`: gets the maximum number of surface anchors supported by the system.
+  * New **Spatial Container** feature:
+    * This feature allows the application content to be rendered within a single spatial container.
+    * New APIs to configure the spatial container:
+      * `XRSpatialContainerFeature.TryGetState(out XRSpatialContainerStateFlags)`
+      * `XRSpatialContainerFeature.TryGetBounds(out Vector3)`
+      * `XRSpatialContainerFeature.TryRequestBoundsMode(bool)`
+      * `XRSpatialContainerFeature.TryRequestVisibility(bool)`
+    * New callback events to monitor the spatial container changes:
+      * `XRSpatialContainerFeature.OnSpatialContainerClosed`
+      * `XRSpatialContainerFeature.OnSpatialContainerBoundsChanged`
+      * `XRSpatialContainerFeature.OnSpatialContainerStateChanged`
+      * `XRSpatialContainerFeature.OnSpatialContainerVisibilityRequestDenied`
+      * `XRSpatialContainerFeature.OnSpatialContainerBoundsModeRequestDenied`
+  * Added `XRSpatialSdkVersions.XRSpatialApiLevel4` to represent the latest Android XR OTA releases.
+
+### Changed
+  * Updated **Geospatial** sample with geospatial anchor usage.
+
+### Deprecated
+  * N/A
+
+### Removed
+  * N/A
+
+### Fixed
+  * Fixed an issue where `System.Runtime.CompilerServices.Unsafe` may not be available from the project, replaced by `Unity.Collections.LowLevel.Unsafe`.
+
 ## [1.4.0] - 2026-07-07
 
 ### Added

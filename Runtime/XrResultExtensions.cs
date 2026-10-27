@@ -67,6 +67,24 @@ namespace Google.XR.Extensions
     }
 
     /// <summary>
+    /// Extends <see cref="XRResultStatus.StatusCode"/> with
+    /// <see cref="XrSpatialPersistenceContextResultEXT"/> to better understand
+    /// the failure reason of persistence operations.
+    /// </summary>
+    public enum PersistenceStatusCode : int
+    {
+        /// <summary>
+        /// Represents <c>XR_SPATIAL_PERSISTENCE_CONTEXT_RESULT_ENTITY_NOT_TRACKING_EXT</c>.
+        /// </summary>
+        EntityNotTracking = -1000781001,
+
+        /// <summary>
+        /// Represents <c>XR_SPATIAL_PERSISTENCE_CONTEXT_RESULT_PERSIST_UUID_NOT_FOUND_EXT</c>.
+        /// </summary>
+        PersistUuidNotFound = -1000781002,
+    }
+
+    /// <summary>
     /// Extension class for <see cref="XrResult"/>, including helpers of
     /// <see cref="OpenXRResultStatus"/> and <see cref="XRResultStatus"/>.
     /// </summary>
@@ -92,6 +110,14 @@ namespace Google.XR.Extensions
             return Enum.IsDefined(typeof(XrResultAndroid), androidType) ?
                 androidType.ToString() : result.ToString();
         }
+
+        /// <summary>
+        /// Converts <see cref="PersistenceStatusCode"/> to <see cref="XRResultStatus.StatusCode"/>.
+        /// </summary>
+        /// <param name="persistenceCode">The persistence result returned from OpenXR APIs.</param>
+        /// <returns>The <see cref="XRResultStatus.StatusCode"/> equivalence.</returns>
+        public static XRResultStatus.StatusCode ToXRCode(this PersistenceStatusCode persistenceCode)
+            => (XRResultStatus.StatusCode)persistenceCode;
 
         /// <summary>
         /// Converts <see cref="XrResult"/> to <see cref="OpenXRResultStatus"/>.
@@ -144,6 +170,20 @@ namespace Google.XR.Extensions
 
             XrResult xrResult = (XrResult)xrStatus.nativeStatusCode;
             return new OpenXRResultStatus(status, xrResult);
+        }
+
+        /// <summary>
+        /// Determines if the <see cref="XRResultStatus"/> represents a
+        /// <see cref="PersistenceStatusCode"/> failure and outputs the error code.
+        /// </summary>
+        /// <param name="xrStatus">The target <see cref="XRResultStatus"/>.</param>
+        /// <param name="persistenceResult">The output <see cref="PersistenceStatusCode"/>.</param>
+        /// <returns>Returns true if it's an extended persistence code.</returns>
+        public static bool IsPersistenceResult(this XRResultStatus xrStatus,
+            out PersistenceStatusCode persistenceResult)
+        {
+            persistenceResult = (PersistenceStatusCode)xrStatus.statusCode;
+            return Enum.IsDefined(typeof(PersistenceStatusCode), persistenceResult);
         }
 
         /// <summary>

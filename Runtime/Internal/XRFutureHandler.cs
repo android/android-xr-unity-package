@@ -20,8 +20,8 @@
 namespace Google.XR.Extensions.Internal
 {
     using System;
-    using System.Runtime.CompilerServices;
     using System.Threading;
+    using Unity.Collections.LowLevel.Unsafe;
     using UnityEngine;
     using UnityEngine.XR.ARSubsystems;
     using UnityEngine.XR.OpenXR.NativeTypes;
@@ -43,7 +43,7 @@ namespace Google.XR.Extensions.Internal
     {
         private XrFutureEXT _xrfuture = 0;
         private bool _isCancelled = false;
-        private CancellationTokenSource _cancelToken = new CancellationTokenSource();
+        private CancellationTokenSource _cancelSource = new CancellationTokenSource();
         private Result<T>? _result = null;
 
         ~XRFutureHandler()
@@ -72,23 +72,36 @@ namespace Google.XR.Extensions.Internal
                 return _result.Value;
             }
 
-            var linkedToken = token.CanBeCanceled ?
-                CancellationTokenSource.CreateLinkedTokenSource(token, _cancelToken.Token) :
-                _cancelToken;
-
-            while (true)
+            CancellationTokenSource linkedSource = null;
+            CancellationToken activeToken = _cancelSource.Token;
+            if (token.CanBeCanceled)
             {
-                if (_result.HasValue)
-                {
-                    return _result.Value;
-                }
+                linkedSource =
+                    CancellationTokenSource.CreateLinkedTokenSource(token, _cancelSource.Token);
+                activeToken = linkedSource.Token;
+            }
 
-                if (_isCancelled)
+            try
+            {
+                while (true)
                 {
-                    throw new OperationCanceledException();
-                }
+                    if (_result.HasValue)
+                    {
+                        return _result.Value;
+                    }
 
-                await Awaitable.NextFrameAsync(linkedToken.Token);
+                    if (_isCancelled)
+                    {
+                        throw new OperationCanceledException();
+                    }
+
+                    activeToken.ThrowIfCancellationRequested();
+                    await Awaitable.NextFrameAsync(activeToken);
+                }
+            }
+            finally
+            {
+                linkedSource?.Dispose();
             }
         }
 
@@ -132,7 +145,7 @@ namespace Google.XR.Extensions.Internal
                     switch (pollResult.state)
                     {
                         case XrFutureStateEXT.Pending:
-                            await Awaitable.NextFrameAsync(_cancelToken.Token);
+                            await Awaitable.NextFrameAsync(_cancelSource.Token);
                             break;
                         case XrFutureStateEXT.Ready:
                             polling = false;
@@ -158,7 +171,7 @@ namespace Google.XR.Extensions.Internal
             {
                 CancelFuture();
                 _result = new Result<T>(new XRResultStatus(StatusCode.UnknownError), new T());
-                Debug.LogException(e);
+                Debug.LogError(e.ToString());
             }
         }
 
@@ -180,20 +193,22 @@ namespace Google.XR.Extensions.Internal
         }
 
         // Wraps Interlocked.Exchange() due to lack of ulong support on .NET standard 2.1.
-        private XrFutureEXT LockedExchange(ref XrFutureEXT target, long newValue)
+        private unsafe XrFutureEXT LockedExchange(ref XrFutureEXT target, long newValue)
         {
-            ref long handleAsLong = ref Unsafe.As<XrFutureEXT, long>(ref target);
+            // Reinterprets the underlying memory bits from ulong to a long reference
+            ref long handleAsLong =
+                ref UnsafeUtility.AsRef<long>(UnsafeUtility.AddressOf(ref target));
             long prevValue = Interlocked.Exchange(ref handleAsLong, newValue);
             return (XrFutureEXT)prevValue;
         }
 
         private void CancelToken()
         {
-            if (_cancelToken != null && !_cancelToken.IsCancellationRequested)
+            if (_cancelSource != null && !_cancelSource.IsCancellationRequested)
             {
-                _cancelToken.Cancel();
-                _cancelToken.Dispose();
-                _cancelToken = null;
+                _cancelSource.Cancel();
+                _cancelSource.Dispose();
+                _cancelSource = null;
             }
         }
     }

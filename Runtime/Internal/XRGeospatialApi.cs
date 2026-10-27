@@ -21,11 +21,14 @@ namespace Google.XR.Extensions.Internal
 {
     using System;
     using System.Runtime.InteropServices;
+    using Google.XR.Extensions;
     using UnityEngine;
     using UnityEngine.XR.OpenXR.NativeTypes;
 
     using XrFutureEXT = System.UInt64;
     using XrGeospatialTracker = System.UInt64;
+    using XrSpatialContextEXT = System.UInt64;
+    using XrSpatialEntityIdEXT = System.UInt64;
 
     internal class XRGeospatialApi
     {
@@ -101,6 +104,106 @@ namespace Google.XR.Extensions.Internal
                 XRInstanceManagerApi.GetIntPtr(), tracker, ref pose, ref result);
         }
 
+        public static bool InitializeGeospatialAnchorHost()
+        {
+            return ExternalApi.XrGeospatial_initializeAnchorHost(
+                XRInstanceManagerApi.GetIntPtr());
+        }
+
+        public static bool SetRequestedPlaneTracking(bool enable)
+        {
+            return ExternalApi.XrGeospatial_setRequestedPlaneTracking(
+                XRInstanceManagerApi.GetIntPtr(), enable);
+        }
+
+        public static bool GetMaxSurfaceAnchorCount(out uint count)
+        {
+            count = 0;
+            return ExternalApi.XrGeospatial_getMaxSurfaceAnchorCount(
+                XRInstanceManagerApi.GetIntPtr(), ref count);
+        }
+
+        public static OpenXRResultStatus CreateGeospatialAnchor(
+            XrSpatialContextEXT spatialContext,
+            XrGeospatialTracker tracker,
+            XRGeospatialPose pose,
+            out XrSpatialEntityIdEXT anchorEntityId)
+        {
+            XrResult result = XrResult.FunctionUnsupported;
+            anchorEntityId = 0;
+            if (!ExternalApi.XrGeospatial_createGeospatialAnchor(
+                XRInstanceManagerApi.GetIntPtr(),
+                spatialContext,
+                tracker,
+                ref pose,
+                ref anchorEntityId,
+                ref result))
+            {
+                return new OpenXRResultStatus(OpenXRResultStatus.StatusCode.ProviderUninitialized);
+            }
+            else if (result == XrResult.HandleInvalid)
+            {
+                // XrSession == XR_NULL_HANDLE
+                return new OpenXRResultStatus(OpenXRResultStatus.StatusCode.ProviderNotStarted);
+            }
+
+            return result.ToStatus();
+        }
+
+        public static OpenXRResultStatus CreateSurfaceAnchorAsync(
+            XrSpatialContextEXT spatialContext,
+            XrGeospatialTracker tracker,
+            XRGeospatialSurfaceType surfaceAnchorType,
+            XRGeospatialPose pose,
+            out XrFutureEXT future)
+        {
+            XrResult result = XrResult.FunctionUnsupported;
+            future = 0;
+            if (!ExternalApi.XrGeospatial_createSurfaceAnchorAsync(
+                XRInstanceManagerApi.GetIntPtr(),
+                spatialContext,
+                tracker,
+                surfaceAnchorType,
+                ref pose,
+                ref future,
+                ref result))
+            {
+                return new OpenXRResultStatus(OpenXRResultStatus.StatusCode.ProviderUninitialized);
+            }
+            else if (result == XrResult.HandleInvalid)
+            {
+                // XrSession == XR_NULL_HANDLE
+                return new OpenXRResultStatus(OpenXRResultStatus.StatusCode.ProviderNotStarted);
+            }
+
+            return result.ToStatus();
+        }
+
+        public static OpenXRResultStatus CreateSurfaceAnchorComplete(
+            XrSpatialContextEXT spatialContext,
+            XrFutureEXT future,
+            out XrSpatialEntityIdEXT anchorEntityId)
+        {
+            XrResult result = XrResult.FunctionUnsupported;
+            anchorEntityId = 0;
+            if (!ExternalApi.XrGeospatial_createSurfaceAnchorComplete(
+                XRInstanceManagerApi.GetIntPtr(),
+                spatialContext,
+                future,
+                ref anchorEntityId,
+                ref result))
+            {
+                return new OpenXRResultStatus(OpenXRResultStatus.StatusCode.ProviderUninitialized);
+            }
+            else if (result == XrResult.HandleInvalid)
+            {
+                // XrSession == XR_NULL_HANDLE
+                return new OpenXRResultStatus(OpenXRResultStatus.StatusCode.ProviderNotStarted);
+            }
+
+            return result.ToStatus();
+        }
+
         private struct ExternalApi
         {
             [DllImport(ApiConstants.OpenXRAndroidApi)]
@@ -130,6 +233,44 @@ namespace Google.XR.Extensions.Internal
             public static extern bool XrGeospatial_locateFromPose(
                 IntPtr manager, XrGeospatialTracker tracker, ref Pose pose,
                 ref XRGeospatialPoseResult out_result);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrGeospatial_initializeAnchorHost(IntPtr manager);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrGeospatial_setRequestedPlaneTracking(
+                IntPtr manager, bool enable);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrGeospatial_getMaxSurfaceAnchorCount(
+                IntPtr manager, ref uint out_max_count);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrGeospatial_createGeospatialAnchor(
+                IntPtr manager,
+                XrSpatialContextEXT spatial_context,
+                XrGeospatialTracker geospatial_tracker,
+                ref XRGeospatialPose pose,
+                ref XrSpatialEntityIdEXT out_anchor_entity_id,
+                ref XrResult out_result);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrGeospatial_createSurfaceAnchorAsync(
+                IntPtr manager,
+                XrSpatialContextEXT spatial_context,
+                XrGeospatialTracker geospatial_tracker,
+                XRGeospatialSurfaceType surface_anchor_type,
+                ref XRGeospatialPose pose,
+                ref XrFutureEXT out_future,
+                ref XrResult out_result);
+
+            [DllImport(ApiConstants.OpenXRAndroidApi)]
+            public static extern bool XrGeospatial_createSurfaceAnchorComplete(
+                IntPtr manager,
+                XrSpatialContextEXT spatial_context,
+                XrFutureEXT future,
+                ref XrSpatialEntityIdEXT out_anchor_entity_id,
+                ref XrResult out_result);
         }
     }
 }
